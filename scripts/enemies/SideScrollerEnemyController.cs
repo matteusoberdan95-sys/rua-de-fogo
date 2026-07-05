@@ -1,7 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Combat;
-using SangueNoAsfalto.Core;
-
 namespace SangueNoAsfalto.Enemies;
 
 public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnockbackReceiver

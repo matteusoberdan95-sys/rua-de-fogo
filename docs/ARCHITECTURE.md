@@ -9,6 +9,8 @@
 - `scripts/player`: controle do jogador.
 - `scripts/enemies`: controle e IA dos inimigos.
 - `scripts/world`: sistemas futuros de clima, horario, rua viva e perigos ambientais.
+- `scripts/systems`: save local, configuracoes e estado persistente.
+- `scripts/pickups`: comportamento de pickups coletaveis.
 - `scripts/ui`: HUD e telas.
 - `art/placeholders`: arte temporaria.
 - `art/concepts`: concept art e exploracoes visuais.
@@ -26,6 +28,8 @@
 - Primeiro validar o jogo rodando; depois refatorar onde a dor aparecer.
 - Backend fica fora do escopo ate existir uma necessidade concreta.
 - Clima/tempo deve ser implementado em camadas pequenas, com dados claros por fase.
+- Imports C# comuns ficam centralizados em `GlobalUsings.cs`, organizado por camadas.
+- Scripts de gameplay nao devem repetir `using` no topo quando o namespace ja estiver coberto pelos global usings.
 
 ## Divisao Godot E C#
 
@@ -74,9 +78,26 @@ Arquivos principais:
 
 Checkpoint atual:
 
-- fica em memoria da cena;
-- nao salva em disco;
-- `R` volta ao checkpoint somente se o jogador ja tiver ativado o checkpoint e morrer.
+- persiste em `user://save_game.json` a partir da Sprint 07;
+- `R` volta ao checkpoint somente se o jogador ja tiver ativado o checkpoint e morrer;
+- `F4` limpa o save local e reinicia do inicio.
+
+## Sprint 07 - Sistemas De Jogo
+
+Arquivos principais:
+
+- `scripts/systems/GameSave.cs`: modelo serializado do save local.
+- `scripts/systems/SaveManager.cs`: carrega, salva e limpa `user://save_game.json`.
+- `scripts/pickups/Pickup.cs`: aplica cura, arma improvisada ou continue ao jogador.
+- `scenes/pickups/*.tscn`: pickups placeholders da vertical slice.
+- `GlobalUsings.cs`: imports globais separados por runtime, Godot, core, gameplay, sistemas, mundo e UI.
+
+Limites atuais:
+
+- save local ainda e simples e sem slots;
+- arma improvisada tem apenas durabilidade e bonus de dano/knockback;
+- continue e limitado a 1;
+- configuracoes atuais sao de prototipo (`F1`, `F2`, `F4`), sem tela dedicada.
 
 ## Observacao Sobre C#
 

@@ -1,5 +1,3 @@
-using Godot;
-
 namespace SangueNoAsfalto.Core;
 
 public partial class InputBootstrap : Node
@@ -16,6 +14,23 @@ public partial class InputBootstrap : Node
         ConfigureKeyAction("restart", Key.R);
         AddMouseButton("attack", MouseButton.Left);
         AddMouseButton("shoot", MouseButton.Right);
+        SaveManager.Load();
+        ApplyAlternateControls(SaveManager.Current.AlternateControls);
+    }
+
+    public static void ApplyAlternateControls(bool enabled)
+    {
+        if (enabled)
+        {
+            ConfigureKeyAction("attack", Key.H);
+            ConfigureKeyAction("shoot", Key.U);
+            ConfigureKeyAction("dash", Key.Shift);
+            return;
+        }
+
+        RemoveKey("attack", Key.H);
+        RemoveKey("shoot", Key.U);
+        RemoveKey("dash", Key.Shift);
     }
 
     private static void ConfigureKeyAction(string action, params Key[] keys)
@@ -67,6 +82,23 @@ public partial class InputBootstrap : Node
         }
 
         return false;
+    }
+
+    private static void RemoveKey(string action, Key key)
+    {
+        if (!InputMap.HasAction(action))
+        {
+            return;
+        }
+
+        foreach (InputEvent inputEvent in InputMap.ActionGetEvents(action))
+        {
+            if (inputEvent is InputEventKey eventKey &&
+                (eventKey.Keycode == key || eventKey.PhysicalKeycode == key))
+            {
+                InputMap.ActionEraseEvent(action, inputEvent);
+            }
+        }
     }
 
     private static void EnsureAction(string action)

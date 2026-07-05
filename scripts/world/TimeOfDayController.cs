@@ -1,5 +1,3 @@
-using Godot;
-
 namespace SangueNoAsfalto.World;
 
 public partial class TimeOfDayController : Node

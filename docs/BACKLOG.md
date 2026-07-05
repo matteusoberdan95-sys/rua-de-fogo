@@ -30,7 +30,7 @@
 
 - [x] Uma fase curta com inicio, combate, checkpoint e mini-chefe.
 - [ ] Menu inicial.
-- [ ] Save local.
+- [x] Save local.
 - [x] Tela de morte.
 - [ ] Build Windows.
 
@@ -41,7 +41,7 @@
 - [x] Mini-chefe placeholder.
 - [x] Tela/mensagem de vitoria via HUD.
 - [x] Validar vertical slice no Godot com `F5`.
-- [ ] Fechar sprint, commitar e fazer push apos validacao.
+- [x] Fechar sprint, commitar e fazer push apos validacao.
 
 ## Marco 0.4 - Identidade Visual Inicial
 
@@ -78,3 +78,16 @@
 - [x] Criar zona de lama ou poca.
 - [x] Fazer luzes/postes reagirem ao horario.
 - [ ] Definir primeiro boss com clima-assinatura.
+
+## Marco 0.7 - Sistemas De Jogo
+
+- [x] Save local simples.
+- [x] Checkpoint persistente.
+- [x] Estado de arma.
+- [x] Durabilidade de arma.
+- [x] Pickups de cura, arma e continue.
+- [x] Continue/vida extra simples.
+- [x] Configuracao basica persistente.
+- [x] Remapeamento minimo de controles.
+- [x] Validar Sprint 07 no Godot com `F5`.
+- [ ] Fechar sprint, commitar e fazer push apos validacao.

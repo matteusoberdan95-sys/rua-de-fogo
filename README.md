@@ -38,7 +38,7 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 07 - Sistemas De Jogo`.
+Sprint atual: `Sprint 08 - Conteudo Alpha`.
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -48,19 +48,20 @@ A Sprint 05 foi validada jogando e iniciou o sistema visual de clima/tempo com `
 
 A Sprint 06 foi validada jogando e implementou a primeira vertical slice pequena: entrada da rua, checkpoint, segundo encontro, mini-chefe placeholder, tela/mensagem de morte e vitoria via HUD.
 
+A Sprint 07 foi validada jogando e iniciou os sistemas de jogo: save local, checkpoint persistente, arma improvisada com durabilidade, pickups de cura/arma/continue, continue simples, configuracao de HUD debug e remapeamento minimo. A organizacao de imports C# agora fica centralizada em `GlobalUsings.cs`.
+
 ## Regra obrigatoria de sprint
 
 Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
 
 ## Proximo passo recomendado
 
-Com a Sprint 06 concluida, o recomendado e iniciar a Sprint 07:
+Com a Sprint 07 concluida, o recomendado e planejar a Sprint 08:
 
-- save local simples;
-- checkpoint persistente se fizer sentido;
-- pickups basicos;
-- estado de arma;
-- configuracoes basicas sem quebrar a vertical slice.
+- expandir conteudo alpha sem quebrar a vertical slice;
+- planejar novos inimigos e mini-chefes;
+- consolidar mais fases ou variacoes da primeira rua;
+- manter build, validacao no Godot, commit e push ao fim da sprint.
 
 ## Documentos importantes
 

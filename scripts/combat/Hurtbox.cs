@@ -1,6 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Core;
-
 namespace SangueNoAsfalto.Combat;
 
 public partial class Hurtbox : Area2D

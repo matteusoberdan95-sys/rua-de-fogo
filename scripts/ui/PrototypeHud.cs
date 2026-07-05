@@ -1,7 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Core;
-using SangueNoAsfalto.Player;
-
 namespace SangueNoAsfalto.Ui;
 
 public partial class PrototypeHud : CanvasLayer

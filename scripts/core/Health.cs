@@ -1,5 +1,3 @@
-using Godot;
-
 namespace SangueNoAsfalto.Core;
 
 public partial class Health : Node
@@ -67,6 +65,18 @@ public partial class Health : Node
         }
 
         CurrentHealth = Mathf.Min(CurrentHealth + amount, MaxHealth);
+        EmitSignal(SignalName.Changed, CurrentHealth, MaxHealth);
+    }
+
+    public void Revive(int health)
+    {
+        if (health <= 0)
+        {
+            return;
+        }
+
+        CurrentHealth = Mathf.Clamp(health, 1, MaxHealth);
+        _invulnerabilityRemaining = 0f;
         EmitSignal(SignalName.Changed, CurrentHealth, MaxHealth);
     }
 

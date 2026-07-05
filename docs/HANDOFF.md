@@ -132,10 +132,10 @@ Estado da Sprint 05:
 
 Proximo passo recomendado:
 
-1. commitar e fazer push da Sprint 06;
-2. iniciar `Sprint 07 - Sistemas De Jogo`;
-3. planejar save local simples, checkpoint persistente, pickups e estado de arma;
-4. manter a vertical slice jogavel durante toda a sprint.
+1. commitar e fazer push da Sprint 07;
+2. iniciar planejamento da `Sprint 08 - Conteudo Alpha`;
+3. expandir conteudo sem quebrar a vertical slice;
+4. manter a regra obrigatoria de build, Godot, docs, commit e push.
 
 Estado da Sprint 06:
 
@@ -144,6 +144,20 @@ Estado da Sprint 06:
 - checkpoint simples em memoria usando `R` para reiniciar do checkpoint apos morte;
 - criada `scenes/actors/SideScrollerMiniBoss.tscn`;
 - `scripts/ui/BeatEmUpHud.cs` mostra etapa, objetivo, checkpoint, morte e vitoria;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`;
+- validada no Godot com `F5` e aprovada.
+
+Estado da Sprint 07:
+
+- `scripts/systems/GameSave.cs` e `scripts/systems/SaveManager.cs` criam save local em `user://save_game.json`;
+- checkpoint da vertical slice persiste no save;
+- `scripts/player/SideScrollerPlayerController.cs` agora tem arma improvisada, durabilidade e continue;
+- `scripts/pickups/Pickup.cs` controla pickups de cura, arma e continue;
+- `scenes/pickups/HealthPickup.tscn`, `WeaponPickup.tscn` e `ContinuePickup.tscn` foram adicionadas;
+- `BeatEmUpHud` mostra arma, durabilidade, continue e atalhos;
+- `F1` alterna HUD debug, `F2` alterna controles alternativos, `F4` limpa o save;
+- `GlobalUsings.cs` centraliza imports globais por camadas;
+- scripts C# foram limpos para remover `using` repetitivo no topo;
 - build C# validada com `dotnet build SangueNoAsfalto.csproj`;
 - validada no Godot com `F5` e aprovada.
 

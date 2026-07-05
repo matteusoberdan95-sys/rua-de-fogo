@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
@@ -8,6 +8,9 @@
 [ext_resource type="Script" path="res://scripts/ui/BeatEmUpHud.cs" id="5_hud"]
 [ext_resource type="Script" path="res://scripts/world/TimeOfDayController.cs" id="6_time"]
 [ext_resource type="Script" path="res://scripts/world/WeatherController.cs" id="7_weather"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/HealthPickup.tscn" id="8_healthpickup"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/WeaponPickup.tscn" id="9_weaponpickup"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/ContinuePickup.tscn" id="10_continuepickup"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_north"]
 size = Vector2(2400, 34)
@@ -397,6 +400,15 @@ shape = SubResource("RectangleShape2D_pole")
 
 [node name="SideScrollerPlayer" parent="." instance=ExtResource("1_player")]
 position = Vector2(-760, 405)
+
+[node name="WeaponPickup" parent="." instance=ExtResource("9_weaponpickup")]
+position = Vector2(-330, 405)
+
+[node name="HealthPickup" parent="." instance=ExtResource("8_healthpickup")]
+position = Vector2(225, 438)
+
+[node name="ContinuePickup" parent="." instance=ExtResource("10_continuepickup")]
+position = Vector2(590, 405)
 
 [node name="SpawnPoints" type="Node2D" parent="."]
 

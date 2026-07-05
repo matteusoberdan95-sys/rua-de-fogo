@@ -1,7 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Combat;
-using SangueNoAsfalto.Core;
-
 namespace SangueNoAsfalto.Player;
 
 public partial class PlayerController : CharacterBody2D

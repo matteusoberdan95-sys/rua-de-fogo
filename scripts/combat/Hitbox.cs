@@ -1,5 +1,3 @@
-using Godot;
-
 namespace SangueNoAsfalto.Combat;
 
 public partial class Hitbox : Area2D

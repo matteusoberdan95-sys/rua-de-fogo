@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 07 - Sistemas De Jogo`
+Sprint atual: `Sprint 08 - Conteudo Alpha`
 
 Direcao oficial atual:
 
@@ -294,7 +294,7 @@ Agentes principais:
 
 ## Sprint 07 - Sistemas De Jogo
 
-Status: proxima / pronta para iniciar.
+Status: concluida.
 
 Objetivo: comecar sistemas que sustentam um jogo maior.
 
@@ -308,6 +308,29 @@ Entregas planejadas:
 - configuracoes basicas;
 - remapeamento de controles se necessario.
 
+Entregas implementadas:
+
+- criado `scripts/systems/GameSave.cs`;
+- criado `scripts/systems/SaveManager.cs`;
+- save local em `user://save_game.json`;
+- checkpoint da vertical slice agora persiste no save local;
+- estado de arma improvisada com durabilidade simples;
+- pickups de cura, arma improvisada e continue;
+- continue simples, limitado a 1, com revive parcial;
+- HUD mostra arma, durabilidade e continue;
+- configuracao persistente `ShowDebugHud`, alternada com `F1`;
+- remapeamento minimo persistente com controles alternativos, alternado com `F2`;
+- `F4` limpa o save local e reinicia a cena;
+- `GlobalUsings.cs` criado para organizar imports globais por camadas;
+- scripts limpos para depender dos global usings;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- save local, checkpoint persistente, pickups, arma, continue e atalhos aprovados;
+- build C# validada com 0 erros e 0 avisos antes do commit.
+
 Agentes principais:
 
 - Piccolo: arquitetura.
@@ -317,7 +340,7 @@ Agentes principais:
 
 ## Sprint 08 - Conteudo Alpha
 
-Status: futura.
+Status: proxima / pronta para iniciar.
 
 Objetivo: expandir o jogo para uma versao alpha.
 

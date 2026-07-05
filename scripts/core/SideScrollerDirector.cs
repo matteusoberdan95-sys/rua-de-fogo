@@ -1,7 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Core;
-using SangueNoAsfalto.Player;
-
 namespace SangueNoAsfalto.Core;
 
 public partial class SideScrollerDirector : Node
@@ -52,6 +48,10 @@ public partial class SideScrollerDirector : Node
 
     public bool IsCompleted => _completed;
 
+    public bool ShowDebugHud => SaveManager.Current.ShowDebugHud;
+
+    public bool AlternateControls => SaveManager.Current.AlternateControls;
+
     private static Phase _resumePhase = Phase.EncounterOne;
     private static bool _checkpointUnlocked;
     private readonly int[] _encounterSizes = { 3, 4 };
@@ -63,11 +63,17 @@ public partial class SideScrollerDirector : Node
     private bool _phaseActive;
     private bool _completed;
     private bool _gameOver;
+    private bool _f1WasDown;
+    private bool _f2WasDown;
+    private bool _f4WasDown;
 
     public override void _Ready()
     {
         AddToGroup("game_director");
         AddToGroup("side_director");
+        SaveManager.Load();
+        _checkpointUnlocked = SaveManager.Current.CheckpointUnlocked;
+        InputBootstrap.ApplyAlternateControls(SaveManager.Current.AlternateControls);
         _spawnPoints = GetNodeOrNull<Node2D>(SpawnPointsPath);
         FindPlayer();
         ApplyRespawnState();
@@ -82,6 +88,8 @@ public partial class SideScrollerDirector : Node
             return;
         }
 
+        HandlePrototypeSettings();
+
         if (_gameOver || _completed)
         {
             return;
@@ -90,6 +98,15 @@ public partial class SideScrollerDirector : Node
         FindPlayer();
         if (_playerHealth is not null && _playerHealth.CurrentHealth <= 0)
         {
+            Vector2 respawnPosition = HasCheckpoint ? CheckpointPosition : StartPosition;
+            if (_player?.TryUseContinue(respawnPosition) == true)
+            {
+                StatusText = "Voce gastou um continue e voltou cambaleando.";
+                _resumePhase = HasCheckpoint ? Phase.EncounterTwo : Phase.EncounterOne;
+                _playerHealth = _player.GetNodeOrNull<Health>("Health");
+                return;
+            }
+
             _gameOver = true;
             _phaseActive = false;
             StatusText = HasCheckpoint
@@ -242,6 +259,8 @@ public partial class SideScrollerDirector : Node
         HasCheckpoint = true;
         _checkpointUnlocked = true;
         _resumePhase = Phase.EncounterTwo;
+        SaveManager.Current.CheckpointUnlocked = true;
+        SaveManager.Save();
 
         if (_player is not null)
         {
@@ -256,6 +275,8 @@ public partial class SideScrollerDirector : Node
         _phaseActive = false;
         _resumePhase = Phase.EncounterOne;
         _checkpointUnlocked = false;
+        SaveManager.Current.CheckpointUnlocked = false;
+        SaveManager.Save();
         ObjectiveText = "Trecho limpo";
         StatusText = "Vitoria. A rua abriu caminho. Aperte R para jogar de novo.";
     }
@@ -270,9 +291,43 @@ public partial class SideScrollerDirector : Node
         {
             _resumePhase = Phase.EncounterOne;
             _checkpointUnlocked = false;
+            SaveManager.Current.CheckpointUnlocked = false;
+            SaveManager.Save();
         }
 
         GetTree().ReloadCurrentScene();
+    }
+
+    private void HandlePrototypeSettings()
+    {
+        if (ConsumeKeyPress(Key.F1, ref _f1WasDown))
+        {
+            SaveManager.Current.ShowDebugHud = !SaveManager.Current.ShowDebugHud;
+            SaveManager.Save();
+        }
+
+        if (ConsumeKeyPress(Key.F2, ref _f2WasDown))
+        {
+            SaveManager.Current.AlternateControls = !SaveManager.Current.AlternateControls;
+            InputBootstrap.ApplyAlternateControls(SaveManager.Current.AlternateControls);
+            SaveManager.Save();
+        }
+
+        if (ConsumeKeyPress(Key.F4, ref _f4WasDown))
+        {
+            SaveManager.Reset();
+            _resumePhase = Phase.EncounterOne;
+            _checkpointUnlocked = false;
+            GetTree().ReloadCurrentScene();
+        }
+    }
+
+    private static bool ConsumeKeyPress(Key key, ref bool wasDown)
+    {
+        bool isDown = Input.IsKeyPressed(key) || Input.IsPhysicalKeyPressed(key);
+        bool justPressed = isDown && !wasDown;
+        wasDown = isDown;
+        return justPressed;
     }
 
     private void ApplyRespawnState()

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/pickups/Pickup.cs" id="1_pickup"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pickup"]
+radius = 20.0
+
+[node name="WeaponPickup" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_pickup")
+Kind = 1
+WeaponDurability = 9
+
+[node name="Icon" type="Polygon2D" parent="."]
+color = Color(0.78, 0.72, 0.52, 1)
+polygon = PackedVector2Array(-26, -5, 22, -8, 34, 0, 22, 8, -26, 5)
+
+[node name="Handle" type="Polygon2D" parent="."]
+color = Color(0.18, 0.09, 0.05, 1)
+polygon = PackedVector2Array(-31, -9, -20, -8, -20, 8, -31, 9)
+
+[node name="Glow" type="Polygon2D" parent="."]
+color = Color(0.95, 0.65, 0.2, 0.22)
+polygon = PackedVector2Array(-42, -20, 42, -20, 50, 0, 42, 20, -42, 20, -50, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pickup")

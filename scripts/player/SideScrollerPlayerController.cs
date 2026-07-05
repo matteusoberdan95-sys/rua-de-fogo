@@ -1,7 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Combat;
-using SangueNoAsfalto.Core;
-
 namespace SangueNoAsfalto.Player;
 
 public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnockbackReceiver
@@ -60,6 +56,12 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public int FacingSign { get; private set; } = 1;
 
+    public string WeaponName => _hasImprovisedWeapon ? "Vergalhao" : "Facao";
+
+    public int WeaponDurability => _weaponDurability;
+
+    public int Continues => _continues;
+
     private readonly KeyPressLatch _attackLatch = new(Key.J);
     private readonly KeyPressLatch _dashLatch = new(Key.K, Key.Space);
     private readonly KeyPressLatch _shootLatch = new(Key.L);
@@ -71,6 +73,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private float _comboResetRemaining;
     private float _shootCooldownRemaining;
     private float _hitStunRemaining;
+    private bool _hasImprovisedWeapon;
+    private int _weaponDurability;
+    private int _continues;
     private int _comboIndex;
 
     public override void _Ready()
@@ -78,6 +83,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         AddToGroup("player");
         AddToGroup("side_player");
         CurrentStamina = MaxStamina;
+        ApplySavedState();
 
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
@@ -281,10 +287,16 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             };
 
             _attackArea.KnockbackForce = _comboIndex == 2 ? 520f : 350f;
+            if (_hasImprovisedWeapon)
+            {
+                _attackArea.Damage += _comboIndex == 2 ? 18 : 10;
+                _attackArea.KnockbackForce += 130f;
+            }
         }
 
         SetAttackCollision(true);
         SpawnSlashEffect(_comboIndex);
+        ConsumeWeaponDurability();
     }
 
     private void StartDash(Vector2 input)
@@ -396,11 +408,82 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         SetAttackCollision(false);
     }
 
+    public void Heal(int amount)
+    {
+        _health?.Heal(amount);
+    }
+
+    public void EquipImprovisedWeapon(int durability)
+    {
+        _hasImprovisedWeapon = true;
+        _weaponDurability = Mathf.Max(durability, 1);
+        SavePlayerState();
+    }
+
+    public void AddContinue()
+    {
+        _continues = Mathf.Clamp(_continues + 1, 0, 1);
+        SavePlayerState();
+    }
+
+    public bool TryUseContinue(Vector2 respawnPosition)
+    {
+        if (_continues <= 0 || _health is null)
+        {
+            return false;
+        }
+
+        _continues--;
+        GlobalPosition = respawnPosition;
+        Velocity = Vector2.Zero;
+        _dashTimeRemaining = 0f;
+        _attackTimeRemaining = 0f;
+        _hitStunRemaining = 0f;
+        _health.Revive(Mathf.CeilToInt(_health.MaxHealth * 0.55f));
+        SetPhysicsProcess(true);
+        Modulate = Colors.White;
+        SavePlayerState();
+        return true;
+    }
+
+    public void SavePlayerState()
+    {
+        SaveManager.Current.HasImprovisedWeapon = _hasImprovisedWeapon;
+        SaveManager.Current.WeaponDurability = _weaponDurability;
+        SaveManager.Current.Continues = _continues;
+        SaveManager.Save();
+    }
+
     private void ClampToPlayableArea()
     {
         GlobalPosition = new Vector2(
             Mathf.Clamp(GlobalPosition.X, MinX, MaxX),
             Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
+    }
+
+    private void ApplySavedState()
+    {
+        SaveManager.Load();
+        _hasImprovisedWeapon = SaveManager.Current.HasImprovisedWeapon && SaveManager.Current.WeaponDurability > 0;
+        _weaponDurability = _hasImprovisedWeapon ? SaveManager.Current.WeaponDurability : 0;
+        _continues = Mathf.Clamp(SaveManager.Current.Continues, 0, 1);
+    }
+
+    private void ConsumeWeaponDurability()
+    {
+        if (!_hasImprovisedWeapon)
+        {
+            return;
+        }
+
+        _weaponDurability--;
+        if (_weaponDurability <= 0)
+        {
+            _hasImprovisedWeapon = false;
+            _weaponDurability = 0;
+        }
+
+        SavePlayerState();
     }
 
     private void UpdateFacingVisual()

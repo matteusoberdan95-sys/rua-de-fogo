@@ -1,6 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Player;
-
 namespace SangueNoAsfalto.Core;
 
 public partial class GameDirector : Node

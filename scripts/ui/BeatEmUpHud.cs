@@ -1,7 +1,3 @@
-using Godot;
-using SangueNoAsfalto.Core;
-using SangueNoAsfalto.Player;
-
 namespace SangueNoAsfalto.Ui;
 
 public partial class BeatEmUpHud : CanvasLayer
@@ -39,7 +35,10 @@ public partial class BeatEmUpHud : CanvasLayer
         {
             if (_staminaLabel is not null)
             {
-                _staminaLabel.Text = $"Stamina: {(int)_player.CurrentStamina}/{(int)_player.MaxStamina}";
+                string weapon = _player.WeaponDurability > 0
+                    ? $"{_player.WeaponName} ({_player.WeaponDurability})"
+                    : _player.WeaponName;
+                _staminaLabel.Text = $"Stamina: {(int)_player.CurrentStamina}/{(int)_player.MaxStamina}  Arma: {weapon}  Continue: {_player.Continues}";
             }
 
             if (_debugLabel is not null)
@@ -65,7 +64,9 @@ public partial class BeatEmUpHud : CanvasLayer
             if (_debugLabel is not null)
             {
                 string checkpoint = _director.HasCheckpoint ? "Checkpoint ativo" : "Sem checkpoint";
-                _debugLabel.Text = $"Objetivo: {_director.ObjectiveText}  |  {checkpoint}";
+                string controls = _director.AlternateControls ? "Alt ON" : "Alt OFF";
+                _debugLabel.Visible = _director.ShowDebugHud;
+                _debugLabel.Text = $"Objetivo: {_director.ObjectiveText}  |  {checkpoint}  |  {controls}";
             }
 
             if (_controlsLabel is not null)
@@ -95,6 +96,11 @@ public partial class BeatEmUpHud : CanvasLayer
             return _director.HasCheckpoint ? "R: voltar ao checkpoint" : "R: voltar ao inicio";
         }
 
-        return "W/S: trocar lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  R: reiniciar";
+        if (_director?.AlternateControls == true)
+        {
+            return "Alt: H ataque  U tiro  Shift esquiva  F1 HUD  F2 controles  F4 limpar save";
+        }
+
+        return "W/S: lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  F1 HUD  F2 alt  F4 limpar save";
     }
 }
