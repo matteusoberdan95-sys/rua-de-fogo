@@ -1,0 +1,260 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
+[ext_resource type="Script" path="res://scripts/core/InputBootstrap.cs" id="3_input"]
+[ext_resource type="Script" path="res://scripts/core/SideScrollerDirector.cs" id="4_director"]
+[ext_resource type="Script" path="res://scripts/ui/BeatEmUpHud.cs" id="5_hud"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_north"]
+size = Vector2(2400, 34)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_south"]
+size = Vector2(2400, 34)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_west"]
+size = Vector2(34, 420)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
+size = Vector2(34, 420)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kiosk"]
+size = Vector2(230, 55)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_car"]
+size = Vector2(210, 45)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pole"]
+size = Vector2(26, 130)
+
+[node name="SideScrollerPrototype" type="Node2D"]
+
+[node name="InputBootstrap" type="Node" parent="."]
+script = ExtResource("3_input")
+
+[node name="Sky" type="Polygon2D" parent="."]
+color = Color(0.05, 0.055, 0.065, 1)
+polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 260, -1280, 260)
+
+[node name="DawnGlow" type="Polygon2D" parent="."]
+color = Color(0.72, 0.29, 0.12, 0.18)
+polygon = PackedVector2Array(-1280, 70, 1280, 40, 1280, 260, -1280, 260)
+
+[node name="FavelaBack" type="Polygon2D" parent="."]
+color = Color(0.09, 0.09, 0.095, 1)
+polygon = PackedVector2Array(-1280, 210, -1150, 168, -1040, 190, -960, 155, -840, 185, -720, 145, -600, 172, -510, 150, -390, 184, -260, 146, -110, 176, 20, 150, 160, 186, 310, 142, 450, 170, 590, 134, 710, 180, 860, 146, 1000, 174, 1140, 136, 1280, 166, 1280, 310, -1280, 310)
+
+[node name="HousesBack" type="Polygon2D" parent="."]
+color = Color(0.12, 0.105, 0.095, 1)
+polygon = PackedVector2Array(-1240, 250, -1120, 250, -1120, 190, -1010, 190, -1010, 250, -900, 250, -900, 205, -790, 205, -790, 250, -650, 250, -650, 180, -520, 180, -520, 250, -360, 250, -360, 198, -220, 198, -220, 250, -70, 250, -70, 188, 70, 188, 70, 250, 230, 250, 230, 205, 365, 205, 365, 250, 520, 250, 520, 178, 650, 178, 650, 250, 790, 250, 790, 200, 920, 200, 920, 250, 1070, 250, 1070, 185, 1210, 185, 1210, 250)
+
+[node name="Road" type="Polygon2D" parent="."]
+color = Color(0.055, 0.058, 0.062, 1)
+polygon = PackedVector2Array(-1280, 250, 1280, 250, 1280, 720, -1280, 720)
+
+[node name="LaneBandBack" type="Polygon2D" parent="."]
+color = Color(0.085, 0.08, 0.075, 1)
+polygon = PackedVector2Array(-1280, 250, 1280, 250, 1280, 345, -1280, 345)
+
+[node name="LaneBandMid" type="Polygon2D" parent="."]
+color = Color(0.075, 0.072, 0.07, 1)
+polygon = PackedVector2Array(-1280, 345, 1280, 345, 1280, 435, -1280, 435)
+
+[node name="LaneBandFront" type="Polygon2D" parent="."]
+color = Color(0.055, 0.052, 0.052, 1)
+polygon = PackedVector2Array(-1280, 435, 1280, 435, 1280, 720, -1280, 720)
+
+[node name="LaneGuideA" type="Polygon2D" parent="."]
+color = Color(0.55, 0.42, 0.2, 0.18)
+polygon = PackedVector2Array(-1120, 336, -870, 336, -870, 344, -1120, 344, -710, 336, -460, 336, -460, 344, -710, 344, -300, 336, -50, 336, -50, 344, -300, 344, 110, 336, 360, 336, 360, 344, 110, 344, 520, 336, 770, 336, 770, 344, 520, 344, 930, 336, 1180, 336, 1180, 344, 930, 344)
+
+[node name="LaneGuideB" type="Polygon2D" parent="."]
+color = Color(0.55, 0.42, 0.2, 0.14)
+polygon = PackedVector2Array(-1120, 430, -870, 430, -870, 438, -1120, 438, -710, 430, -460, 430, -460, 438, -710, 438, -300, 430, -50, 430, -50, 438, -300, 438, 110, 430, 360, 430, 360, 438, 110, 438, 520, 430, 770, 430, 770, 438, 520, 438, 930, 430, 1180, 430, 1180, 438, 930, 438)
+
+[node name="BloodPuddleA" type="Polygon2D" parent="."]
+position = Vector2(-210, 420)
+color = Color(0.34, 0.01, 0.015, 0.82)
+polygon = PackedVector2Array(-92, -12, -31, -29, 44, -20, 88, 6, 30, 23, -58, 20)
+
+[node name="WetReflectionA" type="Polygon2D" parent="."]
+position = Vector2(455, 445)
+color = Color(0.64, 0.55, 0.38, 0.12)
+polygon = PackedVector2Array(-118, -13, 96, -10, 125, 7, 42, 19, -104, 12)
+
+[node name="Kiosk" type="Polygon2D" parent="."]
+position = Vector2(-640, 245)
+color = Color(0.16, 0.12, 0.085, 1)
+polygon = PackedVector2Array(-145, -65, 145, -65, 145, 55, -145, 55)
+
+[node name="KioskDoor" type="Polygon2D" parent="Kiosk"]
+position = Vector2(42, 18)
+color = Color(0.045, 0.045, 0.048, 1)
+polygon = PackedVector2Array(-44, -35, 44, -35, 44, 35, -44, 35)
+
+[node name="GraffitiWall" type="Polygon2D" parent="."]
+position = Vector2(235, 235)
+color = Color(0.14, 0.13, 0.115, 1)
+polygon = PackedVector2Array(-220, -52, 220, -52, 220, 45, -220, 45)
+
+[node name="GraffitiMark" type="Polygon2D" parent="GraffitiWall"]
+color = Color(0.58, 0.03, 0.04, 0.9)
+polygon = PackedVector2Array(-160, 10, -118, -24, -75, 12, -35, -20, 10, 14, 52, -18, 92, 14, 134, -20, 164, 10, 150, 25, 96, -2, 52, 28, 5, 2, -36, 30, -76, 0, -118, 26, -156, 24)
+
+[node name="BrokenCar" type="Polygon2D" parent="."]
+position = Vector2(725, 315)
+color = Color(0.11, 0.09, 0.075, 1)
+polygon = PackedVector2Array(-130, 30, -98, -22, -32, -40, 48, -35, 113, 0, 128, 30)
+
+[node name="CarRust" type="Polygon2D" parent="BrokenCar"]
+color = Color(0.45, 0.16, 0.04, 0.75)
+polygon = PackedVector2Array(-92, 8, -36, -12, 16, -6, 74, 16, 30, 27, -64, 24)
+
+[node name="PostA" type="Polygon2D" parent="."]
+position = Vector2(-930, 250)
+color = Color(0.17, 0.16, 0.13, 1)
+polygon = PackedVector2Array(-8, -115, 8, -115, 8, 115, -8, 115)
+
+[node name="PostALight" type="Polygon2D" parent="PostA"]
+position = Vector2(23, -100)
+color = Color(1, 0.62, 0.18, 0.5)
+polygon = PackedVector2Array(-42, -16, 28, -14, 58, 20, 7, 46, -52, 25)
+
+[node name="PostB" type="Polygon2D" parent="."]
+position = Vector2(865, 250)
+color = Color(0.17, 0.16, 0.13, 1)
+polygon = PackedVector2Array(-8, -115, 8, -115, 8, 115, -8, 115)
+
+[node name="PostBLight" type="Polygon2D" parent="PostB"]
+position = Vector2(-24, -100)
+color = Color(1, 0.54, 0.12, 0.4)
+polygon = PackedVector2Array(-58, 20, -28, -14, 42, -16, 52, 25, -7, 46)
+
+[node name="WorldBounds" type="Node2D" parent="."]
+
+[node name="North" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(0, 240)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/North"]
+shape = SubResource("RectangleShape2D_north")
+
+[node name="South" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(0, 500)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/South"]
+shape = SubResource("RectangleShape2D_south")
+
+[node name="West" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(-1125, 375)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/West"]
+shape = SubResource("RectangleShape2D_west")
+
+[node name="East" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(1125, 375)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/East"]
+shape = SubResource("RectangleShape2D_east")
+
+[node name="KioskBlocker" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(-640, 275)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/KioskBlocker"]
+shape = SubResource("RectangleShape2D_kiosk")
+
+[node name="CarBlocker" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(725, 335)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/CarBlocker"]
+shape = SubResource("RectangleShape2D_car")
+
+[node name="PostABlocker" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(-930, 285)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/PostABlocker"]
+shape = SubResource("RectangleShape2D_pole")
+
+[node name="PostBBlocker" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(865, 285)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/PostBBlocker"]
+shape = SubResource("RectangleShape2D_pole")
+
+[node name="SideScrollerPlayer" parent="." instance=ExtResource("1_player")]
+position = Vector2(-760, 405)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="LeftBack" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-1040, 292)
+
+[node name="RightBack" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1040, 300)
+
+[node name="LeftMid" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-1080, 386)
+
+[node name="RightMid" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1080, 392)
+
+[node name="LeftFront" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-1010, 456)
+
+[node name="RightFront" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(1010, 462)
+
+[node name="SideScrollerDirector" type="Node" parent="."]
+script = ExtResource("4_director")
+EnemyScene = ExtResource("2_enemy")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("5_hud")
+
+[node name="Panel" type="PanelContainer" parent="Hud"]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 510.0
+offset_bottom = 190.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hud/Panel"]
+layout_mode = 2
+
+[node name="HealthLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Vida: 130/130"
+
+[node name="StaminaLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Stamina: 100/100"
+
+[node name="WaveLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Onda: 1/3  Inimigos: 0"
+
+[node name="StatusLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "A rua acordou errada"
+
+[node name="ControlsLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "W/S: trocar lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  R: reiniciar"
+
+[node name="DebugLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Lane: 405  Input: 0.0, 0.0"

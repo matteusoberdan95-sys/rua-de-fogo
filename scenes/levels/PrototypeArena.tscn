@@ -1,0 +1,155 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/actors/EnemyGrunt.tscn" id="2_enemy"]
+[ext_resource type="Script" path="res://scripts/ui/PrototypeHud.cs" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/core/InputBootstrap.cs" id="4_input"]
+[ext_resource type="Script" path="res://scripts/core/GameDirector.cs" id="5_director"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_north"]
+size = Vector2(1100, 38)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_south"]
+size = Vector2(1100, 38)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_west"]
+size = Vector2(38, 620)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
+size = Vector2(38, 620)
+
+[node name="PrototypeArena" type="Node2D"]
+
+[node name="InputBootstrap" type="Node" parent="."]
+script = ExtResource("4_input")
+
+[node name="Ground" type="Polygon2D" parent="."]
+color = Color(0.06, 0.065, 0.07, 1)
+polygon = PackedVector2Array(-620, -360, 620, -360, 620, 360, -620, 360)
+
+[node name="StreetMarking" type="Polygon2D" parent="."]
+color = Color(0.58, 0.52, 0.34, 0.45)
+polygon = PackedVector2Array(-520, -12, -390, -12, -390, 0, -520, 0, -260, -12, -130, -12, -130, 0, -260, 0, 0, -12, 130, -12, 130, 0, 0, 0, 260, -12, 390, -12, 390, 0, 260, 0)
+
+[node name="BloodTrail" type="Polygon2D" parent="."]
+color = Color(0.32, 0.01, 0.015, 0.92)
+polygon = PackedVector2Array(-120, 80, -56, 58, -2, 76, 39, 104, 13, 143, -73, 129)
+
+[node name="BotecoClosed" type="Polygon2D" parent="."]
+position = Vector2(-360, -245)
+color = Color(0.15, 0.12, 0.1, 1)
+polygon = PackedVector2Array(-115, -42, 115, -42, 115, 42, -115, 42)
+
+[node name="BotecoDoor" type="Polygon2D" parent="BotecoClosed"]
+position = Vector2(0, 12)
+color = Color(0.08, 0.08, 0.08, 1)
+polygon = PackedVector2Array(-42, -28, 42, -28, 42, 28, -42, 28)
+
+[node name="GraffitiWall" type="Polygon2D" parent="."]
+position = Vector2(300, -250)
+color = Color(0.12, 0.11, 0.1, 1)
+polygon = PackedVector2Array(-150, -35, 150, -35, 150, 35, -150, 35)
+
+[node name="Graffiti" type="Polygon2D" parent="GraffitiWall"]
+color = Color(0.58, 0.02, 0.08, 1)
+polygon = PackedVector2Array(-92, 6, -58, -18, -31, 9, -5, -17, 29, 8, 61, -18, 88, 7, 84, 17, 58, -4, 30, 22, -2, -3, -31, 24, -59, -4, -86, 18)
+
+[node name="Checkpoint" type="Polygon2D" parent="."]
+position = Vector2(-470, 220)
+color = Color(0.78, 0.18, 0.06, 1)
+polygon = PackedVector2Array(-10, 34, 10, 34, 7, -18, 0, -42, -7, -18)
+
+[node name="CheckpointGlow" type="Polygon2D" parent="Checkpoint"]
+color = Color(1, 0.52, 0.08, 0.2)
+polygon = PackedVector2Array(-42, 42, 42, 42, 52, -12, 0, -66, -52, -12)
+
+[node name="WorldBounds" type="Node2D" parent="."]
+
+[node name="North" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(0, -330)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/North"]
+shape = SubResource("RectangleShape2D_north")
+
+[node name="South" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(0, 330)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/South"]
+shape = SubResource("RectangleShape2D_south")
+
+[node name="West" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(-570, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/West"]
+shape = SubResource("RectangleShape2D_west")
+
+[node name="East" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(570, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/East"]
+shape = SubResource("RectangleShape2D_east")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(-360, 130)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnA" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(220, 0)
+
+[node name="SpawnB" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(360, 150)
+
+[node name="SpawnC" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(250, -180)
+
+[node name="SpawnD" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-30, -210)
+
+[node name="GameDirector" type="Node" parent="."]
+script = ExtResource("5_director")
+EnemyScene = ExtResource("2_enemy")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
+
+[node name="Panel" type="PanelContainer" parent="Hud"]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 430.0
+offset_bottom = 178.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hud/Panel"]
+layout_mode = 2
+
+[node name="HealthLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Vida: 120/120"
+
+[node name="StaminaLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Stamina: 100/100"
+
+[node name="WaveLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Onda: 1/3  Inimigos: 0"
+
+[node name="StatusLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Sobreviva"
+
+[node name="ControlsLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "J: combo  L: tiro  Espaco/K: esquiva  R: reiniciar"
+
+[node name="DebugLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Input: 0.0, 0.0  Pos: 0, 0"
