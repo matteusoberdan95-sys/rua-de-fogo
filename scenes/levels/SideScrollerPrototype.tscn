@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/core/InputBootstrap.cs" id="3_input"]
 [ext_resource type="Script" path="res://scripts/core/SideScrollerDirector.cs" id="4_director"]
 [ext_resource type="Script" path="res://scripts/ui/BeatEmUpHud.cs" id="5_hud"]
+[ext_resource type="Script" path="res://scripts/ui/ScreenshotModeHelper.cs" id="5_screenshot"]
 [ext_resource type="Script" path="res://scripts/world/TimeOfDayController.cs" id="6_time"]
 [ext_resource type="Script" path="res://scripts/world/WeatherController.cs" id="7_weather"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/HealthPickup.tscn" id="8_healthpickup"]
@@ -519,59 +520,27 @@ FinalBossScene = ExtResource("8_alphaboss")
 [node name="Hud" type="CanvasLayer" parent="."]
 script = ExtResource("5_hud")
 
-[node name="StageBanner" type="PanelContainer" parent="Hud"]
-offset_left = 360.0
-offset_top = 12.0
-offset_right = 920.0
-offset_bottom = 86.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Hud/StageBanner"]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="StageTitleLabel" type="Label" parent="Hud/StageBanner/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "ETAPA 1: VILA ESPERANCA"
-horizontal_alignment = 1
-
-[node name="StageTaglineLabel" type="Label" parent="Hud/StageBanner/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "A rua nao esquece. Ela so espera."
-horizontal_alignment = 1
-
-[node name="PlayerPanel" type="HBoxContainer" parent="Hud"]
-offset_left = 18.0
-offset_top = 18.0
-offset_right = 520.0
-offset_bottom = 188.0
-theme_override_constants/separation = 12
-
-[node name="PortraitFrame" type="PanelContainer" parent="Hud/PlayerPanel"]
-custom_minimum_size = Vector2(72, 92)
-layout_mode = 2
-
-[node name="Portrait" type="ColorRect" parent="Hud/PlayerPanel/PortraitFrame"]
-layout_mode = 2
-color = Color(0.42, 0.24, 0.15, 1)
+[node name="PlayerPanel" type="PanelContainer" parent="Hud"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 340.0
+offset_bottom = 168.0
 
 [node name="StatsColumn" type="VBoxContainer" parent="Hud/PlayerPanel"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="PlayerNameLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
+[node name="LevelLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "CAUA  P1"
+text = "CAUA  Nv 1"
 
 [node name="HealthLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
 layout_mode = 2
-text = "Vida 130/130"
+text = "HP 130/130"
 
 [node name="HealthBar" type="ProgressBar" parent="Hud/PlayerPanel/StatsColumn"]
-custom_minimum_size = Vector2(280, 16)
+custom_minimum_size = Vector2(300, 14)
 layout_mode = 2
 max_value = 130.0
 value = 130.0
@@ -582,84 +551,56 @@ layout_mode = 2
 text = "Stamina 100/100"
 
 [node name="StaminaBar" type="ProgressBar" parent="Hud/PlayerPanel/StatsColumn"]
-custom_minimum_size = Vector2(280, 14)
+custom_minimum_size = Vector2(300, 12)
 layout_mode = 2
 max_value = 100.0
 value = 100.0
 show_percentage = false
 
-[node name="FuryBar" type="ProgressBar" parent="Hud/PlayerPanel/StatsColumn"]
-custom_minimum_size = Vector2(280, 12)
+[node name="XpLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
+layout_mode = 2
+text = "XP 0/100"
+
+[node name="XpBar" type="ProgressBar" parent="Hud/PlayerPanel/StatsColumn"]
+custom_minimum_size = Vector2(300, 10)
 layout_mode = 2
 max_value = 100.0
 show_percentage = false
 
-[node name="WaveLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
+[node name="WeaponLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
 layout_mode = 2
-text = "Etapa 1/6  |  Inimigos 0"
+text = "Arma: Facao"
 
-[node name="StatusLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
+[node name="AbilitiesPanel" type="HBoxContainer" parent="Hud"]
+offset_left = 16.0
+offset_top = 176.0
+offset_right = 340.0
+offset_bottom = 206.0
+theme_override_constants/separation = 8
+
+[node name="AbilityAttack" type="Label" parent="Hud/AbilitiesPanel"]
 layout_mode = 2
-text = "A rua acordou errada"
-autowrap_mode = 2
+text = "Ataque"
 
-[node name="WeaponStrip" type="PanelContainer" parent="Hud"]
-offset_left = 18.0
-offset_top = 196.0
-offset_right = 520.0
-offset_bottom = 232.0
-
-[node name="WeaponSlotLabel" type="Label" parent="Hud/WeaponStrip"]
+[node name="AbilityShoot" type="Label" parent="Hud/AbilitiesPanel"]
 layout_mode = 2
-text = "Arma: Facao  |  Sem durabilidade extra  |  Continue x0"
+text = "Tiro"
 
-[node name="ComboCallout" type="Label" parent="Hud"]
+[node name="AbilityDash" type="Label" parent="Hud/AbilitiesPanel"]
+layout_mode = 2
+text = "Esquiva"
+
+[node name="AbilityJump" type="Label" parent="Hud/AbilitiesPanel"]
+layout_mode = 2
+text = "Pulo"
+
+[node name="DebugLabel" type="Label" parent="Hud"]
 visible = false
-offset_left = 430.0
-offset_top = 110.0
-offset_right = 850.0
-offset_bottom = 210.0
-theme_override_colors/font_color = Color(0.92, 0.18, 0.12, 1)
-theme_override_font_sizes/font_size = 42
-text = "BRUTAL!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ComboStatsLabel" type="Label" parent="Hud"]
-offset_left = 900.0
-offset_top = 18.0
-offset_right = 1260.0
-offset_bottom = 48.0
-text = "Melhor combo 0"
-horizontal_alignment = 2
-
-[node name="BottomBar" type="VBoxContainer" parent="Hud"]
-offset_left = 18.0
-offset_top = 238.0
-offset_right = 1260.0
-offset_bottom = 290.0
-theme_override_constants/separation = 4
-
-[node name="ControlsLabel" type="Label" parent="Hud/BottomBar"]
-layout_mode = 2
-text = "W/S: trocar lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  R: reiniciar"
-
-[node name="DebugLabel" type="Label" parent="Hud/BottomBar"]
-layout_mode = 2
-text = "Lane: 405  Input: 0.0, 0.0"
-
-[node name="TutorialPanel" type="PanelContainer" parent="Hud"]
-offset_left = 290.0
-offset_top = 632.0
-offset_right = 990.0
-offset_bottom = 700.0
-
-[node name="TutorialLabel" type="Label" parent="Hud/TutorialPanel"]
-layout_mode = 2
-text = "Tutorial: A/D anda, W/S troca a profundidade da rua. J ataca e L dispara."
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
+offset_left = 16.0
+offset_top = 214.0
+offset_right = 900.0
+offset_bottom = 238.0
+text = "Debug"
 
 [node name="CenterOverlay" type="PanelContainer" parent="Hud"]
 visible = false
@@ -685,3 +626,16 @@ text = "R: jogar de novo\nM: voltar ao menu"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="ScreenshotModeHelper" type="Node" parent="Hud"]
+script = ExtResource("5_screenshot")
+
+[node name="ScreenshotHintLabel" type="Label" parent="Hud"]
+visible = false
+offset_left = 430.0
+offset_top = 680.0
+offset_right = 850.0
+offset_bottom = 710.0
+theme_override_colors/font_color = Color(0.92, 0.72, 0.28, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1

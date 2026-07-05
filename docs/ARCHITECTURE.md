@@ -150,6 +150,20 @@ Referencia visual:
 
 - usar `references/pillars/` como alvo de leitura para HUD, cenario, personagem e clima.
 
+## Sprint 11 - Producao Steam
+
+Arquivos principais:
+
+- `docs/STEAM_PAGE.md`: rascunho de pagina Steam.
+- `docs/SCREENSHOTS_STEAM.md`: lista de capturas para marketing.
+- `docs/QC_DEMO_CHECKLIST.md`: checklist antes de distribuir build.
+- `docs/DEMO_PACKAGE.md` e `build/demo/README.txt`: pacote para testers.
+- `docs/LAUNCH_PLAN.md`: fases e preco sugerido.
+- `docs/TRAILER_INTERNAL.md`: roteiro curto interno.
+- `scripts/systems/DemoInfo.cs`: versao da demo.
+- `scripts/ui/ScreenshotModeHelper.cs`: modo screenshot com `F9`.
+- `scripts/build-demo.ps1`: build/export helper Windows.
+
 ## Observacao Sobre C#
 
 O arquivo `.csproj` usa `Godot.NET.Sdk/4.4.1` como ponto de partida. Caso a versao instalada do Godot .NET seja outra, o editor pode atualizar esse valor automaticamente.

@@ -124,3 +124,18 @@
 - [x] Silhueta/cores do Caua aproximadas da referencia `01-character-lineup-caua-enemies-boss.png`.
 - [x] Validar Sprint 10 no Godot com `F5`.
 - [x] Fechar sprint, commitar e fazer push apos validacao.
+
+## Marco 0.11 - Producao Steam
+
+- [x] Rascunho de pagina Steam.
+- [x] Lista de screenshots alinhada aos pilares.
+- [x] Roteiro interno de trailer.
+- [x] Checklist QC da demo.
+- [x] Plano de lancamento/preco sugerido.
+- [x] Pacote demo para testers (`build/demo/README.txt`).
+- [x] Versao demo `1.0.0-demo` no menu/export.
+- [x] Modo screenshot com `F9`.
+- [x] Script `scripts/build-demo.ps1`.
+- [x] Validar Sprint 11 no Godot com `F5`.
+- [x] HUD simplificado (HP, stamina, XP, arma, habilidades).
+- [x] Fechar sprint, commitar e fazer push apos validacao.

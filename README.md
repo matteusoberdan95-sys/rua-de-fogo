@@ -22,6 +22,7 @@ Prototipo inicial de um beat 'em up/hack and slash dark fantasy em cenario subur
 - `F1`: alternar HUD debug
 - `F2`: alternar controles alternativos
 - `F4`: limpar save durante a demo
+- `F9`: modo screenshot (esconde tutorial/controles para capturas)
 
 ## Primeiro marco
 
@@ -43,7 +44,7 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 11 - Producao Steam`.
+Sprint atual: proxima sprint a definir (Sprint 12).
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -63,18 +64,19 @@ A Sprint 09 foi validada jogando e adiciona menu inicial como cena principal, tu
 
 A Sprint 10 foi validada jogando e aproximou a demo das referencias em `references/pillars` com HUD estilo arcade, combo/furia, banner da Vila Esperanca, boteco/ponto final e silhueta mais proxima do Caua.
 
+A Sprint 11 foi validada jogando e preparou material Steam, checklist QC, pacote demo, versao `Demo v1.0`, modo screenshot com `F9` e HUD simplificado com HP, stamina, XP/nivel, arma e habilidades.
+
 ## Regra obrigatoria de sprint
 
 Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
 
 ## Proximo passo recomendado
 
-Com a Sprint 10 concluida, o recomendado e planejar a Sprint 11:
+Com a Sprint 11 concluida, o recomendado e:
 
-- preparar pagina/material Steam;
-- capturar screenshots alinhadas com `references/pillars`;
-- exportar build demo Windows;
-- definir escopo comercial minimo sem quebrar a vertical slice.
+- exportar build Windows com `scripts/build-demo.ps1` ou pelo editor;
+- capturar screenshots seguindo `docs/SCREENSHOTS_STEAM.md`;
+- planejar Sprint 12 (tutorial dedicado, arte final ou nova fase).
 
 ## Documentos importantes
 
@@ -87,4 +89,9 @@ Com a Sprint 10 concluida, o recomendado e planejar a Sprint 11:
 - `docs/SPRINTS.md`: planejamento das sprints e sprint atual.
 - `docs/HANDOFF.md`: como continuar em Codex, CLI ou outro PC.
 - `docs/BUILD_WINDOWS.md`: passo de exportacao Windows.
+- `docs/STEAM_PAGE.md`: rascunho da pagina Steam.
+- `docs/SCREENSHOTS_STEAM.md`: lista de screenshots para marketing.
+- `docs/QC_DEMO_CHECKLIST.md`: checklist antes de distribuir build.
+- `docs/DEMO_PACKAGE.md`: pacote para testers.
+- `docs/LAUNCH_PLAN.md`: fases e preco sugerido.
 - `docs/AGENTS.md`: responsabilidades dos agentes.

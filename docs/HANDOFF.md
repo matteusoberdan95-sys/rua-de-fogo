@@ -200,12 +200,21 @@ Estado da Sprint 10:
 - build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
 - validada no Godot com `F5` e aprovada.
 
+Estado da Sprint 11:
+
+- criados docs Steam/QC/launch/demo/trailer interno;
+- versao demo `Demo v1.0` / `1.0.0-demo` no menu e export preset;
+- modo screenshot com `F9` via `ScreenshotModeHelper`;
+- script `scripts/build-demo.ps1` e pasta `marketing/screenshots/steam/`;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
+- validada no Godot com `F5` e aprovada;
+- HUD simplificado: HP, stamina, XP/nivel, arma e habilidades; tutorial in-game removido.
+
 Proximo passo recomendado:
 
-1. iniciar planejamento da `Sprint 11 - Producao Steam`;
-2. capturar screenshots e material de pagina alinhados com `references/pillars`;
-3. exportar build demo Windows com `docs/BUILD_WINDOWS.md`;
-4. manter a regra obrigatoria de build, Godot, docs, commit e push.
+1. exportar build Windows e passar `docs/QC_DEMO_CHECKLIST.md`;
+2. capturar screenshots com `docs/SCREENSHOTS_STEAM.md`;
+3. planejar Sprint 12 (tutorial dedicado, conteudo ou arte final).
 
 ## Regra Obrigatoria De Sprint
 

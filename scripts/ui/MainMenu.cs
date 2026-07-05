@@ -7,6 +7,7 @@ public partial class MainMenu : Control
     private Label? _settingsLabel;
     private Label? _statusLabel;
     private Button? _toggleControlsButton;
+    private Label? _versionLabel;
 
     public override void _Ready()
     {
@@ -15,11 +16,13 @@ public partial class MainMenu : Control
         _settingsLabel = GetNodeOrNull<Label>("Root/SettingsPanel/SettingsText");
         _statusLabel = GetNodeOrNull<Label>("Root/StatusLabel");
         _toggleControlsButton = GetNodeOrNull<Button>("Root/MenuButtons/ToggleControlsButton");
+        _versionLabel = GetNodeOrNull<Label>("Root/VersionLabel");
         BindButton("Root/MenuButtons/StartButton", StartDemo);
         BindButton("Root/MenuButtons/ClearSaveButton", ClearSave);
         BindButton("Root/MenuButtons/ToggleControlsButton", ToggleAlternateControls);
         BindButton("Root/MenuButtons/QuitButton", QuitIfStandalone);
         UpdateSettingsText();
+        UpdateVersionLabel();
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -112,6 +115,14 @@ public partial class MainMenu : Control
         if (_statusLabel is not null)
         {
             _statusLabel.Text = text;
+        }
+    }
+
+    private void UpdateVersionLabel()
+    {
+        if (_versionLabel is not null)
+        {
+            _versionLabel.Text = DemoInfo.VersionLabel;
         }
     }
 

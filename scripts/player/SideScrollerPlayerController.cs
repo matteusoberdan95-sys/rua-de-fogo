@@ -85,6 +85,12 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public bool ShowComboCallout => _comboCalloutRemaining > 0f && ComboHitCount >= 8;
 
+    public int Level { get; private set; } = 1;
+
+    public float Experience { get; private set; }
+
+    public float ExperienceToNext { get; private set; } = 100f;
+
     private readonly KeyPressLatch _attackLatch = new(Key.J);
     private readonly KeyPressLatch _dashLatch = new(Key.K);
     private readonly KeyPressLatch _jumpLatch = new(Key.Space);
@@ -294,6 +300,28 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _comboChainRemaining = ComboResetTime * 1.35f;
         _comboCalloutRemaining = 1.8f;
         Fury = Math.Min(100f, Fury + 6f + damage * 0.12f);
+        AddExperience(4f + damage * 0.35f);
+    }
+
+    public void RegisterEnemyDefeat()
+    {
+        AddExperience(28f);
+    }
+
+    public void AddExperience(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        Experience += amount;
+        while (Experience >= ExperienceToNext)
+        {
+            Experience -= ExperienceToNext;
+            Level++;
+            ExperienceToNext = MathF.Round(ExperienceToNext * 1.18f);
+        }
     }
 
     private void TickShoot(float dt)

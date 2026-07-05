@@ -29,6 +29,10 @@ public partial class Hurtbox : Area2D
         if (hitbox.Source is SideScrollerPlayerController player)
         {
             player.RegisterCombatHit(hitbox.Damage);
+            if (_health?.CurrentHealth <= 0)
+            {
+                player.RegisterEnemyDefeat();
+            }
         }
 
         ApplyKnockback(hitbox);

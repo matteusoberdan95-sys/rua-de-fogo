@@ -53,7 +53,7 @@ horizontal_alignment = 1
 [node name="Subtitle" type="Label" parent="Root"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Demo publica - vertical slice alpha"
+text = "Demo publica - vertical slice alpha  |  Demo v1.0"
 horizontal_alignment = 1
 
 [node name="MenuButtons" type="VBoxContainer" parent="Root"]
@@ -93,4 +93,10 @@ autowrap_mode = 2
 [node name="StatusLabel" type="Label" parent="Root"]
 layout_mode = 2
 text = "Pressione Enter para jogar."
+horizontal_alignment = 1
+
+[node name="VersionLabel" type="Label" parent="Root"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Demo v1.0"
 horizontal_alignment = 1

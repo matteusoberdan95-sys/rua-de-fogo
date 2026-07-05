@@ -452,9 +452,9 @@ Pendencias levadas para sprints futuras:
 
 ## Sprint 11 - Producao Steam
 
-Status: proxima / pronta para iniciar.
+Status: concluida.
 
-Objetivo: transformar a demo em produto comercial.
+Objetivo: transformar a demo em produto comercial inicial, com material Steam, build demo e QC.
 
 Entregas planejadas:
 
@@ -465,6 +465,44 @@ Entregas planejadas:
 - achievements se fizer sentido;
 - controle de qualidade;
 - plano de preco e lancamento.
+
+Entregas implementadas:
+
+- criado `docs/STEAM_PAGE.md` com rascunho de pagina, tags, requisitos e achievements futuros;
+- criado `docs/SCREENSHOTS_STEAM.md` com lista de capturas alinhadas aos pilares;
+- criado `docs/QC_DEMO_CHECKLIST.md` para validacao antes de distribuir build;
+- criado `docs/LAUNCH_PLAN.md` com fases, preco sugerido e metricas;
+- criado `docs/DEMO_PACKAGE.md` e `build/demo/README.txt` para testers;
+- criado `docs/TRAILER_INTERNAL.md` com roteiro curto interno;
+- criado `scripts/systems/DemoInfo.cs` com versao `Demo v1.0`;
+- menu mostra versao da demo;
+- criado `scripts/ui/ScreenshotModeHelper.cs` com `F9` para capturas limpas;
+- criado `scripts/build-demo.ps1` e pasta `marketing/screenshots/steam/`;
+- `export_presets.cfg` atualizado para versao `1.0.0.0`;
+- HUD simplificado apos playtest: apenas HP, stamina, XP/nivel, arma e habilidades;
+- sistema placeholder de XP/nivel adicionado ao jogador;
+- tutorial in-game removido; tela dedicada fica para sprint futura;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- versao `Demo v1.0`, `F9`, fluxo demo e HUD simplificado aprovados;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Pendencias levadas para sprints futuras:
+
+- capsule art, header e icones finais Steam;
+- trailer editado de verdade;
+- achievements implementados na versao comercial;
+- pagina Steam publicada.
+- tela de tutorial dedicada.
+
+## Sprint 12 - Proxima
+
+Status: futura.
+
+Objetivo: definir proximo marco apos demo publica (conteudo, arte final ou distribuicao).
 
 ## Backlog Tecnico Permanente
 

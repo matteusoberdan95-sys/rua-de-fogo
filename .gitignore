@@ -3,6 +3,9 @@
 bin/
 obj/
 export/
+build/windows/
+marketing/screenshots/steam/*.png
+marketing/screenshots/steam/*.jpg
 *.tmp
 *.translation
 *.old

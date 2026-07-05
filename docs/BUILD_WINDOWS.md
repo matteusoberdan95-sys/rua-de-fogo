@@ -24,8 +24,22 @@ Antes de exportar, rode:
 dotnet build SangueNoAsfalto.csproj
 ```
 
-## Observacoes
+## Pelo script
 
-- A cena principal da demo e `res://scenes/ui/MainMenu.tscn`.
-- O menu inicia a demo em `res://scenes/levels/SideScrollerPrototype.tscn`.
-- A pasta `build/` nao deve ser commitada se contiver binarios exportados.
+Na raiz do projeto:
+
+```powershell
+./scripts/build-demo.ps1
+```
+
+Se o Godot CLI nao estiver no `PATH`, o script ainda valida o build C# e orienta export manual.
+
+## Pacote para testers
+
+Depois do export:
+
+1. Copie o executavel e dependencias para uma pasta limpa.
+2. Inclua `build/demo/README.txt`.
+3. Siga `docs/DEMO_PACKAGE.md` e `docs/QC_DEMO_CHECKLIST.md`.
+
+Versao atual da demo: `1.0.0-demo` (`Demo v1.0` no menu).
