@@ -1,0 +1,89 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
+[ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
+[ext_resource type="Script" path="res://scripts/combat/Hurtbox.cs" id="3_hurtbox"]
+[ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 28.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt"]
+radius = 38.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(92, 58)
+
+[node name="SideScrollerAlphaBoss" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+scale = Vector2(1.42, 1.42)
+script = ExtResource("1_enemy")
+MoveSpeed = 72.0
+LaneSpeed = 58.0
+AttackRangeX = 96.0
+AttackRangeY = 54.0
+AttackCooldown = 1.55
+TelegraphDuration = 0.48
+AttackDuration = 0.22
+
+[node name="LaneShadow" type="Polygon2D" parent="."]
+position = Vector2(0, 26)
+color = Color(0, 0, 0, 0.58)
+polygon = PackedVector2Array(-48, -9, 48, -9, 62, 0, 48, 9, -48, 9, -62, 0)
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.18, 0.01, 0.025, 1)
+polygon = PackedVector2Array(-36, -42, 28, -48, 48, 4, 24, 44, -32, 30, -52, -8)
+
+[node name="CoreGlow" type="Polygon2D" parent="."]
+color = Color(0.95, 0.16, 0.06, 0.78)
+polygon = PackedVector2Array(-18, -27, 18, -31, 28, -12, 14, 10, -12, 16, -28, -10)
+
+[node name="Head" type="Polygon2D" parent="."]
+position = Vector2(0, -58)
+color = Color(0.095, 0.045, 0.045, 1)
+polygon = PackedVector2Array(-23, -18, 17, -20, 30, 0, 12, 22, -18, 19, -34, -3)
+
+[node name="Eyes" type="Polygon2D" parent="."]
+position = Vector2(0, -58)
+color = Color(1, 0.82, 0.08, 1)
+polygon = PackedVector2Array(-18, -7, -4, -7, -6, 3, -20, 3, 6, -8, 20, -7, 18, 3, 4, 3)
+
+[node name="BackCrown" type="Polygon2D" parent="."]
+color = Color(0.09, 0.006, 0.012, 1)
+polygon = PackedVector2Array(-32, -42, -62, -35, -38, -20, 28, -47, 66, -36, 38, -18, 0, -62)
+
+[node name="HammerArm" type="Polygon2D" parent="."]
+position = Vector2(42, -4)
+color = Color(0.34, 0.23, 0.18, 1)
+polygon = PackedVector2Array(-12, -25, 34, -20, 58, 16, 18, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+MaxHealth = 540
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("3_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_hurt")
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 16
+monitoring = false
+script = ExtResource("4_hitbox")
+Damage = 38
+KnockbackForce = 520.0
+HitStunDuration = 0.26
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(46, 0)
+shape = SubResource("RectangleShape2D_attack")
+disabled = true

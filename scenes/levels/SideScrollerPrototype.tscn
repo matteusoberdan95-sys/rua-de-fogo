@@ -1,8 +1,13 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerMiniBoss.tscn" id="3_miniboss"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyFast.tscn" id="4_fast"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyBrute.tscn" id="5_brute"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyInfected.tscn" id="6_infected"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerRainMiniBoss.tscn" id="7_rainboss"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerAlphaBoss.tscn" id="8_alphaboss"]
 [ext_resource type="Script" path="res://scripts/core/InputBootstrap.cs" id="3_input"]
 [ext_resource type="Script" path="res://scripts/core/SideScrollerDirector.cs" id="4_director"]
 [ext_resource type="Script" path="res://scripts/ui/BeatEmUpHud.cs" id="5_hud"]
@@ -434,6 +439,11 @@ position = Vector2(1010, 462)
 script = ExtResource("4_director")
 EnemyScene = ExtResource("2_enemy")
 MiniBossScene = ExtResource("3_miniboss")
+FastEnemyScene = ExtResource("4_fast")
+BruteEnemyScene = ExtResource("5_brute")
+InfectedEnemyScene = ExtResource("6_infected")
+SecondMiniBossScene = ExtResource("7_rainboss")
+FinalBossScene = ExtResource("8_alphaboss")
 
 [node name="Hud" type="CanvasLayer" parent="."]
 script = ExtResource("5_hud")

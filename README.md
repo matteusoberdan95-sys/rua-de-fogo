@@ -15,7 +15,8 @@ Prototipo inicial de um beat 'em up/hack and slash dark fantasy em cenario subur
 - `W/S` ou setas cima/baixo: trocar lane/profundidade
 - `J` ou botao esquerdo do mouse: atacar
 - `L` ou botao direito do mouse: disparar
-- `K` ou `Espaco`: esquivar
+- `K`: esquivar
+- `Espaco`: pular
 - `R`: reiniciar a arena
 
 ## Primeiro marco
@@ -38,7 +39,7 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 08 - Conteudo Alpha`.
+Sprint atual: `Sprint 09 - Demo Publica`.
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -50,18 +51,23 @@ A Sprint 06 foi validada jogando e implementou a primeira vertical slice pequena
 
 A Sprint 07 foi validada jogando e iniciou os sistemas de jogo: save local, checkpoint persistente, arma improvisada com durabilidade, pickups de cura/arma/continue, continue simples, configuracao de HUD debug e remapeamento minimo. A organizacao de imports C# agora fica centralizada em `GlobalUsings.cs`.
 
+A Sprint 08 foi validada jogando e expandiu o conteudo alpha com inimigo rapido, bruto, infectado, segundo mini-chefe, chefe placeholder alpha e encontros por composicao.
+
+O controle atual usa `Espaco` para pulo visual do personagem e `K` para esquiva.
+
 ## Regra obrigatoria de sprint
 
 Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
 
 ## Proximo passo recomendado
 
-Com a Sprint 07 concluida, o recomendado e planejar a Sprint 08:
+Com a Sprint 08 concluida, o recomendado e planejar a Sprint 09:
 
-- expandir conteudo alpha sem quebrar a vertical slice;
-- planejar novos inimigos e mini-chefes;
-- consolidar mais fases ou variacoes da primeira rua;
-- manter build, validacao no Godot, commit e push ao fim da sprint.
+- preparar uma demo publica pequena;
+- adicionar tutorial discreto;
+- criar menu inicial simples;
+- preparar tela/configuracoes basicas;
+- planejar build Windows.
 
 ## Documentos importantes
 

@@ -1,0 +1,85 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
+[ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
+[ext_resource type="Script" path="res://scripts/combat/Hurtbox.cs" id="3_hurtbox"]
+[ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 24.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt"]
+radius = 32.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(76, 48)
+
+[node name="SideScrollerRainMiniBoss" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+scale = Vector2(1.22, 1.22)
+script = ExtResource("1_enemy")
+MoveSpeed = 98.0
+LaneSpeed = 82.0
+AttackRangeX = 82.0
+AttackRangeY = 44.0
+AttackCooldown = 1.08
+TelegraphDuration = 0.3
+AttackDuration = 0.18
+
+[node name="LaneShadow" type="Polygon2D" parent="."]
+position = Vector2(0, 23)
+color = Color(0, 0, 0, 0.5)
+polygon = PackedVector2Array(-36, -7, 36, -7, 47, 0, 36, 7, -36, 7, -47, 0)
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.1, 0.2, 0.105, 1)
+polygon = PackedVector2Array(-28, -32, 22, -37, 38, 5, 17, 34, -26, 22, -38, -5)
+
+[node name="RainVeins" type="Polygon2D" parent="."]
+color = Color(0.38, 0.9, 0.24, 0.72)
+polygon = PackedVector2Array(-16, -20, 14, -24, 20, -16, -8, -10, -20, -4, 18, 3, 22, 12, -14, 18)
+
+[node name="Head" type="Polygon2D" parent="."]
+position = Vector2(0, -46)
+color = Color(0.075, 0.12, 0.075, 1)
+polygon = PackedVector2Array(-18, -15, 13, -16, 23, 0, 10, 17, -14, 15, -24, -2)
+
+[node name="Eyes" type="Polygon2D" parent="."]
+position = Vector2(0, -46)
+color = Color(0.62, 1, 0.13, 1)
+polygon = PackedVector2Array(-14, -6, -3, -6, -4, 2, -16, 2, 5, -7, 16, -6, 15, 2, 3, 2)
+
+[node name="HookArm" type="Polygon2D" parent="."]
+position = Vector2(32, -5)
+color = Color(0.4, 0.62, 0.28, 1)
+polygon = PackedVector2Array(-10, -18, 24, -18, 42, 2, 18, 19, 2, 10)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+MaxHealth = 310
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("3_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_hurt")
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 16
+monitoring = false
+script = ExtResource("4_hitbox")
+Damage = 30
+KnockbackForce = 430.0
+HitStunDuration = 0.22
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(38, 0)
+shape = SubResource("RectangleShape2D_attack")
+disabled = true

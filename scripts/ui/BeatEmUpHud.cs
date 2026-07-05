@@ -98,9 +98,9 @@ public partial class BeatEmUpHud : CanvasLayer
 
         if (_director?.AlternateControls == true)
         {
-            return "Alt: H ataque  U tiro  Shift esquiva  F1 HUD  F2 controles  F4 limpar save";
+            return "Alt: H ataque  U tiro  Shift esquiva  Espaco pulo  F1 HUD  F2 controles  F4 limpar save";
         }
 
-        return "W/S: lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  F1 HUD  F2 alt  F4 limpar save";
+        return "W/S: lane  A/D: andar  J: combo  L: tiro  K: esquiva  Espaco: pulo  F1 HUD  F2 alt  F4 limpar save";
     }
 }

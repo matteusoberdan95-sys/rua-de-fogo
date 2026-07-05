@@ -7,7 +7,10 @@ public partial class SideScrollerDirector : Node
         EncounterOne,
         Checkpoint,
         EncounterTwo,
+        EncounterThree,
         MiniBoss,
+        MiniBossTwo,
+        FinalBoss,
         Victory
     }
 
@@ -16,6 +19,21 @@ public partial class SideScrollerDirector : Node
 
     [Export]
     public PackedScene? MiniBossScene { get; set; }
+
+    [Export]
+    public PackedScene? FastEnemyScene { get; set; }
+
+    [Export]
+    public PackedScene? BruteEnemyScene { get; set; }
+
+    [Export]
+    public PackedScene? InfectedEnemyScene { get; set; }
+
+    [Export]
+    public PackedScene? SecondMiniBossScene { get; set; }
+
+    [Export]
+    public PackedScene? FinalBossScene { get; set; }
 
     [Export]
     public NodePath SpawnPointsPath { get; set; } = "../SpawnPoints";
@@ -34,7 +52,7 @@ public partial class SideScrollerDirector : Node
 
     public int WaveNumber { get; private set; }
 
-    public int TotalWaves => 3;
+    public int TotalWaves => 6;
 
     public int EnemiesRemaining { get; private set; }
 
@@ -54,7 +72,7 @@ public partial class SideScrollerDirector : Node
 
     private static Phase _resumePhase = Phase.EncounterOne;
     private static bool _checkpointUnlocked;
-    private readonly int[] _encounterSizes = { 3, 4 };
+    private readonly PackedScene?[] _emptyComposition = [];
     private Node2D? _spawnPoints;
     private Health? _playerHealth;
     private SideScrollerPlayerController? _player;
@@ -153,9 +171,18 @@ public partial class SideScrollerDirector : Node
                 StartPhase(Phase.Checkpoint);
                 break;
             case Phase.EncounterTwo:
+                StartPhase(Phase.EncounterThree);
+                break;
+            case Phase.EncounterThree:
                 StartPhase(Phase.MiniBoss);
                 break;
             case Phase.MiniBoss:
+                StartPhase(Phase.MiniBossTwo);
+                break;
+            case Phase.MiniBossTwo:
+                StartPhase(Phase.FinalBoss);
+                break;
+            case Phase.FinalBoss:
                 CompleteRun();
                 break;
         }
@@ -172,7 +199,7 @@ public partial class SideScrollerDirector : Node
                 WaveNumber = 1;
                 ObjectiveText = "Limpe a entrada da rua";
                 StatusText = "Entrada da Vila Esperanca: sobreviva ao primeiro ataque.";
-                SpawnEncounter(_encounterSizes[0]);
+                SpawnComposition([EnemyScene, EnemyScene, EnemyScene]);
                 break;
             case Phase.Checkpoint:
                 WaveNumber = 1;
@@ -183,15 +210,33 @@ public partial class SideScrollerDirector : Node
                 break;
             case Phase.EncounterTwo:
                 WaveNumber = 2;
-                ObjectiveText = "Segure a rua ate o monstro aparecer";
-                StatusText = "Reforcos na chuva. Nao deixa fecharem a lane.";
-                SpawnEncounter(_encounterSizes[1]);
+                ObjectiveText = "Segure a rua contra os corredores";
+                StatusText = "Reforcos rapidos na chuva. Nao deixa fecharem a lane.";
+                SpawnComposition([EnemyScene, FastEnemyScene, EnemyScene, InfectedEnemyScene]);
+                break;
+            case Phase.EncounterThree:
+                WaveNumber = 3;
+                ObjectiveText = "Quebre a linha dos brutos";
+                StatusText = "Um bruto chegou abrindo caminho no asfalto.";
+                SpawnComposition([BruteEnemyScene, EnemyScene, EnemyScene, FastEnemyScene]);
                 break;
             case Phase.MiniBoss:
-                WaveNumber = 3;
+                WaveNumber = 4;
                 ObjectiveText = "Derrube o bruto da rua";
                 StatusText = "O portao range. Tem algo grande vindo.";
-                SpawnMiniBoss();
+                SpawnBoss(MiniBossScene);
+                break;
+            case Phase.MiniBossTwo:
+                WaveNumber = 5;
+                ObjectiveText = "Derrube o infectado da chuva";
+                StatusText = "A chuva engrossou. Algo verde rasteja no meio da rua.";
+                SpawnBoss(SecondMiniBossScene);
+                break;
+            case Phase.FinalBoss:
+                WaveNumber = 6;
+                ObjectiveText = "Sobreviva ao alfa da rua";
+                StatusText = "A rua inteira parou. O alfa apareceu.";
+                SpawnBoss(FinalBossScene);
                 break;
             case Phase.Victory:
                 CompleteRun();
@@ -199,41 +244,43 @@ public partial class SideScrollerDirector : Node
         }
     }
 
-    private void SpawnEncounter(int enemyCount)
+    private void SpawnComposition(PackedScene?[] scenes)
     {
-        EnemiesRemaining = enemyCount;
+        PackedScene?[] composition = scenes.Length > 0 ? scenes : _emptyComposition;
+        EnemiesRemaining = composition.Length;
         _phaseActive = true;
-        for (int i = 0; i < enemyCount; i++)
+
+        for (int i = 0; i < composition.Length; i++)
         {
-            SpawnEnemy(i);
+            SpawnEnemy(i, composition[i] ?? EnemyScene);
         }
     }
 
-    private void SpawnEnemy(int index)
+    private void SpawnEnemy(int index, PackedScene? scene)
     {
-        if (EnemyScene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
+        if (scene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
         {
             return;
         }
 
         Node2D spawnPoint = _spawnPoints.GetChild<Node2D>(index % _spawnPoints.GetChildCount());
-        Node2D enemy = EnemyScene.Instantiate<Node2D>();
+        Node2D enemy = scene.Instantiate<Node2D>();
         enemy.GlobalPosition = spawnPoint.GlobalPosition + new Vector2(index * 14f, 0f);
         GetTree().CurrentScene?.AddChild(enemy);
     }
 
-    private void SpawnMiniBoss()
+    private void SpawnBoss(PackedScene? bossScene)
     {
-        if (MiniBossScene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
+        if (bossScene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
         {
-            SpawnEncounter(1);
+            SpawnComposition([EnemyScene]);
             return;
         }
 
         Node2D spawnPoint = _spawnPoints.GetChild<Node2D>(1 % _spawnPoints.GetChildCount());
-        Node2D miniBoss = MiniBossScene.Instantiate<Node2D>();
-        miniBoss.GlobalPosition = spawnPoint.GlobalPosition;
-        GetTree().CurrentScene?.AddChild(miniBoss);
+        Node2D boss = bossScene.Instantiate<Node2D>();
+        boss.GlobalPosition = spawnPoint.GlobalPosition;
+        GetTree().CurrentScene?.AddChild(boss);
         EnemiesRemaining = 1;
         _phaseActive = true;
     }
@@ -248,8 +295,17 @@ public partial class SideScrollerDirector : Node
             case Phase.EncounterTwo:
                 StatusText = "A rua ficou quieta demais...";
                 break;
+            case Phase.EncounterThree:
+                StatusText = "Os brutos cairam. O ar ficou pesado.";
+                break;
             case Phase.MiniBoss:
                 StatusText = "O bruto caiu. Trecho limpo.";
+                break;
+            case Phase.MiniBossTwo:
+                StatusText = "O infectado da chuva desmanchou no asfalto.";
+                break;
+            case Phase.FinalBoss:
+                StatusText = "O alfa caiu. A rua abriu caminho.";
                 break;
         }
     }

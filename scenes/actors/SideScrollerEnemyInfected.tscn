@@ -1,0 +1,87 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
+[ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
+[ext_resource type="Script" path="res://scripts/combat/Hurtbox.cs" id="3_hurtbox"]
+[ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt"]
+radius = 24.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(56, 36)
+
+[node name="SideScrollerEnemyInfected" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_enemy")
+MoveSpeed = 118.0
+LaneSpeed = 102.0
+AttackRangeX = 64.0
+AttackRangeY = 36.0
+AttackCooldown = 0.95
+TelegraphDuration = 0.22
+
+[node name="LaneShadow" type="Polygon2D" parent="."]
+position = Vector2(0, 20)
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(-24, -5, 24, -5, 31, 0, 24, 5, -24, 5, -31, 0)
+
+[node name="Legs" type="Polygon2D" parent="."]
+color = Color(0.055, 0.065, 0.052, 1)
+polygon = PackedVector2Array(-12, 2, 12, 1, 17, 27, 5, 30, 0, 12, -5, 30, -18, 27)
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.14, 0.23, 0.105, 1)
+polygon = PackedVector2Array(-19, -23, 15, -26, 25, 5, 5, 24, -20, 13, -25, -4)
+
+[node name="SickGlow" type="Polygon2D" parent="."]
+color = Color(0.42, 0.72, 0.18, 0.55)
+polygon = PackedVector2Array(-10, -13, 13, -16, 16, -7, -6, -3, -14, 3, 12, 8, 15, 14, -12, 17)
+
+[node name="Head" type="Polygon2D" parent="."]
+position = Vector2(0, -36)
+color = Color(0.08, 0.12, 0.075, 1)
+polygon = PackedVector2Array(-13, -11, 10, -12, 15, 1, 5, 13, -10, 10, -16, -2)
+
+[node name="Eyes" type="Polygon2D" parent="."]
+position = Vector2(0, -36)
+color = Color(0.7, 1, 0.18, 1)
+polygon = PackedVector2Array(-9, -4, -2, -4, -3, 1, -10, 1, 4, -5, 11, -4, 10, 1, 3, 1)
+
+[node name="WetClaw" type="Polygon2D" parent="."]
+position = Vector2(22, -5)
+color = Color(0.55, 0.68, 0.38, 1)
+polygon = PackedVector2Array(-5, -10, 28, -11, 36, -3, 10, 0, 36, 4, 24, 10, -4, 6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+MaxHealth = 95
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("3_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_hurt")
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 16
+monitoring = false
+script = ExtResource("4_hitbox")
+Damage = 18
+KnockbackForce = 260.0
+HitStunDuration = 0.14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(28, 0)
+shape = SubResource("RectangleShape2D_attack")
+disabled = true

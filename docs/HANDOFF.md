@@ -54,7 +54,8 @@ No Godot:
 - `W/S` ou setas cima/baixo: trocar lane/profundidade
 - `J` ou botao esquerdo: combo/ataque
 - `L` ou botao direito: tiro
-- `K` ou `Espaco`: esquiva
+- `K`: esquiva
+- `Espaco`: pulo
 - `R`: reiniciar
 
 ## Cenas Atuais
@@ -160,6 +161,25 @@ Estado da Sprint 07:
 - scripts C# foram limpos para remover `using` repetitivo no topo;
 - build C# validada com `dotnet build SangueNoAsfalto.csproj`;
 - validada no Godot com `F5` e aprovada.
+
+Estado da Sprint 08:
+
+- adicionadas variacoes de inimigo: rapido, bruto e infectado/chuvoso;
+- adicionados `SideScrollerRainMiniBoss.tscn` e `SideScrollerAlphaBoss.tscn`;
+- `SideScrollerDirector` agora usa composicoes por encontro;
+- fluxo alpha atual: comuns, checkpoint, comuns + rapido + infectado, bruto + comuns, mini-chefe, mini-chefe de chuva, chefe alpha e vitoria;
+- `Espaco` agora executa pulo visual do jogador; esquiva fica no `K`;
+- primeira rodada de balanceamento aplicada em vida, dano, velocidade, cooldown e quantidades;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`;
+- validada no Godot com `F5` e aprovada;
+- `Espaco` ajustado para pulo visual do jogador.
+
+Proximo passo recomendado:
+
+1. commitar e fazer push da Sprint 08;
+2. iniciar planejamento da `Sprint 09 - Demo Publica`;
+3. preparar tutorial discreto, menu inicial, configuracoes basicas e build Windows;
+4. manter a regra obrigatoria de build, Godot, docs, commit e push.
 
 ## Regra Obrigatoria De Sprint
 

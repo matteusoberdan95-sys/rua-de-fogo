@@ -90,4 +90,15 @@
 - [x] Configuracao basica persistente.
 - [x] Remapeamento minimo de controles.
 - [x] Validar Sprint 07 no Godot com `F5`.
-- [ ] Fechar sprint, commitar e fazer push apos validacao.
+- [x] Fechar sprint, commitar e fazer push apos validacao.
+
+## Marco 0.8 - Conteudo Alpha
+
+- [ ] 2 ou 3 fases.
+- [x] 4 tipos de inimigos.
+- [x] 2 mini-chefes.
+- [x] 1 chefe principal placeholder.
+- [ ] Trilha e efeitos temporarios.
+- [x] Primeira rodada de balanceamento.
+- [x] Validar Sprint 08 no Godot com `F5`.
+- [x] Fechar sprint, commitar e fazer push apos validacao.

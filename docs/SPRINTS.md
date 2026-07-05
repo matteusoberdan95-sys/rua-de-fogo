@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 08 - Conteudo Alpha`
+Sprint atual: `Sprint 09 - Demo Publica`
 
 Direcao oficial atual:
 
@@ -340,7 +340,7 @@ Agentes principais:
 
 ## Sprint 08 - Conteudo Alpha
 
-Status: proxima / pronta para iniciar.
+Status: concluida.
 
 Objetivo: expandir o jogo para uma versao alpha.
 
@@ -353,9 +353,29 @@ Entregas planejadas:
 - trilha e efeitos temporarios;
 - primeira rodada de balanceamento.
 
+Entregas implementadas:
+
+- criadas variacoes `SideScrollerEnemyFast.tscn`, `SideScrollerEnemyBrute.tscn` e `SideScrollerEnemyInfected.tscn`;
+- criado segundo mini-chefe `SideScrollerRainMiniBoss.tscn`;
+- criado chefe placeholder alpha `SideScrollerAlphaBoss.tscn`;
+- `SideScrollerDirector` agora usa composicoes de encontro por tipo de inimigo;
+- fluxo alpha atual: comuns, checkpoint, comuns + rapido + infectado, bruto + comuns, mini-chefe, mini-chefe de chuva, chefe alpha e vitoria;
+- primeira rodada de balanceamento aplicada em vida, dano, velocidade, cooldown e quantidades;
+- `Espaco` agora faz o pulo visual do jogador e `K` fica dedicado a esquiva;
+- `SideScrollerPrototype.tscn` conectado aos novos inimigos e chefes;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- novos inimigos e fluxo alpha aprovados;
+- chefe alpha placeholder aprovado para seguir;
+- `Espaco` ajustado para pulo visual do jogador;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
 ## Sprint 09 - Demo Publica
 
-Status: futura.
+Status: proxima / pronta para iniciar.
 
 Objetivo: preparar uma demo jogavel para feedback externo.
 

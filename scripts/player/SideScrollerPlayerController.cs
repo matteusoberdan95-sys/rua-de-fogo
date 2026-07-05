@@ -15,6 +15,12 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     public float DashDuration { get; set; } = 0.14f;
 
     [Export]
+    public float JumpDuration { get; set; } = 0.42f;
+
+    [Export]
+    public float JumpHeight { get; set; } = 62f;
+
+    [Export]
     public float AttackDuration { get; set; } = 0.13f;
 
     [Export]
@@ -63,8 +69,10 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     public int Continues => _continues;
 
     private readonly KeyPressLatch _attackLatch = new(Key.J);
-    private readonly KeyPressLatch _dashLatch = new(Key.K, Key.Space);
+    private readonly KeyPressLatch _dashLatch = new(Key.K);
+    private readonly KeyPressLatch _jumpLatch = new(Key.Space);
     private readonly KeyPressLatch _shootLatch = new(Key.L);
+    private readonly Dictionary<Polygon2D, Vector2> _jumpVisualOrigins = [];
     private Hitbox? _attackArea;
     private CollisionShape2D? _attackCollision;
     private Health? _health;
@@ -73,6 +81,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private float _comboResetRemaining;
     private float _shootCooldownRemaining;
     private float _hitStunRemaining;
+    private float _jumpTimeRemaining;
     private bool _hasImprovisedWeapon;
     private int _weaponDurability;
     private int _continues;
@@ -84,6 +93,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         AddToGroup("side_player");
         CurrentStamina = MaxStamina;
         ApplySavedState();
+        CaptureJumpVisuals();
 
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
@@ -118,9 +128,11 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         TickDash(dt, input);
         TickCombo(dt);
         TickShoot(dt);
+        TickJump(dt);
         RegenerateStamina(dt);
         UpdateAttackArc();
         UpdateFacingVisual();
+        UpdateJumpVisual();
         UpdateInvulnerabilityVisual();
 
         if (TickHitStun(dt))
@@ -146,6 +158,11 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (Input.IsActionJustPressed("dash") || _dashLatch.ConsumeJustPressed())
         {
             StartDash(input);
+        }
+
+        if (Input.IsActionJustPressed("jump") || _jumpLatch.ConsumeJustPressed())
+        {
+            StartJump();
         }
 
         if (Input.IsActionJustPressed("shoot") || _shootLatch.ConsumeJustPressed())
@@ -239,6 +256,14 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
     }
 
+    private void TickJump(float dt)
+    {
+        if (_jumpTimeRemaining > 0f)
+        {
+            _jumpTimeRemaining = Mathf.Max(_jumpTimeRemaining - dt, 0f);
+        }
+    }
+
     private void RegenerateStamina(float dt)
     {
         if (_dashTimeRemaining > 0f)
@@ -311,6 +336,16 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _health?.MakeInvulnerable(DashDuration + 0.08f);
         float direction = Mathf.Abs(input.X) > 0.01f ? Mathf.Sign(input.X) : FacingSign;
         Velocity = new Vector2(direction * DashSpeed, input.Y * LaneSpeed * 0.45f);
+    }
+
+    private void StartJump()
+    {
+        if (_jumpTimeRemaining > 0f || _hitStunRemaining > 0f)
+        {
+            return;
+        }
+
+        _jumpTimeRemaining = JumpDuration;
     }
 
     private void Shoot()
@@ -404,7 +439,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _dashTimeRemaining = 0f;
         _attackTimeRemaining = 0f;
         _hitStunRemaining = Mathf.Max(_hitStunRemaining, duration);
+        _jumpTimeRemaining = 0f;
         Velocity = impulse;
+        UpdateJumpVisual();
         SetAttackCollision(false);
     }
 
@@ -439,8 +476,10 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _dashTimeRemaining = 0f;
         _attackTimeRemaining = 0f;
         _hitStunRemaining = 0f;
+        _jumpTimeRemaining = 0f;
         _health.Revive(Mathf.CeilToInt(_health.MaxHealth * 0.55f));
         SetPhysicsProcess(true);
+        UpdateJumpVisual();
         Modulate = Colors.White;
         SavePlayerState();
         return true;
@@ -459,6 +498,33 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         GlobalPosition = new Vector2(
             Mathf.Clamp(GlobalPosition.X, MinX, MaxX),
             Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
+    }
+
+    private void CaptureJumpVisuals()
+    {
+        _jumpVisualOrigins.Clear();
+        foreach (Node child in GetChildren())
+        {
+            if (child is Polygon2D polygon && child.Name != "LaneShadow")
+            {
+                _jumpVisualOrigins[polygon] = polygon.Position;
+            }
+        }
+    }
+
+    private void UpdateJumpVisual()
+    {
+        float heightOffset = 0f;
+        if (_jumpTimeRemaining > 0f && JumpDuration > 0f)
+        {
+            float progress = 1f - _jumpTimeRemaining / JumpDuration;
+            heightOffset = Mathf.Sin(progress * Mathf.Pi) * JumpHeight;
+        }
+
+        foreach ((Polygon2D polygon, Vector2 origin) in _jumpVisualOrigins)
+        {
+            polygon.Position = origin + new Vector2(0f, -heightOffset);
+        }
     }
 
     private void ApplySavedState()
@@ -512,6 +578,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private void OnDied()
     {
         SetPhysicsProcess(false);
+        _jumpTimeRemaining = 0f;
+        UpdateJumpVisual();
         Modulate = Colors.DarkRed;
     }
 

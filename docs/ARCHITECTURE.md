@@ -99,6 +99,24 @@ Limites atuais:
 - continue e limitado a 1;
 - configuracoes atuais sao de prototipo (`F1`, `F2`, `F4`), sem tela dedicada.
 
+## Sprint 08 - Conteudo Alpha
+
+Arquivos principais:
+
+- `scenes/actors/SideScrollerEnemyFast.tscn`: inimigo rapido, baixa vida e alta velocidade.
+- `scenes/actors/SideScrollerEnemyBrute.tscn`: inimigo bruto, mais vida e ataque pesado.
+- `scenes/actors/SideScrollerEnemyInfected.tscn`: inimigo infectado/chuvoso, ritmo intermediario.
+- `scenes/actors/SideScrollerRainMiniBoss.tscn`: segundo mini-chefe placeholder.
+- `scenes/actors/SideScrollerAlphaBoss.tscn`: chefe alpha placeholder.
+- `scripts/core/SideScrollerDirector.cs`: composicoes de encontro por tipo de inimigo.
+
+Limites atuais:
+
+- todos os inimigos ainda reutilizam `SideScrollerEnemyController`;
+- ainda nao ha ataques exclusivos por tipo;
+- chefe alpha e placeholder para ritmo/fim de fase, nao boss final definitivo;
+- Sprint 08 ainda usa uma unica cena principal.
+
 ## Observacao Sobre C#
 
 O arquivo `.csproj` usa `Godot.NET.Sdk/4.4.1` como ponto de partida. Caso a versao instalada do Godot .NET seja outra, o editor pode atualizar esse valor automaticamente.
