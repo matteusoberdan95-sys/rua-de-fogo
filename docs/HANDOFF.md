@@ -236,9 +236,10 @@ Proximo passo recomendado:
 
 1. validar a Sprint 14 no Godot com `F5`;
 2. confirmar que os sprites `_game` removeram o fundo preto;
-3. confirmar que idle/walk do Caua nao mudam mais de tamanho;
+3. confirmar que idle/walk/attack do Caua agora parecem o mesmo personagem usando `caua_ref_*`;
 4. confirmar que o grunt vira para o lado correto;
-5. depois integrar sprites finais desenhados no Krita usando as novas referencias em `references/personagens_ref/` e `references/cenarios/`.
+5. confirmar que a Vila Esperanca mostra mais background pintado e menos blocagem antiga;
+6. depois integrar sprites finais desenhados no Krita usando as novas referencias em `references/personagens_ref/` e `references/cenarios/`.
 
 Estado da Sprint 14:
 
@@ -248,6 +249,12 @@ Estado da Sprint 14:
 - `CharacterSpriteVisual` agora tem `SourceFacesRight`;
 - grunt usa `SourceFacesRight = false`;
 - inimigo sem walk sheet tem bob visual leve quando anda;
+- criada `tools/extract-reference-assets.ps1`;
+- gerados `caua_ref_idle.png`, `caua_ref_walk_sheet.png` e `caua_ref_attack.png` a partir da prancha de personagens;
+- `SideScrollerPlayer.tscn` agora usa `caua_ref_*` para coerencia visual do Caua;
+- `VilaEsperancaParallax.tscn` reposicionado para mostrar melhor as camadas pintadas;
+- blocagem antiga da fase foi escondida/atenuada onde competia com o background;
+- bloqueadores dos props escondidos foram desligados para nao criar colisao invisivel;
 - build C# validada com `dotnet build SangueNoAsfalto.csproj`.
 
 ## Regra Obrigatoria De Sprint

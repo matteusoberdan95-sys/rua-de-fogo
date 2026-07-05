@@ -108,3 +108,19 @@ Ela gera:
 - `art/sprites/enemies/grunt_idle_game.png`
 
 Isso nao substitui o trabalho final no Krita. E uma ponte para o jogo parar de parecer uma colagem com fundo preto enquanto desenhamos sprites finais.
+
+## Extracao Temporaria De Pranchas
+
+Quando uma referencia vier como uma prancha grande com varios personagens/poses, use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/extract-reference-assets.ps1
+```
+
+Na Sprint 14 esse script recorta o Caua da primeira prancha em `references/personagens_ref/` e gera:
+
+- `art/sprites/player/caua_ref_idle.png`
+- `art/sprites/player/caua_ref_walk_sheet.png`
+- `art/sprites/player/caua_ref_attack.png`
+
+Esses arquivos sao placeholders de integracao. A arte final comercial deve ser redesenhada/exportada como sprite sheet limpa, transparente e sem textos/grades da prancha.

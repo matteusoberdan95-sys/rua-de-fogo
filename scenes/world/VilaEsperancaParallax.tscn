@@ -12,38 +12,38 @@ offset_left = -1400.0
 offset_top = -40.0
 offset_right = 1400.0
 offset_bottom = 280.0
-color = Color(0.04, 0.045, 0.05, 1)
+color = Color(0.025, 0.028, 0.032, 1)
 
 [node name="FarHills" type="ParallaxLayer" parent="."]
 motion_scale = Vector2(0.1, 0)
-motion_offset = Vector2(0, 90)
+motion_offset = Vector2(0, 12)
 
 [node name="Sprite2D" type="Sprite2D" parent="FarHills"]
 texture_filter = 0
-position = Vector2(-820, 40)
-scale = Vector2(1.05, 0.34)
+position = Vector2(-760, -82)
+scale = Vector2(1, 0.68)
 texture = ExtResource("1_far")
 centered = false
 
 [node name="MidStreet" type="ParallaxLayer" parent="."]
 motion_scale = Vector2(0.28, 0)
-motion_offset = Vector2(0, 120)
+motion_offset = Vector2(0, 32)
 
 [node name="Sprite2D" type="Sprite2D" parent="MidStreet"]
 texture_filter = 0
-position = Vector2(-860, 70)
-scale = Vector2(1.08, 0.36)
+position = Vector2(-780, -50)
+scale = Vector2(1, 0.68)
 texture = ExtResource("2_mid")
 centered = false
 
 [node name="NearForeground" type="ParallaxLayer" parent="."]
 motion_scale = Vector2(0.52, 0)
-motion_offset = Vector2(0, 190)
+motion_offset = Vector2(0, 58)
 
 [node name="Sprite2D" type="Sprite2D" parent="NearForeground"]
 texture_filter = 0
-position = Vector2(-900, 150)
-scale = Vector2(1.1, 0.32)
+position = Vector2(-790, -30)
+scale = Vector2(1, 0.68)
 texture = ExtResource("3_near")
 centered = false
 

@@ -578,7 +578,7 @@ Proximo passo apos validacao:
 
 ## Sprint 14 - Integracao Visual De Assets
 
-Status: iniciada / correcao tecnica aplicada.
+Status: em andamento / segunda correcao visual aplicada.
 
 Objetivo: transformar as referencias novas em pipeline real de jogo, corrigindo primeiro os problemas que quebram a apresentacao: fundo preto em sprites, escala diferente entre idle/walk e inimigo virando para o lado errado.
 
@@ -603,6 +603,15 @@ Entregas implementadas:
 - `CharacterSpriteVisual` recebeu `SourceFacesRight` para corrigir flip por asset;
 - grunt configurado com `SourceFacesRight = false`;
 - inimigo sem walk sheet ganhou bob leve ao se mover;
+- criada ferramenta `tools/extract-reference-assets.ps1`;
+- gerados sprites temporarios consistentes a partir da prancha `references/personagens_ref/`:
+  - `art/sprites/player/caua_ref_idle.png`;
+  - `art/sprites/player/caua_ref_walk_sheet.png`;
+  - `art/sprites/player/caua_ref_attack.png`;
+- `SideScrollerPlayer.tscn` agora usa `caua_ref_*` para parado/andando/atacando parecerem o mesmo personagem;
+- `VilaEsperancaParallax.tscn` reposicionado para exibir melhor o background pintado;
+- blocagem antiga de predios, postes, carro e placas foi escondida/atenuada para nao cobrir a arte;
+- bloqueadores invisiveis desses props foram desligados para evitar colisao sem leitura visual;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
 Referencias novas:
@@ -614,8 +623,10 @@ Pendencias de validacao:
 
 - abrir no Godot e testar `F5`;
 - confirmar se o fundo preto sumiu;
-- confirmar se idle/walk mantem tamanho coerente;
+- confirmar se idle/walk/attack agora parecem o mesmo Caua;
 - confirmar se o grunt vira para o lado correto;
+- confirmar se o cenario ficou menos blocagem e mais background pintado;
+- se o background ficar desalinhado no F5, ajustar `motion_offset`, `position` e `scale` em `VilaEsperancaParallax.tscn`;
 - decidir quais referencias serao recortadas/desenhadas primeiro no Krita.
 
 ## Marco futuro - Demo Publica / Steam
