@@ -6,29 +6,61 @@ namespace SangueNoAsfalto.Core;
 
 public partial class SideScrollerDirector : Node
 {
+    private enum Phase
+    {
+        EncounterOne,
+        Checkpoint,
+        EncounterTwo,
+        MiniBoss,
+        Victory
+    }
+
     [Export]
     public PackedScene? EnemyScene { get; set; }
+
+    [Export]
+    public PackedScene? MiniBossScene { get; set; }
 
     [Export]
     public NodePath SpawnPointsPath { get; set; } = "../SpawnPoints";
 
     [Export]
-    public float TimeBetweenWaves { get; set; } = 2.2f;
+    public NodePath PlayerPath { get; set; } = "../SideScrollerPlayer";
+
+    [Export]
+    public float TimeBetweenEncounters { get; set; } = 1.4f;
+
+    [Export]
+    public Vector2 StartPosition { get; set; } = new(-760f, 405f);
+
+    [Export]
+    public Vector2 CheckpointPosition { get; set; } = new(-80f, 405f);
 
     public int WaveNumber { get; private set; }
 
-    public int TotalWaves => _waveSizes.Length;
+    public int TotalWaves => 3;
 
     public int EnemiesRemaining { get; private set; }
 
     public string StatusText { get; private set; } = "A rua acordou errada";
 
-    private readonly int[] _waveSizes = { 3, 4, 6 };
+    public string ObjectiveText { get; private set; } = "Atravesse a Vila Esperanca";
+
+    public bool HasCheckpoint { get; private set; }
+
+    public bool IsGameOver => _gameOver;
+
+    public bool IsCompleted => _completed;
+
+    private static Phase _resumePhase = Phase.EncounterOne;
+    private static bool _checkpointUnlocked;
+    private readonly int[] _encounterSizes = { 3, 4 };
     private Node2D? _spawnPoints;
     private Health? _playerHealth;
-    private int _currentWaveIndex = -1;
-    private float _nextWaveTimer;
-    private bool _waveActive;
+    private SideScrollerPlayerController? _player;
+    private Phase _phase;
+    private float _phaseTimer;
+    private bool _phaseActive;
     private bool _completed;
     private bool _gameOver;
 
@@ -37,15 +69,16 @@ public partial class SideScrollerDirector : Node
         AddToGroup("game_director");
         AddToGroup("side_director");
         _spawnPoints = GetNodeOrNull<Node2D>(SpawnPointsPath);
-        FindPlayerHealth();
-        StartNextWave();
+        FindPlayer();
+        ApplyRespawnState();
+        StartPhase(_resumePhase);
     }
 
     public override void _Process(double delta)
     {
         if (Input.IsActionJustPressed("restart") || Input.IsKeyPressed(Key.R))
         {
-            GetTree().ReloadCurrentScene();
+            ReloadRun();
             return;
         }
 
@@ -54,57 +87,105 @@ public partial class SideScrollerDirector : Node
             return;
         }
 
-        FindPlayerHealth();
+        FindPlayer();
         if (_playerHealth is not null && _playerHealth.CurrentHealth <= 0)
         {
             _gameOver = true;
-            _waveActive = false;
-            StatusText = "Caiu no asfalto. Aperte R para voltar.";
+            _phaseActive = false;
+            StatusText = HasCheckpoint
+                ? "Caiu no asfalto. Aperte R para voltar ao checkpoint."
+                : "Caiu no asfalto. Aperte R para voltar ao inicio.";
             return;
         }
 
         EnemiesRemaining = CountLivingEnemies();
 
-        if (_waveActive && EnemiesRemaining == 0)
+        if (_phaseActive && EnemiesRemaining == 0)
         {
-            _waveActive = false;
-            _nextWaveTimer = TimeBetweenWaves;
+            _phaseActive = false;
+            _phaseTimer = TimeBetweenEncounters;
+            OnPhaseCleared();
         }
 
-        if (!_waveActive)
+        if (!_phaseActive)
         {
-            TickWaveBreak((float)delta);
+            TickPhaseBreak((float)delta);
         }
     }
 
-    private void TickWaveBreak(float dt)
+    private void TickPhaseBreak(float dt)
     {
-        if (_currentWaveIndex >= _waveSizes.Length - 1)
+        if (_completed || _gameOver)
         {
-            _completed = true;
-            StatusText = "Trecho limpo. Aperte R para jogar de novo.";
             return;
         }
 
-        _nextWaveTimer -= dt;
-        StatusText = $"Reforcos chegando em {Mathf.CeilToInt(_nextWaveTimer)}";
-
-        if (_nextWaveTimer <= 0f)
+        _phaseTimer -= dt;
+        if (_phaseTimer > 0f)
         {
-            StartNextWave();
+            return;
+        }
+
+        switch (_phase)
+        {
+            case Phase.Checkpoint:
+                UnlockCheckpoint();
+                StartPhase(Phase.EncounterTwo);
+                break;
+            case Phase.EncounterOne:
+                StartPhase(Phase.Checkpoint);
+                break;
+            case Phase.EncounterTwo:
+                StartPhase(Phase.MiniBoss);
+                break;
+            case Phase.MiniBoss:
+                CompleteRun();
+                break;
         }
     }
 
-    private void StartNextWave()
+    private void StartPhase(Phase phase)
     {
-        _currentWaveIndex++;
-        WaveNumber = _currentWaveIndex + 1;
+        _phase = phase;
+        EnemiesRemaining = 0;
 
-        int enemyCount = _waveSizes[_currentWaveIndex];
+        switch (phase)
+        {
+            case Phase.EncounterOne:
+                WaveNumber = 1;
+                ObjectiveText = "Limpe a entrada da rua";
+                StatusText = "Entrada da Vila Esperanca: sobreviva ao primeiro ataque.";
+                SpawnEncounter(_encounterSizes[0]);
+                break;
+            case Phase.Checkpoint:
+                WaveNumber = 1;
+                ObjectiveText = "Alcance o altar improvisado";
+                StatusText = "Respira. O altar virou checkpoint.";
+                _phaseActive = false;
+                _phaseTimer = 1.2f;
+                break;
+            case Phase.EncounterTwo:
+                WaveNumber = 2;
+                ObjectiveText = "Segure a rua ate o monstro aparecer";
+                StatusText = "Reforcos na chuva. Nao deixa fecharem a lane.";
+                SpawnEncounter(_encounterSizes[1]);
+                break;
+            case Phase.MiniBoss:
+                WaveNumber = 3;
+                ObjectiveText = "Derrube o bruto da rua";
+                StatusText = "O portao range. Tem algo grande vindo.";
+                SpawnMiniBoss();
+                break;
+            case Phase.Victory:
+                CompleteRun();
+                break;
+        }
+    }
+
+    private void SpawnEncounter(int enemyCount)
+    {
         EnemiesRemaining = enemyCount;
-        StatusText = $"Onda {WaveNumber}/{TotalWaves}: quebrar a linha";
-        _waveActive = true;
-
+        _phaseActive = true;
         for (int i = 0; i < enemyCount; i++)
         {
             SpawnEnemy(i);
@@ -124,6 +205,87 @@ public partial class SideScrollerDirector : Node
         GetTree().CurrentScene?.AddChild(enemy);
     }
 
+    private void SpawnMiniBoss()
+    {
+        if (MiniBossScene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
+        {
+            SpawnEncounter(1);
+            return;
+        }
+
+        Node2D spawnPoint = _spawnPoints.GetChild<Node2D>(1 % _spawnPoints.GetChildCount());
+        Node2D miniBoss = MiniBossScene.Instantiate<Node2D>();
+        miniBoss.GlobalPosition = spawnPoint.GlobalPosition;
+        GetTree().CurrentScene?.AddChild(miniBoss);
+        EnemiesRemaining = 1;
+        _phaseActive = true;
+    }
+
+    private void OnPhaseCleared()
+    {
+        switch (_phase)
+        {
+            case Phase.EncounterOne:
+                StatusText = "Entrada limpa. Avance ate o altar.";
+                break;
+            case Phase.EncounterTwo:
+                StatusText = "A rua ficou quieta demais...";
+                break;
+            case Phase.MiniBoss:
+                StatusText = "O bruto caiu. Trecho limpo.";
+                break;
+        }
+    }
+
+    private void UnlockCheckpoint()
+    {
+        HasCheckpoint = true;
+        _checkpointUnlocked = true;
+        _resumePhase = Phase.EncounterTwo;
+
+        if (_player is not null)
+        {
+            _player.GlobalPosition = CheckpointPosition;
+        }
+    }
+
+    private void CompleteRun()
+    {
+        _phase = Phase.Victory;
+        _completed = true;
+        _phaseActive = false;
+        _resumePhase = Phase.EncounterOne;
+        _checkpointUnlocked = false;
+        ObjectiveText = "Trecho limpo";
+        StatusText = "Vitoria. A rua abriu caminho. Aperte R para jogar de novo.";
+    }
+
+    private void ReloadRun()
+    {
+        if (_gameOver && HasCheckpoint)
+        {
+            _resumePhase = Phase.EncounterTwo;
+        }
+        else
+        {
+            _resumePhase = Phase.EncounterOne;
+            _checkpointUnlocked = false;
+        }
+
+        GetTree().ReloadCurrentScene();
+    }
+
+    private void ApplyRespawnState()
+    {
+        HasCheckpoint = _checkpointUnlocked;
+        if (_player is null)
+        {
+            return;
+        }
+
+        _player.GlobalPosition = _resumePhase >= Phase.EncounterTwo ? CheckpointPosition : StartPosition;
+    }
+
     private int CountLivingEnemies()
     {
         int count = 0;
@@ -138,16 +300,19 @@ public partial class SideScrollerDirector : Node
         return count;
     }
 
-    private void FindPlayerHealth()
+    private void FindPlayer()
     {
-        if (_playerHealth is not null)
+        if (_player is not null && _playerHealth is not null)
         {
             return;
         }
 
-        if (GetTree().GetFirstNodeInGroup("side_player") is SideScrollerPlayerController player)
+        _player ??= GetNodeOrNull<SideScrollerPlayerController>(PlayerPath);
+        _player ??= GetTree().GetFirstNodeInGroup("side_player") as SideScrollerPlayerController;
+
+        if (_player is not null)
         {
-            _playerHealth = player.GetNodeOrNull<Health>("Health");
+            _playerHealth = _player.GetNodeOrNull<Health>("Health");
         }
     }
 }

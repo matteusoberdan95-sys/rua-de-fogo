@@ -63,6 +63,21 @@ Arquivos principais:
 
 O top-down antigo permanece em `scenes/levels/PrototypeArena.tscn`.
 
+## Sprint 06 - Vertical Slice Pequena
+
+Arquivos principais:
+
+- `scripts/core/SideScrollerDirector.cs`: fluxo curto de fase, checkpoint, mini-chefe e estados de morte/vitoria.
+- `scripts/ui/BeatEmUpHud.cs`: status de etapa, objetivo, checkpoint, morte e vitoria.
+- `scenes/actors/SideScrollerMiniBoss.tscn`: mini-chefe placeholder da primeira rua.
+- `scenes/levels/SideScrollerPrototype.tscn`: cena principal da vertical slice.
+
+Checkpoint atual:
+
+- fica em memoria da cena;
+- nao salva em disco;
+- `R` volta ao checkpoint somente se o jogador ja tiver ativado o checkpoint e morrer.
+
 ## Observacao Sobre C#
 
 O arquivo `.csproj` usa `Godot.NET.Sdk/4.4.1` como ponto de partida. Caso a versao instalada do Godot .NET seja outra, o editor pode atualizar esse valor automaticamente.

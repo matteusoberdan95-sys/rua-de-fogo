@@ -24,15 +24,24 @@
 - [x] Reinicio rapido com `R`.
 - [x] Feedback de hit: pausa curta, flash, knockback e som.
 - [x] Inimigo com ataque telegrafado.
-- [ ] Checkpoint funcional.
+- [x] Checkpoint funcional.
 
 ## Marco 0.3 - Vertical Slice Pequeno
 
-- [ ] Uma fase curta com inicio, combate, checkpoint e mini-chefe.
+- [x] Uma fase curta com inicio, combate, checkpoint e mini-chefe.
 - [ ] Menu inicial.
 - [ ] Save local.
-- [ ] Tela de morte.
+- [x] Tela de morte.
 - [ ] Build Windows.
+
+## Marco 0.3 - Progresso Atual
+
+- [x] Fluxo curto de fase na cena lateral.
+- [x] Checkpoint simples em memoria.
+- [x] Mini-chefe placeholder.
+- [x] Tela/mensagem de vitoria via HUD.
+- [x] Validar vertical slice no Godot com `F5`.
+- [ ] Fechar sprint, commitar e fazer push apos validacao.
 
 ## Marco 0.4 - Identidade Visual Inicial
 

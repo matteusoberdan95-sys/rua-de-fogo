@@ -132,10 +132,20 @@ Estado da Sprint 05:
 
 Proximo passo recomendado:
 
-1. commitar e fazer push da Sprint 05;
-2. iniciar `Sprint 06 - Vertical Slice Pequena`;
-3. planejar fase curta com inicio, meio, fim, checkpoint, mini-chefe e telas basicas;
-4. manter build e cena jogavel a cada fatia.
+1. commitar e fazer push da Sprint 06;
+2. iniciar `Sprint 07 - Sistemas De Jogo`;
+3. planejar save local simples, checkpoint persistente, pickups e estado de arma;
+4. manter a vertical slice jogavel durante toda a sprint.
+
+Estado da Sprint 06:
+
+- `scripts/core/SideScrollerDirector.cs` agora controla fluxo curto de fase;
+- sequencia: encontro inicial, checkpoint, segundo encontro, mini-chefe e vitoria;
+- checkpoint simples em memoria usando `R` para reiniciar do checkpoint apos morte;
+- criada `scenes/actors/SideScrollerMiniBoss.tscn`;
+- `scripts/ui/BeatEmUpHud.cs` mostra etapa, objetivo, checkpoint, morte e vitoria;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`;
+- validada no Godot com `F5` e aprovada.
 
 ## Regra Obrigatoria De Sprint
 

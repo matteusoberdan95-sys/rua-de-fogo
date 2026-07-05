@@ -10,6 +10,7 @@ public partial class BeatEmUpHud : CanvasLayer
     private Label? _staminaLabel;
     private Label? _waveLabel;
     private Label? _statusLabel;
+    private Label? _controlsLabel;
     private Label? _debugLabel;
     private SideScrollerPlayerController? _player;
     private SideScrollerDirector? _director;
@@ -20,6 +21,7 @@ public partial class BeatEmUpHud : CanvasLayer
         _staminaLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/StaminaLabel");
         _waveLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/WaveLabel");
         _statusLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/StatusLabel");
+        _controlsLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/ControlsLabel");
         _debugLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/DebugLabel");
         _player = GetTree().GetFirstNodeInGroup("side_player") as SideScrollerPlayerController;
         _director = GetTree().GetFirstNodeInGroup("side_director") as SideScrollerDirector;
@@ -52,12 +54,23 @@ public partial class BeatEmUpHud : CanvasLayer
         {
             if (_waveLabel is not null)
             {
-                _waveLabel.Text = $"Onda: {_director.WaveNumber}/{_director.TotalWaves}  Inimigos: {_director.EnemiesRemaining}";
+                _waveLabel.Text = $"Etapa: {_director.WaveNumber}/{_director.TotalWaves}  Inimigos: {_director.EnemiesRemaining}";
             }
 
             if (_statusLabel is not null)
             {
                 _statusLabel.Text = _director.StatusText;
+            }
+
+            if (_debugLabel is not null)
+            {
+                string checkpoint = _director.HasCheckpoint ? "Checkpoint ativo" : "Sem checkpoint";
+                _debugLabel.Text = $"Objetivo: {_director.ObjectiveText}  |  {checkpoint}";
+            }
+
+            if (_controlsLabel is not null)
+            {
+                _controlsLabel.Text = GetControlsText();
             }
         }
     }
@@ -68,5 +81,20 @@ public partial class BeatEmUpHud : CanvasLayer
         {
             _healthLabel.Text = $"Vida: {current}/{maximum}";
         }
+    }
+
+    private string GetControlsText()
+    {
+        if (_director?.IsCompleted == true)
+        {
+            return "Vitoria alcancada. R: jogar de novo";
+        }
+
+        if (_director?.IsGameOver == true)
+        {
+            return _director.HasCheckpoint ? "R: voltar ao checkpoint" : "R: voltar ao inicio";
+        }
+
+        return "W/S: trocar lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  R: reiniciar";
     }
 }

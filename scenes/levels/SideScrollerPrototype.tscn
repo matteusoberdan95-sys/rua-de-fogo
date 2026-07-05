@@ -1,7 +1,8 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerMiniBoss.tscn" id="3_miniboss"]
 [ext_resource type="Script" path="res://scripts/core/InputBootstrap.cs" id="3_input"]
 [ext_resource type="Script" path="res://scripts/core/SideScrollerDirector.cs" id="4_director"]
 [ext_resource type="Script" path="res://scripts/ui/BeatEmUpHud.cs" id="5_hud"]
@@ -228,7 +229,7 @@ color = Color(0.25, 0.28, 0.27, 0.65)
 polygon = PackedVector2Array(-34, -7, -28, -7, -24, 14, -30, 14, -12, -8, -6, -8, -3, 15, -9, 15, 12, -8, 18, -8, 16, 15, 10, 15, 34, -6, 40, -6, 32, 13, 26, 13)
 
 [node name="RoadsideAltar" type="Polygon2D" parent="."]
-position = Vector2(545, 456)
+position = Vector2(-80, 456)
 color = Color(0.12, 0.1, 0.075, 1)
 polygon = PackedVector2Array(-30, 18, 30, 18, 22, -6, 8, -24, -8, -24, -22, -6)
 
@@ -245,6 +246,11 @@ polygon = PackedVector2Array(-4, -9, 5, -9, 5, 8, -4, 8)
 position = Vector2(1, -12)
 color = Color(1, 0.58, 0.14, 0.58)
 polygon = PackedVector2Array(0, -15, 10, 1, 0, 14, -10, 1)
+
+[node name="CheckpointMark" type="Polygon2D" parent="RoadsideAltar"]
+position = Vector2(0, 18)
+color = Color(0.75, 0.58, 0.22, 0.32)
+polygon = PackedVector2Array(-58, -7, 58, -7, 72, 0, 58, 7, -58, 7, -72, 0)
 
 [node name="PostA" type="Polygon2D" parent="."]
 position = Vector2(-930, 250)
@@ -415,6 +421,7 @@ position = Vector2(1010, 462)
 [node name="SideScrollerDirector" type="Node" parent="."]
 script = ExtResource("4_director")
 EnemyScene = ExtResource("2_enemy")
+MiniBossScene = ExtResource("3_miniboss")
 
 [node name="Hud" type="CanvasLayer" parent="."]
 script = ExtResource("5_hud")

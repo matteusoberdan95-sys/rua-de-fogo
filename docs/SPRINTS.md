@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 06 - Vertical Slice Pequena`
+Sprint atual: `Sprint 07 - Sistemas De Jogo`
 
 Direcao oficial atual:
 
@@ -244,7 +244,7 @@ Agentes principais:
 
 ## Sprint 06 - Vertical Slice Pequena
 
-Status: proxima / pronta para iniciar.
+Status: concluida.
 
 Objetivo: criar uma fase curta com inicio, meio e fim.
 
@@ -259,6 +259,31 @@ Entregas planejadas:
 - menu inicial simples;
 - build Windows.
 
+Entregas implementadas:
+
+- `SideScrollerDirector` agora controla fluxo curto de fase;
+- sequencia atual: entrada da rua, checkpoint, segundo encontro, mini-chefe e vitoria;
+- checkpoint simples em memoria da cena;
+- ao morrer depois do checkpoint, `R` volta para o checkpoint;
+- ao morrer antes do checkpoint, `R` volta para o inicio;
+- criada cena `scenes/actors/SideScrollerMiniBoss.tscn`;
+- mini-chefe placeholder usa base do inimigo lateral, com vida maior, corpo maior e ataque mais pesado;
+- HUD mostra etapa, objetivo, checkpoint, morte e vitoria;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- fluxo da vertical slice aprovado;
+- checkpoint, mini-chefe e mensagens de morte/vitoria aprovados para seguir;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Pendencias levadas para sprints futuras:
+
+- menu inicial simples;
+- build Windows;
+- checkpoint persistente em save local, se fizer sentido.
+
 Agentes principais:
 
 - Goku: gameplay.
@@ -269,7 +294,7 @@ Agentes principais:
 
 ## Sprint 07 - Sistemas De Jogo
 
-Status: futura.
+Status: proxima / pronta para iniciar.
 
 Objetivo: comecar sistemas que sustentam um jogo maior.
 
