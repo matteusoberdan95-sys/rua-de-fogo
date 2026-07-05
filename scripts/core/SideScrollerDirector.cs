@@ -6,12 +6,20 @@ public partial class SideScrollerDirector : Node
 
     private enum Phase
     {
+        IntroWalk,
         EncounterOne,
+        EncounterOneB,
+        ApproachCheckpoint,
         Checkpoint,
         EncounterTwo,
+        EncounterTwoB,
+        MidBreather,
         EncounterThree,
-        MiniBoss,
-        MiniBossTwo,
+        EncounterThreeB,
+        StreetMiniBoss,
+        RainBuildup,
+        RainMiniBoss,
+        AlphaBuildup,
         FinalBoss,
         Victory
     }
@@ -44,7 +52,13 @@ public partial class SideScrollerDirector : Node
     public NodePath PlayerPath { get; set; } = "../SideScrollerPlayer";
 
     [Export]
-    public float TimeBetweenEncounters { get; set; } = 1.4f;
+    public NodePath WeatherControllerPath { get; set; } = "../WeatherController";
+
+    [Export]
+    public NodePath TimeOfDayControllerPath { get; set; } = "../TimeOfDayController";
+
+    [Export]
+    public float TimeBetweenEncounters { get; set; } = 2.8f;
 
     [Export]
     public Vector2 StartPosition { get; set; } = new(-760f, 405f);
@@ -54,7 +68,7 @@ public partial class SideScrollerDirector : Node
 
     public int WaveNumber { get; private set; }
 
-    public int TotalWaves => 6;
+    public int TotalWaves => 10;
 
     public int EnemiesRemaining { get; private set; }
 
@@ -76,12 +90,14 @@ public partial class SideScrollerDirector : Node
 
     public bool AlternateControls => SaveManager.Current.AlternateControls;
 
-    private static Phase _resumePhase = Phase.EncounterOne;
+    private static Phase _resumePhase = Phase.IntroWalk;
     private static bool _checkpointUnlocked;
     private readonly PackedScene?[] _emptyComposition = [];
     private Node2D? _spawnPoints;
     private Health? _playerHealth;
     private SideScrollerPlayerController? _player;
+    private WeatherController? _weather;
+    private TimeOfDayController? _timeOfDay;
     private Phase _phase;
     private float _phaseTimer;
     private bool _phaseActive;
@@ -99,16 +115,25 @@ public partial class SideScrollerDirector : Node
         _checkpointUnlocked = SaveManager.Current.CheckpointUnlocked;
         InputBootstrap.ApplyAlternateControls(SaveManager.Current.AlternateControls);
         _spawnPoints = GetNodeOrNull<Node2D>(SpawnPointsPath);
+        _weather = GetNodeOrNull<WeatherController>(WeatherControllerPath);
+        _timeOfDay = GetNodeOrNull<TimeOfDayController>(TimeOfDayControllerPath);
         FindPlayer();
         ApplyRespawnState();
-        StartPhase(_resumePhase);
+
+        Phase startPhase = _checkpointUnlocked ? Phase.EncounterTwo : _resumePhase;
+        if (startPhase == Phase.EncounterOne)
+        {
+            startPhase = Phase.IntroWalk;
+        }
+
+        StartPhase(startPhase);
     }
 
     public override void _Process(double delta)
     {
         if ((_gameOver || _completed) && Input.IsKeyPressed(Key.M))
         {
-            _resumePhase = Phase.EncounterOne;
+            _resumePhase = Phase.IntroWalk;
             GetTree().ChangeSceneToFile(MainMenuScenePath);
             return;
         }
@@ -176,23 +201,47 @@ public partial class SideScrollerDirector : Node
 
         switch (_phase)
         {
+            case Phase.IntroWalk:
+                StartPhase(Phase.EncounterOne);
+                break;
+            case Phase.EncounterOne:
+                StartPhase(Phase.EncounterOneB);
+                break;
+            case Phase.EncounterOneB:
+                StartPhase(Phase.ApproachCheckpoint);
+                break;
+            case Phase.ApproachCheckpoint:
+                StartPhase(Phase.Checkpoint);
+                break;
             case Phase.Checkpoint:
                 UnlockCheckpoint();
                 StartPhase(Phase.EncounterTwo);
                 break;
-            case Phase.EncounterOne:
-                StartPhase(Phase.Checkpoint);
-                break;
             case Phase.EncounterTwo:
+                StartPhase(Phase.EncounterTwoB);
+                break;
+            case Phase.EncounterTwoB:
+                StartPhase(Phase.MidBreather);
+                break;
+            case Phase.MidBreather:
                 StartPhase(Phase.EncounterThree);
                 break;
             case Phase.EncounterThree:
-                StartPhase(Phase.MiniBoss);
+                StartPhase(Phase.EncounterThreeB);
                 break;
-            case Phase.MiniBoss:
-                StartPhase(Phase.MiniBossTwo);
+            case Phase.EncounterThreeB:
+                StartPhase(Phase.StreetMiniBoss);
                 break;
-            case Phase.MiniBossTwo:
+            case Phase.StreetMiniBoss:
+                StartPhase(Phase.RainBuildup);
+                break;
+            case Phase.RainBuildup:
+                StartPhase(Phase.RainMiniBoss);
+                break;
+            case Phase.RainMiniBoss:
+                StartPhase(Phase.AlphaBuildup);
+                break;
+            case Phase.AlphaBuildup:
                 StartPhase(Phase.FinalBoss);
                 break;
             case Phase.FinalBoss:
@@ -205,55 +254,140 @@ public partial class SideScrollerDirector : Node
     {
         _phase = phase;
         EnemiesRemaining = 0;
+        ApplyActAtmosphere(phase);
 
         switch (phase)
         {
+            case Phase.IntroWalk:
+                WaveNumber = 0;
+                ObjectiveText = "Entre na Vila Esperanca";
+                StatusText = "O asfalto esta molhado. Avance pela rua.";
+                BeginIntermission(38f);
+                break;
             case Phase.EncounterOne:
                 WaveNumber = 1;
                 ObjectiveText = "Limpe a entrada da rua";
-                StatusText = "Entrada da Vila Esperanca: sobreviva ao primeiro ataque.";
+                StatusText = "Primeiro contato. Nao deixe fecharem a lane.";
                 SpawnComposition([EnemyScene, EnemyScene, EnemyScene]);
                 break;
-            case Phase.Checkpoint:
-                WaveNumber = 1;
+            case Phase.EncounterOneB:
+                WaveNumber = 2;
+                ObjectiveText = "Segure a entrada";
+                StatusText = "Reforcos chegando pelos fundos.";
+                SpawnComposition([EnemyScene, FastEnemyScene, EnemyScene]);
+                break;
+            case Phase.ApproachCheckpoint:
+                WaveNumber = 2;
                 ObjectiveText = "Alcance o altar improvisado";
-                StatusText = "Respira. O altar virou checkpoint.";
-                _phaseActive = false;
-                _phaseTimer = 1.2f;
+                StatusText = "A rua abriu. Va ate o altar.";
+                BeginIntermission(28f);
+                break;
+            case Phase.Checkpoint:
+                WaveNumber = 2;
+                ObjectiveText = "Ative o checkpoint";
+                StatusText = "Respira. O altar virou ponto seguro.";
+                BeginIntermission(4f);
                 break;
             case Phase.EncounterTwo:
-                WaveNumber = 2;
+                WaveNumber = 3;
                 ObjectiveText = "Segure a rua contra os corredores";
-                StatusText = "Reforcos rapidos na chuva. Nao deixa fecharem a lane.";
+                StatusText = "Corredores na chuva. Troque de lane rapido.";
                 SpawnComposition([EnemyScene, FastEnemyScene, EnemyScene, InfectedEnemyScene]);
                 break;
+            case Phase.EncounterTwoB:
+                WaveNumber = 4;
+                ObjectiveText = "Quebre a segunda linha";
+                StatusText = "Mais infectados entrando pelo meio da rua.";
+                SpawnComposition([FastEnemyScene, FastEnemyScene, InfectedEnemyScene, EnemyScene, EnemyScene]);
+                break;
+            case Phase.MidBreather:
+                WaveNumber = 4;
+                ObjectiveText = "Recupere folego";
+                StatusText = "Trecho quieto. Use os pickups se precisar.";
+                BeginIntermission(32f);
+                break;
             case Phase.EncounterThree:
-                WaveNumber = 3;
+                WaveNumber = 5;
                 ObjectiveText = "Quebre a linha dos brutos";
-                StatusText = "Um bruto chegou abrindo caminho no asfalto.";
+                StatusText = "Brutos abrindo caminho no asfalto.";
                 SpawnComposition([BruteEnemyScene, EnemyScene, EnemyScene, FastEnemyScene]);
                 break;
-            case Phase.MiniBoss:
-                WaveNumber = 4;
+            case Phase.EncounterThreeB:
+                WaveNumber = 6;
+                ObjectiveText = "Segure o corredor central";
+                StatusText = "Linha mista. Cuidado com o bruto.";
+                SpawnComposition([BruteEnemyScene, InfectedEnemyScene, EnemyScene, FastEnemyScene, EnemyScene]);
+                break;
+            case Phase.StreetMiniBoss:
+                WaveNumber = 7;
                 ObjectiveText = "Derrube o bruto da rua";
-                StatusText = "O portao range. Tem algo grande vindo.";
+                StatusText = "O portao range. Algo grande vem.";
                 SpawnBoss(MiniBossScene);
                 break;
-            case Phase.MiniBossTwo:
-                WaveNumber = 5;
+            case Phase.RainBuildup:
+                WaveNumber = 7;
+                ObjectiveText = "Atravesse a chuva";
+                StatusText = "A tempestade engrossou. Prepare-se.";
+                BeginIntermission(24f);
+                break;
+            case Phase.RainMiniBoss:
+                WaveNumber = 8;
                 ObjectiveText = "Derrube o infectado da chuva";
-                StatusText = "A chuva engrossou. Algo verde rasteja no meio da rua.";
+                StatusText = "Algo verde rasteja no meio da rua.";
                 SpawnBoss(SecondMiniBossScene);
                 break;
+            case Phase.AlphaBuildup:
+                WaveNumber = 8;
+                ObjectiveText = "Chegue ao fim do trecho";
+                StatusText = "A rua inteira parou. O cheiro de ferro veio.";
+                BeginIntermission(26f);
+                break;
             case Phase.FinalBoss:
-                WaveNumber = 6;
+                WaveNumber = 9;
                 ObjectiveText = "Sobreviva ao alfa da rua";
-                StatusText = "A rua inteira parou. O alfa apareceu.";
+                StatusText = "O alfa apareceu. Termine a fase.";
                 SpawnBoss(FinalBossScene);
                 break;
             case Phase.Victory:
                 CompleteRun();
                 break;
+        }
+    }
+
+    private void BeginIntermission(float duration)
+    {
+        _phaseActive = false;
+        _phaseTimer = duration;
+    }
+
+    private void ApplyActAtmosphere(Phase phase)
+    {
+        if (_weather is not null)
+        {
+            _weather.AutoCycle = false;
+            _weather.SetState(phase switch
+            {
+                Phase.IntroWalk or Phase.EncounterOne or Phase.EncounterOneB or Phase.ApproachCheckpoint => WeatherController.WeatherState.Drizzle,
+                Phase.EncounterTwo or Phase.EncounterTwoB or Phase.MidBreather => WeatherController.WeatherState.HeavyRain,
+                Phase.EncounterThree or Phase.EncounterThreeB or Phase.StreetMiniBoss => WeatherController.WeatherState.HeavyRain,
+                Phase.RainBuildup or Phase.RainMiniBoss => WeatherController.WeatherState.Thunderstorm,
+                Phase.AlphaBuildup or Phase.FinalBoss => WeatherController.WeatherState.Thunderstorm,
+                _ => WeatherController.WeatherState.Drizzle
+            });
+        }
+
+        if (_timeOfDay is not null)
+        {
+            _timeOfDay.AutoCycle = false;
+            _timeOfDay.SetState(phase switch
+            {
+                Phase.IntroWalk or Phase.EncounterOne or Phase.EncounterOneB => TimeOfDayController.TimeOfDayState.Sunset,
+                Phase.ApproachCheckpoint or Phase.Checkpoint or Phase.EncounterTwo or Phase.EncounterTwoB => TimeOfDayController.TimeOfDayState.Night,
+                Phase.MidBreather or Phase.EncounterThree or Phase.EncounterThreeB => TimeOfDayController.TimeOfDayState.Night,
+                Phase.StreetMiniBoss or Phase.RainBuildup or Phase.RainMiniBoss => TimeOfDayController.TimeOfDayState.Night,
+                Phase.AlphaBuildup or Phase.FinalBoss => TimeOfDayController.TimeOfDayState.Night,
+                _ => TimeOfDayController.TimeOfDayState.Sunset
+            });
         }
     }
 
@@ -303,22 +437,31 @@ public partial class SideScrollerDirector : Node
         switch (_phase)
         {
             case Phase.EncounterOne:
-                StatusText = "Entrada limpa. Avance ate o altar.";
+                StatusText = "Entrada segura por agora.";
+                break;
+            case Phase.EncounterOneB:
+                StatusText = "Entrada limpa. Siga em frente.";
                 break;
             case Phase.EncounterTwo:
+                StatusText = "Primeira linha quebrada.";
+                break;
+            case Phase.EncounterTwoB:
                 StatusText = "A rua ficou quieta demais...";
                 break;
             case Phase.EncounterThree:
-                StatusText = "Os brutos cairam. O ar ficou pesado.";
+                StatusText = "Os brutos cairam.";
                 break;
-            case Phase.MiniBoss:
-                StatusText = "O bruto caiu. Trecho limpo.";
+            case Phase.EncounterThreeB:
+                StatusText = "O corredor abriu. Algo grande vem.";
                 break;
-            case Phase.MiniBossTwo:
-                StatusText = "O infectado da chuva desmanchou no asfalto.";
+            case Phase.StreetMiniBoss:
+                StatusText = "O bruto caiu.";
+                break;
+            case Phase.RainMiniBoss:
+                StatusText = "O infectado desmanchou no asfalto.";
                 break;
             case Phase.FinalBoss:
-                StatusText = "O alfa caiu. A rua abriu caminho.";
+                StatusText = "O alfa caiu. A fase terminou.";
                 break;
         }
     }
@@ -342,12 +485,13 @@ public partial class SideScrollerDirector : Node
         _phase = Phase.Victory;
         _completed = true;
         _phaseActive = false;
-        _resumePhase = Phase.EncounterOne;
+        WaveNumber = 10;
+        _resumePhase = Phase.IntroWalk;
         _checkpointUnlocked = false;
         SaveManager.Current.CheckpointUnlocked = false;
         SaveManager.Save();
-        ObjectiveText = "Trecho limpo";
-        StatusText = "Vitoria. A rua abriu caminho. Aperte R para jogar de novo.";
+        ObjectiveText = "Fase concluida";
+        StatusText = "Vila Esperanca: trecho limpo. Aperte R para jogar de novo.";
     }
 
     private void ReloadRun()
@@ -356,9 +500,13 @@ public partial class SideScrollerDirector : Node
         {
             _resumePhase = Phase.EncounterTwo;
         }
+        else if (_completed)
+        {
+            _resumePhase = Phase.IntroWalk;
+        }
         else
         {
-            _resumePhase = Phase.EncounterOne;
+            _resumePhase = Phase.IntroWalk;
             _checkpointUnlocked = false;
             SaveManager.Current.CheckpointUnlocked = false;
             SaveManager.Save();
@@ -385,7 +533,7 @@ public partial class SideScrollerDirector : Node
         if (ConsumeKeyPress(Key.F4, ref _f4WasDown))
         {
             SaveManager.Reset();
-            _resumePhase = Phase.EncounterOne;
+            _resumePhase = Phase.IntroWalk;
             _checkpointUnlocked = false;
             GetTree().ReloadCurrentScene();
         }

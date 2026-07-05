@@ -1,5 +1,6 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=26 format=3]
 
+[ext_resource type="PackedScene" path="res://scenes/world/VilaEsperancaParallax.tscn" id="1_parallax"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerMiniBoss.tscn" id="3_miniboss"]
@@ -41,26 +42,30 @@ size = Vector2(26, 130)
 
 [node name="SideScrollerPrototype" type="Node2D"]
 
+[node name="VilaEsperancaParallax" parent="." instance=ExtResource("1_parallax")]
+
 [node name="InputBootstrap" type="Node" parent="."]
 script = ExtResource("3_input")
 
 [node name="TimeOfDayController" type="Node" parent="."]
 script = ExtResource("6_time")
 InitialState = 0
-AutoCycle = true
+AutoCycle = false
 SecondsPerState = 18.0
 
 [node name="WeatherController" type="Node" parent="."]
 script = ExtResource("7_weather")
 InitialState = 1
-AutoCycle = true
+AutoCycle = false
 SecondsPerState = 22.0
 
 [node name="Sky" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.05, 0.055, 0.065, 1)
 polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 260, -1280, 260)
 
 [node name="DawnGlow" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.72, 0.29, 0.12, 0.18)
 polygon = PackedVector2Array(-1280, 70, 1280, 40, 1280, 260, -1280, 260)
 
@@ -69,22 +74,27 @@ color = Color(0, 0, 0, 0.26)
 polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 720, -1280, 720)
 
 [node name="FarMist" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.23, 0.28, 0.28, 0.12)
 polygon = PackedVector2Array(-1280, 198, 1280, 176, 1280, 285, -1280, 310)
 
 [node name="FavelaBack" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.09, 0.09, 0.095, 1)
 polygon = PackedVector2Array(-1280, 210, -1150, 168, -1040, 190, -960, 155, -840, 185, -720, 145, -600, 172, -510, 150, -390, 184, -260, 146, -110, 176, 20, 150, 160, 186, 310, 142, 450, 170, 590, 134, 710, 180, 860, 146, 1000, 174, 1140, 136, 1280, 166, 1280, 310, -1280, 310)
 
 [node name="RooftopWaterTanks" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.055, 0.06, 0.062, 1)
 polygon = PackedVector2Array(-1110, 168, -1068, 168, -1068, 202, -1110, 202, -1089, 150, 470, 146, 516, 146, 516, 180, 470, 180, 493, 130, 910, 152, 955, 152, 955, 187, 910, 187, 932, 135)
 
 [node name="HousesBack" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.12, 0.105, 0.095, 1)
 polygon = PackedVector2Array(-1240, 250, -1120, 250, -1120, 190, -1010, 190, -1010, 250, -900, 250, -900, 205, -790, 205, -790, 250, -650, 250, -650, 180, -520, 180, -520, 250, -360, 250, -360, 198, -220, 198, -220, 250, -70, 250, -70, 188, 70, 188, 70, 250, 230, 250, 230, 205, 365, 205, 365, 250, 520, 250, 520, 178, 650, 178, 650, 250, 790, 250, 790, 200, 920, 200, 920, 250, 1070, 250, 1070, 185, 1210, 185, 1210, 250)
 
 [node name="HangingWiresBack" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.025, 0.026, 0.026, 1)
 polygon = PackedVector2Array(-1280, 156, -920, 184, -530, 160, -120, 188, 280, 158, 710, 184, 1280, 148, 1280, 154, 710, 190, 280, 164, -120, 194, -530, 166, -920, 190, -1280, 162)
 
@@ -239,6 +249,32 @@ horizontal_alignment = 1
 position = Vector2(690, 468)
 color = Color(0.18, 0.14, 0.1, 1)
 polygon = PackedVector2Array(-26, -8, 18, -12, 34, 0, 18, 10, -8, 12, -22, 4, -12, -2, -24, 2)
+
+[node name="PoliceCar" type="Node2D" parent="."]
+position = Vector2(520, 318)
+
+[node name="PoliceBody" type="Polygon2D" parent="PoliceCar"]
+color = Color(0.08, 0.09, 0.11, 1)
+polygon = PackedVector2Array(-90, 18, -55, -18, 20, -22, 85, 0, 95, 18)
+
+[node name="PoliceLightA" type="Polygon2D" parent="PoliceCar"]
+position = Vector2(-10, -20)
+color = Color(0.15, 0.35, 0.95, 0.9)
+polygon = PackedVector2Array(-8, -4, 8, -4, 8, 4, -8, 4)
+
+[node name="PoliceLightB" type="Polygon2D" parent="PoliceCar"]
+position = Vector2(10, -20)
+color = Color(0.9, 0.15, 0.12, 0.9)
+polygon = PackedVector2Array(-8, -4, 8, -4, 8, 4, -8, 4)
+
+[node name="NeonBarSign" type="Label" parent="WorldSigns"]
+offset_left = -780.0
+offset_top = 152.0
+offset_right = -620.0
+offset_bottom = 178.0
+theme_override_colors/font_color = Color(0.95, 0.45, 0.12, 1)
+theme_override_font_sizes/font_size = 16
+text = "CERVEJA GELADA"
 
 [node name="ClosedMarket" type="Polygon2D" parent="."]
 position = Vector2(-255, 246)

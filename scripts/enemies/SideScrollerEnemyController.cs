@@ -40,12 +40,14 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private float _attackTimeRemaining;
     private float _hitStunRemaining;
     private int _facingSign = -1;
+    private CharacterSpriteVisual? _spriteVisual;
 
     public override void _Ready()
     {
         AddToGroup("enemy");
         AddToGroup("side_enemy");
 
+        _spriteVisual = GetNodeOrNull<CharacterSpriteVisual>("SpriteVisual");
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
 
@@ -216,13 +218,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
     private void UpdateFacingVisual()
     {
-        foreach (Node child in GetChildren())
-        {
-            if (child is Polygon2D polygon && child.Name != "LaneShadow")
-            {
-                polygon.Scale = new Vector2(_facingSign, 1f);
-            }
-        }
+        _spriteVisual?.SetFacing(_facingSign);
     }
 
     private void OnDied()

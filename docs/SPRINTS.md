@@ -490,19 +490,104 @@ Validado jogando:
 - versao `Demo v1.0`, `F9`, fluxo demo e HUD simplificado aprovados;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
-Pendencias levadas para sprints futuras:
+## Sprint 12 - Fase Jogavel Vila Esperanca
 
-- capsule art, header e icones finais Steam;
-- trailer editado de verdade;
-- achievements implementados na versao comercial;
-- pagina Steam publicada.
-- tela de tutorial dedicada.
+Status: implementada / aguardando validacao no Godot.
 
-## Sprint 12 - Proxima
+Objetivo: entregar **uma fase completa e jogavel por cerca de 10 minutos**, com leitura visual proxima de `references/pillars`. Este e o gate real antes de demo publica ou Steam.
 
-Status: futura.
+Criterio de pronto:
 
-Objetivo: definir proximo marco apos demo publica (conteudo, arte final ou distribuicao).
+- jogador consegue jogar ~10 minutos sem sentir que acabou em 2 minutos;
+- cenario, personagem e inimigos parecem proximos das referencias (mesmo com placeholders);
+- fluxo claro: inicio -> exploracao/combate -> checkpoint -> escalada -> chefe -> fim;
+- tutorial fica em tela dedicada, nao espalhado no HUD;
+- clima e horario reforcam a fase, nao so existem como efeito solto.
+
+Entregas planejadas:
+
+- repacing do `SideScrollerDirector` para duracao ~10 min;
+- expansao do layout da Vila Esperanca (camadas, props, landmarks da ref `02`);
+- passada visual do Caua e inimigos comuns (ref `01`);
+- encontros variados com tempo de respiracao entre ondas;
+- mini-eventos ambientais simples (props, clima, transicao de horario);
+- tela de tutorial dedicada no menu ou antes da fase;
+- primeira rodada de balanceamento para sessao de 10 min.
+
+Fora de escopo nesta sprint:
+
+- demo publica para testers externos;
+- pagina Steam, screenshots de marketing, trailer;
+- build de distribuicao como prioridade;
+- segunda fase (Vila Santana).
+
+Entregas implementadas:
+
+- `SideScrollerDirector` repacingado para ~10 min: intro, 9 encontros, 4 respiros, 3 chefes;
+- clima e horario controlados por ato da fase (noite + chuva/tempestade progressiva);
+- criada `scenes/ui/TutorialScreen.tscn` com controles e objetivo da fase;
+- menu agora abre tutorial antes da fase (`Jogar` -> tutorial -> fase);
+- cenario ganhou carro de policia, neon do boteco e props extras;
+- inimigo comum aproximado do Quebra-Osso (regata, short roxo, bone);
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validacao pendente:
+
+- jogar sessao completa no Godot e estimar duracao (~10 min);
+- validar tutorial dedicado, pacing, checkpoint e chefes;
+- apos aprovacao, marcar sprint como concluida, commitar e fazer push.
+
+## Sprint 13 - Producao Visual Fase 1
+
+Status: implementada / aguardando validacao no Godot.
+
+Objetivo: sair do visual generico (poligonos + UI default) e comecar a parecer jogo, alinhado a `references/pillars/`, com estilo **pintura 2D + pixel aparente**.
+
+Criterio de pronto:
+
+- Caua e grunt comum usam `AnimatedSprite2D` (nao poligonos);
+- fundo da Vila Esperanca usa parallax em 3 camadas pintadas;
+- HUD com painel escuro, borda vermelha e barras custom;
+- filtro `Nearest` nos sprites para leitura pixel aparente;
+- placeholders claros mas com silhueta/paleta das refs, prontos para substituicao no Krita.
+
+Entregas implementadas:
+
+- estilo travado em `docs/VISUAL_BIBLE.md` e `docs/ART_PIPELINE.md`;
+- assets em `art/sprites/` e `art/backgrounds/vila-esperanca/`;
+- `CharacterSpriteVisual.cs` — flip, pulo, idle/walk/attack;
+- `SideScrollerPlayer.tscn` e `SideScrollerEnemyGrunt.tscn` migrados para sprites;
+- `VilaEsperancaParallax.tscn` com 3 camadas + vignette;
+- `GameUiTheme.cs` + skin aplicada no `BeatEmUpHud`;
+- poligonos de skyline antigos ocultos na fase (rua/props mantidos);
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validacao pendente:
+
+- F5 no Godot: alinhamento pes/sombra dos sprites vs colisao;
+- parallax vs camera e limites da fase;
+- legibilidade do HUD em combate;
+- comparar com refs `01`, `02`, `04`.
+
+Proximo passo apos validacao:
+
+- redesenhar sprites no Krita (resolucao alvo ~128px altura, sheet horizontal);
+- animacao de ataque/hit/morte do Caua;
+- SFX ambiente (rua/chuva) + 5-8 efeitos de combate;
+- skin nos demais inimigos e menu principal.
+
+## Marco futuro - Demo Publica / Steam
+
+Status: bloqueado ate a fase jogavel de ~10 min estar pronta.
+
+Pre-requisitos:
+
+- 1 fase com qualidade visual aceitavel vs `references/pillars`;
+- duracao real de ~10 minutos;
+- tutorial dedicado;
+- polimento minimo de bugs e pacing.
+
+Os docs de Steam/export da Sprint 11 permanecem como rascunho, nao como sprint ativa.
 
 ## Backlog Tecnico Permanente
 

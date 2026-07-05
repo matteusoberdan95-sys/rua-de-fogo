@@ -2,7 +2,7 @@ namespace SangueNoAsfalto.Ui;
 
 public partial class MainMenu : Control
 {
-    private const string DemoScenePath = "res://scenes/levels/SideScrollerPrototype.tscn";
+    private const string TutorialScenePath = "res://scenes/ui/TutorialScreen.tscn";
 
     private Label? _settingsLabel;
     private Label? _statusLabel;
@@ -52,7 +52,7 @@ public partial class MainMenu : Control
 
     private void StartDemo()
     {
-        GetTree().ChangeSceneToFile(DemoScenePath);
+        GetTree().ChangeSceneToFile(TutorialScenePath);
     }
 
     private void ClearSave()

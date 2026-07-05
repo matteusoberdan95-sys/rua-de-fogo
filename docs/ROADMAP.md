@@ -45,17 +45,16 @@ Inclui:
 
 Objetivo: uma pequena fase completa.
 
+Status: em andamento — fase ~10 min implementada; visual em transicao de poligonos para sprites pintados (Sprint 13).
+
 Inclui:
 
-- inicio da fase;
-- caminho curto;
-- encontros de combate;
-- checkpoint;
-- mini-chefe;
-- tela de morte;
-- menu inicial;
-- build Windows;
-- clima/horario usado como momento dramatico da fase.
+- repacing e duracao real de sessao;
+- cenario Vila Esperanca com parallax pintado;
+- Caua e grunt com sprites animados (placeholders Krita);
+- tutorial em tela dedicada;
+- HUD tematizado;
+- polimento minimo de pacing e bugs.
 
 ## Fase 4 - Producao
 
@@ -77,7 +76,7 @@ Inclui:
 
 Objetivo: preparar venda.
 
-Inclui:
+Status: **bloqueado** — so depois de 1 fase jogavel (~10 min) com visual aceitavel.
 
 - pagina Steam;
 - trailer;

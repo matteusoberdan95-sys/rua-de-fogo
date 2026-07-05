@@ -1,10 +1,65 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/SideScrollerPlayerController.cs" id="1_player"]
 [ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
 [ext_resource type="Script" path="res://scripts/combat/Hurtbox.cs" id="3_hurtbox"]
 [ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
 [ext_resource type="PackedScene" path="res://scenes/actors/PlayerProjectile.tscn" id="5_projectile"]
+[ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="6_sprite_visual"]
+[ext_resource type="Texture2D" path="res://art/sprites/player/caua_idle.png" id="7_idle"]
+[ext_resource type="Texture2D" path="res://art/sprites/player/caua_walk_sheet.png" id="8_walk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk0"]
+atlas = ExtResource("8_walk")
+region = Rect2(0, 0, 384, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk1"]
+atlas = ExtResource("8_walk")
+region = Rect2(384, 0, 384, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk2"]
+atlas = ExtResource("8_walk")
+region = Rect2(768, 0, 384, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk3"]
+atlas = ExtResource("8_walk")
+region = Rect2(1152, 0, 384, 1024)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_caua"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_idle")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk3")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_idle")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 14.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 18.0
@@ -26,57 +81,16 @@ position = Vector2(0, 21)
 color = Color(0, 0, 0, 0.38)
 polygon = PackedVector2Array(-24, -5, 24, -5, 31, 0, 24, 5, -24, 5, -31, 0)
 
-[node name="Legs" type="Polygon2D" parent="."]
-color = Color(0.07, 0.075, 0.085, 1)
-polygon = PackedVector2Array(-10, 2, 10, 2, 15, 29, 4, 31, 0, 12, -5, 31, -16, 29)
+[node name="SpriteVisual" type="Node2D" parent="."]
+position = Vector2(-8, -6)
+script = ExtResource("6_sprite_visual")
+DisplayScale = 0.11
 
-[node name="Torso" type="Polygon2D" parent="."]
-color = Color(0.72, 0.1, 0.06, 1)
-polygon = PackedVector2Array(-17, -24, 14, -26, 21, 6, 8, 17, -15, 13, -22, -4)
-
-[node name="JacketRim" type="Polygon2D" parent="."]
-color = Color(0.52, 0.05, 0.04, 1)
-polygon = PackedVector2Array(-18, -23, -7, -25, -2, 13, -14, 13, -23, -4, 9, -26, 19, -19, 13, 15, 5, 17)
-
-[node name="Shirt" type="Polygon2D" parent="."]
-color = Color(0.88, 0.86, 0.8, 1)
-polygon = PackedVector2Array(-8, -20, 7, -21, 10, 10, -6, 10)
-
-[node name="Scarf" type="Polygon2D" parent="."]
-color = Color(0.62, 0.025, 0.035, 1)
-polygon = PackedVector2Array(-13, -25, 18, -20, 26, -10, 6, -14, -11, -12, 18, -8, 24, 8, 8, 12, -8, 8)
-
-[node name="Head" type="Polygon2D" parent="."]
-position = Vector2(0, -38)
-color = Color(0.42, 0.24, 0.15, 1)
-polygon = PackedVector2Array(-10, -11, 8, -12, 13, 0, 6, 12, -8, 10, -14, -2)
-
-[node name="Hair" type="Polygon2D" parent="Head"]
-color = Color(0.035, 0.028, 0.025, 1)
-polygon = PackedVector2Array(-11, -12, 8, -13, 15, -4, 2, -2, -3, 5, -16, -1)
-
-[node name="FaceBandage" type="Polygon2D" parent="Head"]
-color = Color(0.82, 0.76, 0.62, 0.92)
-polygon = PackedVector2Array(-12, -2, 10, -4, 12, 1, -10, 4)
-
-[node name="ArmBack" type="Polygon2D" parent="."]
-position = Vector2(-15, -7)
-color = Color(0.32, 0.18, 0.12, 1)
-polygon = PackedVector2Array(-6, -14, 6, -12, 4, 14, -8, 18)
-
-[node name="ArmBlade" type="Polygon2D" parent="."]
-position = Vector2(15, -9)
-color = Color(0.33, 0.19, 0.13, 1)
-polygon = PackedVector2Array(-5, -12, 8, -10, 26, 6, 14, 13)
-
-[node name="Blade" type="Polygon2D" parent="."]
-position = Vector2(25, -7)
-color = Color(0.86, 0.82, 0.66, 1)
-polygon = PackedVector2Array(0, -6, 55, -4, 64, 0, 55, 5, 0, 6)
-
-[node name="BladeBlood" type="Polygon2D" parent="Blade"]
-color = Color(0.55, 0.015, 0.02, 0.88)
-polygon = PackedVector2Array(24, -4, 43, -3, 35, 4, 18, 5)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteVisual"]
+texture_filter = 0
+position = Vector2(0, -52)
+sprite_frames = SubResource("SpriteFrames_caua")
+animation = &"idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
@@ -93,7 +107,6 @@ collision_mask = 8
 script = ExtResource("3_hurtbox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, 0)
 shape = SubResource("CircleShape2D_hurt")
 
 [node name="AttackArea" type="Area2D" parent="."]

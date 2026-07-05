@@ -14,7 +14,9 @@
 
 - `references/`: moodboards, prints e estudos visuais.
 - `art/concepts/`: concept art e exploracoes.
-- `art/sprites/`: personagens, inimigos, projeteis e efeitos.
+- `art/sprites/player/`: Cauã — idle, walk sheet, attack (Krita)
+- `art/sprites/enemies/`: grunt e variantes
+- `art/backgrounds/vila-esperanca/`: camadas parallax (far, mid, near)
 - `art/tiles/`: chao, parede, props e tilesets.
 - `art/ui/`: HUD, icones e menus.
 - `audio/sfx/`: efeitos sonoros.
@@ -37,6 +39,8 @@ Board inicial sugerido:
 - paletas de vermelho, amarelo, concreto e preto.
 
 ## Krita
+
+**Ferramenta principal para este projeto** (estilo pintura 2D + pixel aparente).
 
 Melhor para:
 

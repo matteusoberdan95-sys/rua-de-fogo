@@ -139,3 +139,23 @@
 - [x] Validar Sprint 11 no Godot com `F5`.
 - [x] HUD simplificado (HP, stamina, XP, arma, habilidades).
 - [x] Fechar sprint, commitar e fazer push apos validacao.
+
+## Marco 0.12 - Fase Jogavel Vila Esperanca
+
+- [x] Repacing da fase para ~10 minutos.
+- [x] Tutorial dedicado no menu.
+- [x] Clima/horario por ato da fase.
+- [x] Visual reforcado (boteco, policia, inimigo Quebra-Osso).
+- [ ] Validar Sprint 12 no Godot (~10 min de sessao).
+- [ ] Fechar sprint apos validacao.
+
+## Marco 0.13 - Producao Visual Fase 1
+
+- [x] Estilo travado: pintura 2D + pixel aparente.
+- [x] Caua e grunt com AnimatedSprite2D.
+- [x] Parallax Vila Esperanca (3 camadas).
+- [x] HUD tematizado (GameUiTheme).
+- [x] Pipeline de arte documentado em `art/README.md`.
+- [ ] Validar Sprint 13 no Godot (sprites, parallax, HUD vs refs).
+- [ ] Substituir placeholders por arte Krita.
+- [ ] Fechar sprint apos validacao.

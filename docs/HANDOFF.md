@@ -66,7 +66,9 @@ No Godot:
 - `scenes/actors/EnemyGrunt.tscn`: inimigo comum.
 - `scenes/actors/SideScrollerPlayer.tscn`: jogador lateral.
 - `scenes/actors/SideScrollerEnemyGrunt.tscn`: inimigo lateral.
-- `scenes/actors/PlayerProjectile.tscn`: tiro do jogador.
+- `scenes/ui/MainMenu.tscn`: menu inicial (cena principal do `F5`).
+- `scenes/ui/TutorialScreen.tscn`: tutorial dedicado antes da fase.
+- `scenes/world/VilaEsperancaParallax.tscn`: fundo parallax pintado (3 camadas).
 
 ## Cena Principal Atual
 
@@ -76,7 +78,7 @@ Cena que roda com `F5`:
 scenes/ui/MainMenu.tscn
 ```
 
-A demo carrega `scenes/levels/SideScrollerPrototype.tscn` a partir do menu.
+A demo carrega `scenes/ui/TutorialScreen.tscn` a partir do menu (`Jogar`), e depois `scenes/levels/SideScrollerPrototype.tscn`.
 
 Objetivo:
 
@@ -210,11 +212,33 @@ Estado da Sprint 11:
 - validada no Godot com `F5` e aprovada;
 - HUD simplificado: HP, stamina, XP/nivel, arma e habilidades; tutorial in-game removido.
 
+Estado da Sprint 12:
+
+- `SideScrollerDirector` repacingado para ~10 min (intro, 9 encontros, 4 respiros, 3 chefes);
+- clima e horario controlados por ato da fase (`AutoCycle = false`);
+- `scenes/ui/TutorialScreen.tscn` + fluxo menu -> tutorial -> fase;
+- cenario: carro policia, neon boteco, inimigo estilo Quebra-Osso;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
+- aguardando validacao no Godot (~10 min de sessao).
+
+Estado da Sprint 13:
+
+- estilo travado: pintura 2D + pixel aparente (Krita, filtro Nearest no Godot);
+- assets em `art/sprites/` e `art/backgrounds/vila-esperanca/` (placeholders);
+- `scripts/visual/CharacterSpriteVisual.cs` — animacao, flip e pulo;
+- `SideScrollerPlayer.tscn` e `SideScrollerEnemyGrunt.tscn` migrados para `AnimatedSprite2D`;
+- `VilaEsperancaParallax.tscn` com 3 camadas + vignette;
+- `scripts/ui/GameUiTheme.cs` + skin no `BeatEmUpHud`;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
+- aguardando validacao no Godot (sprites, parallax, HUD vs refs).
+
 Proximo passo recomendado:
 
-1. exportar build Windows e passar `docs/QC_DEMO_CHECKLIST.md`;
-2. capturar screenshots com `docs/SCREENSHOTS_STEAM.md`;
-3. planejar Sprint 12 (tutorial dedicado, conteudo ou arte final).
+1. validar Sprints 12 e 13 no Godot com `F5`;
+2. ajustar escala/alinhamento dos sprites se necessario;
+3. redesenhar placeholders no Krita (mesmos nomes de arquivo);
+4. apos aprovacao, marcar sprints como concluidas;
+5. proxima sprint: animacoes hit/morte, SFX ambiente, skin nos demais inimigos e menu.
 
 ## Regra Obrigatoria De Sprint
 
@@ -269,7 +293,7 @@ A fonte da verdade deve ser:
 
 ## Git
 
-O projeto deve ser mantido em Git para permitir continuidade entre maquinas.
+Remoto: `https://github.com/matteusoberdan95-sys/rua-de-fogo.git` (branch `main`).
 
 Rotina recomendada:
 
@@ -277,9 +301,8 @@ Rotina recomendada:
 git status
 git add .
 git commit -m "Describe the sprint change"
+git push origin main
 ```
-
-Ainda falta conectar este repositorio local a um remoto, por exemplo GitHub, GitLab, Azure DevOps ou outro repositorio privado.
 
 Nao commitar:
 

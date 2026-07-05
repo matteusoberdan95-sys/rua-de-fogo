@@ -95,7 +95,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private readonly KeyPressLatch _dashLatch = new(Key.K);
     private readonly KeyPressLatch _jumpLatch = new(Key.Space);
     private readonly KeyPressLatch _shootLatch = new(Key.L);
-    private readonly Dictionary<Polygon2D, Vector2> _jumpVisualOrigins = [];
+    private CharacterSpriteVisual? _spriteVisual;
     private Hitbox? _attackArea;
     private CollisionShape2D? _attackCollision;
     private Health? _health;
@@ -118,8 +118,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         AddToGroup("side_player");
         CurrentStamina = MaxStamina;
         ApplySavedState();
-        CaptureJumpVisuals();
 
+        _spriteVisual = GetNodeOrNull<CharacterSpriteVisual>("SpriteVisual");
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
 
@@ -159,6 +159,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         UpdateAttackArc();
         UpdateFacingVisual();
         UpdateJumpVisual();
+        UpdateLocomotionVisual();
         UpdateInvulnerabilityVisual();
 
         if (TickHitStun(dt))
@@ -576,18 +577,6 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
     }
 
-    private void CaptureJumpVisuals()
-    {
-        _jumpVisualOrigins.Clear();
-        foreach (Node child in GetChildren())
-        {
-            if (child is Polygon2D polygon && child.Name != "LaneShadow")
-            {
-                _jumpVisualOrigins[polygon] = polygon.Position;
-            }
-        }
-    }
-
     private void UpdateJumpVisual()
     {
         float heightOffset = 0f;
@@ -597,10 +586,21 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             heightOffset = Mathf.Sin(progress * Mathf.Pi) * JumpHeight;
         }
 
-        foreach ((Polygon2D polygon, Vector2 origin) in _jumpVisualOrigins)
+        _spriteVisual?.SetJumpOffset(heightOffset);
+    }
+
+    private void UpdateLocomotionVisual()
+    {
+        if (_spriteVisual is null)
         {
-            polygon.Position = origin + new Vector2(0f, -heightOffset);
+            return;
         }
+
+        bool moving = Velocity.LengthSquared() > 900f
+            && _dashTimeRemaining <= 0f
+            && _hitStunRemaining <= 0f
+            && _jumpTimeRemaining <= 0f;
+        _spriteVisual.UpdateLocomotion(moving, _attackTimeRemaining > 0f, _dashTimeRemaining > 0f);
     }
 
     private void ApplySavedState()
@@ -630,13 +630,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void UpdateFacingVisual()
     {
-        foreach (Node child in GetChildren())
-        {
-            if (child is Polygon2D polygon && child.Name != "LaneShadow")
-            {
-                polygon.Scale = new Vector2(FacingSign, 1f);
-            }
-        }
+        _spriteVisual?.SetFacing(FacingSign);
     }
 
     private void UpdateInvulnerabilityVisual()

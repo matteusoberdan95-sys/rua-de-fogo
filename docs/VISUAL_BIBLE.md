@@ -12,6 +12,8 @@ Um suburbio brasileiro em noite de apagao, onde postes amarelos, asfalto molhado
 
 ## Estilo
 
+**Decisao travada (Sprint 13):** pintura 2D com pixel aparente — brush visivel, silhuetas fortes, export PNG do Krita com filtro `Nearest` no Godot. Nao e pixel art pura de grid fixo.
+
 - 2D com camera lateral/2.5D em estilo beat 'em up para a direcao final.
 - O prototipo top-down atual fica como laboratorio de combate, IA e sistemas.
 - Pixel art de alta resolucao ou pintura 2D com pixels aparentes.

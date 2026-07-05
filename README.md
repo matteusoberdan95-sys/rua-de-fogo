@@ -44,7 +44,13 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: proxima sprint a definir (Sprint 12).
+Sprint atual: `Sprint 13 - Producao Visual Fase 1` (aguardando validacao).
+
+Estamos em **prototipo alpha**. Meta atual: **fase jogavel de ~10 minutos** na Vila Esperanca, com visual proximo de `references/pillars` (pintura 2D + pixel aparente). Demo publica e Steam ficam bloqueadas ate la.
+
+A Sprint 12 esta implementada: fase repacingada (~10 min), tutorial dedicado, clima por ato e props da Vila Esperanca.
+
+A Sprint 13 esta implementada: Caua e grunt com `AnimatedSprite2D`, parallax pintado em 3 camadas, HUD tematizado e estilo visual travado no Krita/pixel aparente. Assets placeholder em `art/` prontos para substituicao.
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -72,11 +78,14 @@ Toda sprint so pode ser marcada como concluida depois de build C# sem erros, val
 
 ## Proximo passo recomendado
 
-Com a Sprint 11 concluida, o recomendado e:
+Na outra maquina, validar Sprints 12 e 13 no Godot com `F5`:
 
-- exportar build Windows com `scripts/build-demo.ps1` ou pelo editor;
-- capturar screenshots seguindo `docs/SCREENSHOTS_STEAM.md`;
-- planejar Sprint 12 (tutorial dedicado, arte final ou nova fase).
+- menu -> tutorial -> fase;
+- jogar sessao completa e checar duracao (~10 min);
+- conferir alinhamento sprites/colisao, parallax, HUD e comparacao com `references/pillars/` (`01`, `02`, `04`);
+- substituir placeholders em `art/` por sprites finais no Krita quando o pipeline estiver ok.
+
+**So depois disso** voltamos a falar de demo publica ou Steam.
 
 ## Documentos importantes
 

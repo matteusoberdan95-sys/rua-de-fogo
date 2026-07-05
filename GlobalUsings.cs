@@ -19,4 +19,5 @@ global using SangueNoAsfalto.Player;
 
 // Presentation / world layers
 global using SangueNoAsfalto.Ui;
+global using SangueNoAsfalto.Visual;
 global using SangueNoAsfalto.World;
