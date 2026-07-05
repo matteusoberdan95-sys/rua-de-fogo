@@ -375,7 +375,7 @@ Validado jogando:
 
 ## Sprint 09 - Demo Publica
 
-Status: proxima / pronta para iniciar.
+Status: concluida.
 
 Objetivo: preparar uma demo jogavel para feedback externo.
 
@@ -389,9 +389,33 @@ Entregas planejadas:
 - trailer curto interno;
 - pacote para testers.
 
+Entregas implementadas:
+
+- criada cena `scenes/ui/MainMenu.tscn` como cena principal da aplicacao;
+- criado `scripts/ui/MainMenu.cs` com iniciar demo, limpar save, alternar controles e sair fora do editor;
+- menu mostra painel simples de configuracoes, controles, checkpoint salvo e atalhos `F1`, `F2`, `F4`;
+- HUD da vertical slice ganhou tutorial discreto por etapa sem pausar o jogo;
+- overlays de morte e fim da demo mostram instrucoes claras de `R` para tentar de novo e `M` para voltar ao menu;
+- `SideScrollerDirector` agora permite voltar ao menu nos estados finais com `M`;
+- adicionado `export_presets.cfg` com preset inicial `Windows Desktop`;
+- criado `docs/BUILD_WINDOWS.md` com passos de export pelo editor e pelo CLI;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- menu inicial, iniciar demo, limpar save, alternar controles, tutorial, morte, vitoria, `R` e `M` aprovados;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Pendencias levadas para sprints futuras:
+
+- trailer curto interno;
+- pacote final para testers;
+- aproximar arte/HUD do visual das referencias em `references/pillars`.
+
 ## Sprint 10 - Producao Steam
 
-Status: futura.
+Status: proxima / pronta para iniciar.
 
 Objetivo: transformar a demo em produto comercial.
 

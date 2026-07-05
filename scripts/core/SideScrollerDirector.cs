@@ -2,6 +2,8 @@ namespace SangueNoAsfalto.Core;
 
 public partial class SideScrollerDirector : Node
 {
+    private const string MainMenuScenePath = "res://scenes/ui/MainMenu.tscn";
+
     private enum Phase
     {
         EncounterOne,
@@ -100,6 +102,13 @@ public partial class SideScrollerDirector : Node
 
     public override void _Process(double delta)
     {
+        if ((_gameOver || _completed) && Input.IsKeyPressed(Key.M))
+        {
+            _resumePhase = Phase.EncounterOne;
+            GetTree().ChangeSceneToFile(MainMenuScenePath);
+            return;
+        }
+
         if (Input.IsActionJustPressed("restart") || Input.IsKeyPressed(Key.R))
         {
             ReloadRun();

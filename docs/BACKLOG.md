@@ -29,10 +29,10 @@
 ## Marco 0.3 - Vertical Slice Pequeno
 
 - [x] Uma fase curta com inicio, combate, checkpoint e mini-chefe.
-- [ ] Menu inicial.
+- [x] Menu inicial.
 - [x] Save local.
 - [x] Tela de morte.
-- [ ] Build Windows.
+- [x] Build Windows.
 
 ## Marco 0.3 - Progresso Atual
 
@@ -101,4 +101,16 @@
 - [ ] Trilha e efeitos temporarios.
 - [x] Primeira rodada de balanceamento.
 - [x] Validar Sprint 08 no Godot com `F5`.
+- [x] Fechar sprint, commitar e fazer push apos validacao.
+
+## Marco 0.9 - Demo Publica
+
+- [x] Menu inicial como cena principal.
+- [x] Tutorial discreto dentro da vertical slice.
+- [x] Overlay claro de morte.
+- [x] Overlay claro de fim da demo.
+- [x] Painel simples de controles/configuracoes no menu.
+- [x] Preset inicial de export Windows.
+- [x] Documentacao de build Windows.
+- [x] Validar Sprint 09 no Godot com `F5`.
 - [x] Fechar sprint, commitar e fazer push apos validacao.

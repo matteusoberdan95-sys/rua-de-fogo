@@ -117,6 +117,24 @@ Limites atuais:
 - chefe alpha e placeholder para ritmo/fim de fase, nao boss final definitivo;
 - Sprint 08 ainda usa uma unica cena principal.
 
+## Sprint 09 - Demo Publica
+
+Arquivos principais:
+
+- `scenes/ui/MainMenu.tscn`: cena principal da demo publica, com iniciar demo, limpar save, alternar controles e sair.
+- `scripts/ui/MainMenu.cs`: comportamento do menu e integracao com `SaveManager`/`InputBootstrap`.
+- `scripts/ui/BeatEmUpHud.cs`: tutorial discreto por etapa e overlays de morte/fim da demo.
+- `scripts/core/SideScrollerDirector.cs`: retorno ao menu com `M` nos estados finais.
+- `export_presets.cfg`: preset inicial `Windows Desktop`.
+- `docs/BUILD_WINDOWS.md`: guia de export Windows.
+
+Fluxo atual:
+
+- `project.godot` inicia em `res://scenes/ui/MainMenu.tscn`;
+- o menu carrega `res://scenes/levels/SideScrollerPrototype.tscn`;
+- a vertical slice continua sendo a fase unica da demo publica;
+- configuracoes persistentes continuam centralizadas no save local.
+
 ## Observacao Sobre C#
 
 O arquivo `.csproj` usa `Godot.NET.Sdk/4.4.1` como ponto de partida. Caso a versao instalada do Godot .NET seja outra, o editor pode atualizar esse valor automaticamente.

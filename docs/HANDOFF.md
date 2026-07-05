@@ -73,8 +73,10 @@ No Godot:
 Cena que roda com `F5`:
 
 ```text
-scenes/levels/SideScrollerPrototype.tscn
+scenes/ui/MainMenu.tscn
 ```
+
+A demo carrega `scenes/levels/SideScrollerPrototype.tscn` a partir do menu.
 
 Objetivo:
 
@@ -174,11 +176,24 @@ Estado da Sprint 08:
 - validada no Godot com `F5` e aprovada;
 - `Espaco` ajustado para pulo visual do jogador.
 
+Estado da Sprint 09:
+
+- `scenes/ui/MainMenu.tscn` foi criada e virou a cena principal em `project.godot`;
+- `scripts/ui/MainMenu.cs` controla iniciar demo, limpar save, alternar controles e sair fora do editor;
+- menu mostra painel simples de configuracoes com modo de controle, checkpoint salvo e atalhos;
+- `BeatEmUpHud` agora mostra tutorial discreto por etapa sem pausar o jogo;
+- HUD ganhou overlay central para morte e fim da demo;
+- `SideScrollerDirector` permite voltar ao menu com `M` quando o jogador morre ou termina a demo;
+- `export_presets.cfg` adiciona preset inicial `Windows Desktop`;
+- `docs/BUILD_WINDOWS.md` documenta export pelo editor e pelo CLI;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
+- validada no Godot com `F5` e aprovada.
+
 Proximo passo recomendado:
 
-1. commitar e fazer push da Sprint 08;
-2. iniciar planejamento da `Sprint 09 - Demo Publica`;
-3. preparar tutorial discreto, menu inicial, configuracoes basicas e build Windows;
+1. iniciar planejamento da `Sprint 10 - Producao Steam`;
+2. usar `references/pillars` como alvo visual para screenshots, HUD e arte;
+3. exportar build demo Windows com `docs/BUILD_WINDOWS.md`;
 4. manter a regra obrigatoria de build, Godot, docs, commit e push.
 
 ## Regra Obrigatoria De Sprint

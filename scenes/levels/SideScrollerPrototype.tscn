@@ -480,3 +480,41 @@ text = "W/S: trocar lane  A/D: andar  J: combo  L: tiro  K/Espaco: esquiva  R: r
 [node name="DebugLabel" type="Label" parent="Hud/Panel/VBoxContainer"]
 layout_mode = 2
 text = "Lane: 405  Input: 0.0, 0.0"
+
+[node name="TutorialPanel" type="PanelContainer" parent="Hud"]
+offset_left = 290.0
+offset_top = 632.0
+offset_right = 990.0
+offset_bottom = 700.0
+
+[node name="TutorialLabel" type="Label" parent="Hud/TutorialPanel"]
+layout_mode = 2
+text = "Tutorial: A/D anda, W/S troca a profundidade da rua. J ataca e L dispara."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="CenterOverlay" type="PanelContainer" parent="Hud"]
+visible = false
+offset_left = 384.0
+offset_top = 238.0
+offset_right = 896.0
+offset_bottom = 482.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hud/CenterOverlay"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="OverlayTitle" type="Label" parent="Hud/CenterOverlay/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Fim da demo"
+horizontal_alignment = 1
+
+[node name="OverlayBody" type="Label" parent="Hud/CenterOverlay/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "R: jogar de novo\nM: voltar ao menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

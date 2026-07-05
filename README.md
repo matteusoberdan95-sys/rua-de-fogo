@@ -7,7 +7,7 @@ Prototipo inicial de um beat 'em up/hack and slash dark fantasy em cenario subur
 1. Instale a versao `.NET` do Godot 4.
 2. Abra esta pasta pelo Godot.
 3. Se o editor pedir para atualizar a versao do `Godot.NET.Sdk`, aceite ou ajuste o arquivo `SangueNoAsfalto.csproj` para a versao do seu editor.
-4. Execute com `F5`. A cena principal atual e `res://scenes/levels/SideScrollerPrototype.tscn`.
+4. Execute com `F5`. A cena principal atual e `res://scenes/ui/MainMenu.tscn`.
 
 ## Controles
 
@@ -18,6 +18,10 @@ Prototipo inicial de um beat 'em up/hack and slash dark fantasy em cenario subur
 - `K`: esquivar
 - `Espaco`: pular
 - `R`: reiniciar a arena
+- `M`: voltar ao menu nos estados de morte/vitoria
+- `F1`: alternar HUD debug
+- `F2`: alternar controles alternativos
+- `F4`: limpar save durante a demo
 
 ## Primeiro marco
 
@@ -39,9 +43,9 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 09 - Demo Publica`.
+Sprint atual: `Sprint 10 - Producao Steam`.
 
-O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
+O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
 A Sprint 04 foi validada jogando e adicionou uma primeira passada de identidade visual na rua: asfalto molhado, reflexos, rachaduras, luzes de poste desenhadas, boteco/mercadinho fechado, pichacoes, fios, props urbanos, altar de rua e silhuetas melhores para protagonista e inimigo comum.
 
@@ -55,19 +59,20 @@ A Sprint 08 foi validada jogando e expandiu o conteudo alpha com inimigo rapido,
 
 O controle atual usa `Espaco` para pulo visual do personagem e `K` para esquiva.
 
+A Sprint 09 foi validada jogando e adiciona menu inicial como cena principal, tutorial discreto no HUD, overlays melhores de morte/vitoria, painel simples de configuracoes/controles no menu e preset inicial de export Windows.
+
 ## Regra obrigatoria de sprint
 
 Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
 
 ## Proximo passo recomendado
 
-Com a Sprint 08 concluida, o recomendado e planejar a Sprint 09:
+Com a Sprint 09 concluida, o recomendado e planejar a Sprint 10:
 
-- preparar uma demo publica pequena;
-- adicionar tutorial discreto;
-- criar menu inicial simples;
-- preparar tela/configuracoes basicas;
-- planejar build Windows.
+- preparar pagina/material Steam;
+- capturar screenshots alinhadas com `references/pillars`;
+- exportar build demo Windows;
+- definir escopo comercial minimo sem quebrar a vertical slice.
 
 ## Documentos importantes
 
@@ -79,4 +84,5 @@ Com a Sprint 08 concluida, o recomendado e planejar a Sprint 09:
 - `docs/ROADMAP.md`: fases do projeto.
 - `docs/SPRINTS.md`: planejamento das sprints e sprint atual.
 - `docs/HANDOFF.md`: como continuar em Codex, CLI ou outro PC.
+- `docs/BUILD_WINDOWS.md`: passo de exportacao Windows.
 - `docs/AGENTS.md`: responsabilidades dos agentes.

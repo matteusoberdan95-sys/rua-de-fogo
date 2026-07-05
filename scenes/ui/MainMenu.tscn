@@ -1,0 +1,96 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/MainMenu.cs" id="1_menu"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0352941, 0.0235294, 0.027451, 1)
+
+[node name="Accent" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 560.0
+offset_bottom = 720.0
+grow_horizontal = 2
+color = Color(0.266667, 0.0352941, 0.027451, 0.78)
+
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -265.0
+offset_right = 310.0
+offset_bottom = 265.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="Root"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 54
+text = "SANGUE NO ASFALTO"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Root"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Demo publica - vertical slice alpha"
+horizontal_alignment = 1
+
+[node name="MenuButtons" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StartButton" type="Button" parent="Root/MenuButtons"]
+layout_mode = 2
+text = "Iniciar demo  (Enter)"
+
+[node name="ClearSaveButton" type="Button" parent="Root/MenuButtons"]
+layout_mode = 2
+text = "Limpar save  (C)"
+
+[node name="ToggleControlsButton" type="Button" parent="Root/MenuButtons"]
+layout_mode = 2
+text = "Alternar controles  (F2)"
+
+[node name="QuitButton" type="Button" parent="Root/MenuButtons"]
+layout_mode = 2
+text = "Sair  (Esc)"
+
+[node name="SettingsPanel" type="PanelContainer" parent="Root"]
+layout_mode = 2
+
+[node name="SettingsText" type="Label" parent="Root/SettingsPanel"]
+layout_mode = 2
+text = "Configuracoes"
+horizontal_alignment = 1
+
+[node name="ControlsText" type="Label" parent="Root"]
+layout_mode = 2
+text = "Movimento: A/D + W/S | Ataque: J | Tiro: L | Esquiva: K | Pulo: Espaco | Reiniciar: R"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Root"]
+layout_mode = 2
+text = "Pressione Enter para jogar."
+horizontal_alignment = 1

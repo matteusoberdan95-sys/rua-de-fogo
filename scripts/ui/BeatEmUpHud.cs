@@ -8,6 +8,10 @@ public partial class BeatEmUpHud : CanvasLayer
     private Label? _statusLabel;
     private Label? _controlsLabel;
     private Label? _debugLabel;
+    private Label? _tutorialLabel;
+    private PanelContainer? _centerOverlay;
+    private Label? _overlayTitleLabel;
+    private Label? _overlayBodyLabel;
     private SideScrollerPlayerController? _player;
     private SideScrollerDirector? _director;
 
@@ -19,6 +23,10 @@ public partial class BeatEmUpHud : CanvasLayer
         _statusLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/StatusLabel");
         _controlsLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/ControlsLabel");
         _debugLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/DebugLabel");
+        _tutorialLabel = GetNodeOrNull<Label>("TutorialPanel/TutorialLabel");
+        _centerOverlay = GetNodeOrNull<PanelContainer>("CenterOverlay");
+        _overlayTitleLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayTitle");
+        _overlayBodyLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayBody");
         _player = GetTree().GetFirstNodeInGroup("side_player") as SideScrollerPlayerController;
         _director = GetTree().GetFirstNodeInGroup("side_director") as SideScrollerDirector;
 
@@ -73,6 +81,9 @@ public partial class BeatEmUpHud : CanvasLayer
             {
                 _controlsLabel.Text = GetControlsText();
             }
+
+            UpdateTutorialText();
+            UpdateCenterOverlay();
         }
     }
 
@@ -88,12 +99,12 @@ public partial class BeatEmUpHud : CanvasLayer
     {
         if (_director?.IsCompleted == true)
         {
-            return "Vitoria alcancada. R: jogar de novo";
+            return "Fim da demo. R: jogar de novo  M: menu";
         }
 
         if (_director?.IsGameOver == true)
         {
-            return _director.HasCheckpoint ? "R: voltar ao checkpoint" : "R: voltar ao inicio";
+            return _director.HasCheckpoint ? "R: voltar ao checkpoint  M: menu" : "R: voltar ao inicio  M: menu";
         }
 
         if (_director?.AlternateControls == true)
@@ -102,5 +113,53 @@ public partial class BeatEmUpHud : CanvasLayer
         }
 
         return "W/S: lane  A/D: andar  J: combo  L: tiro  K: esquiva  Espaco: pulo  F1 HUD  F2 alt  F4 limpar save";
+    }
+
+    private void UpdateTutorialText()
+    {
+        if (_tutorialLabel is null || _director is null)
+        {
+            return;
+        }
+
+        _tutorialLabel.Visible = !_director.IsGameOver && !_director.IsCompleted;
+        _tutorialLabel.Text = _director.WaveNumber switch
+        {
+            1 when _director.ObjectiveText.Contains("altar", StringComparison.OrdinalIgnoreCase) =>
+                "Tutorial: checkpoint ativado no altar. Se cair depois daqui, R volta para este trecho.",
+            1 => "Tutorial: A/D anda, W/S troca a profundidade da rua. J ataca e L dispara.",
+            2 => "Tutorial: corredores fecham rapido. Use K para esquivar e Espaco para pular por cima do caos.",
+            3 => "Tutorial: brutos aguentam mais dano. Use tiro, combo e arma improvisada se tiver pego.",
+            4 => "Tutorial: chefes mostram o ataque antes de bater. Saia da lane ou use esquiva.",
+            5 => "Tutorial: chuva e infectados punem erro de posicionamento. Mantenha distancia curta.",
+            6 => "Tutorial: chefe alpha da demo. Guarde stamina para esquivar dos golpes pesados.",
+            _ => "Tutorial: pickups de cura, arma e continue aparecem pela rua. Pegue passando por cima."
+        };
+    }
+
+    private void UpdateCenterOverlay()
+    {
+        if (_centerOverlay is null || _overlayTitleLabel is null || _overlayBodyLabel is null || _director is null)
+        {
+            return;
+        }
+
+        _centerOverlay.Visible = _director.IsGameOver || _director.IsCompleted;
+        if (!_centerOverlay.Visible)
+        {
+            return;
+        }
+
+        if (_director.IsCompleted)
+        {
+            _overlayTitleLabel.Text = "Fim da demo";
+            _overlayBodyLabel.Text = "Voce limpou este trecho da Vila Esperanca.\nR: jogar de novo\nM: voltar ao menu";
+            return;
+        }
+
+        _overlayTitleLabel.Text = "Voce caiu no asfalto";
+        _overlayBodyLabel.Text = _director.HasCheckpoint
+            ? "R: voltar ao checkpoint\nM: voltar ao menu"
+            : "R: tentar desde o inicio\nM: voltar ao menu";
     }
 }
