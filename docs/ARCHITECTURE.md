@@ -174,7 +174,23 @@ Arquivos principais:
 
 - `tools/normalize-sprites.ps1`: gera sprites `_game.png` com alpha e frame padronizado.
 - `scripts/visual/CharacterSpriteVisual.cs`: controla escala, flip, pulo, locomocao e flash visual.
-- `scenes/actors/SideScrollerPlayer.tscn`: usa `caua_idle_game.png` e `caua_walk_sheet_game.png`.
+- `scenes/actors/SideScrollerPlayer.tscn`: pode usar sprites normalizados ou rig em camadas.
 - `scenes/actors/SideScrollerEnemyGrunt.tscn`: usa `grunt_idle_game.png` e `SourceFacesRight = false`.
 
 Regra: referencias em `references/` nao devem ser ligadas direto ao jogo. Primeiro precisam virar assets em `art/` com transparencia, escala e pivot corretos.
+
+## Sprint 15 - Personagem Vivo
+
+Arquivos principais:
+
+- `scripts/visual/CharacterSpriteVisual.cs`: agora possui `UseLayeredPrototype`.
+- `scenes/actors/SideScrollerPlayer.tscn`: ativa `UseLayeredPrototype = true` no `SpriteVisual`.
+
+Fluxo:
+
+- inimigos podem continuar usando `AnimatedSprite2D`;
+- Caua usa rig em camadas enquanto nao existe sprite sheet final limpa;
+- o contrato publico do controller nao muda: `SetFacing`, `SetJumpOffset`, `UpdateLocomotion`, `Play` e `PlayHitFlash`;
+- quando a sprite sheet final existir, basta desativar `UseLayeredPrototype`, apontar `AnimatedSprite2D` para a nova `SpriteFrames` e preservar o controller.
+
+Objetivo tecnico: separar a logica de gameplay da apresentacao do personagem, permitindo trocar prototipo visual por arte final sem reescrever combate/movimento.

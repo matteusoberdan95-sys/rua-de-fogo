@@ -119,6 +119,13 @@ Pilar atual:
 
 Direcao:
 
+- Caua nao pode parecer uma imagem colada ou recorte de concept sheet.
+- Idle precisa mostrar respiracao, cansaco, tensao e algum micro movimento no cabelo/roupa.
+- Caminhada precisa ter peso, ombro e arma atrasando o corpo.
+- Golpes precisam ter antecipacao, impacto e follow-through.
+- Low health deve mudar postura, nao apenas barra de vida.
+- Sangue/machucados devem reforcar drama sem destruir leitura da silhueta.
+
 - nao parecer cavaleiro medieval;
 - nao parecer anime famoso;
 - nao parecer soldado tatico;

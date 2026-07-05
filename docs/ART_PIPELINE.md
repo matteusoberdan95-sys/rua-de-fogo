@@ -124,3 +124,44 @@ Na Sprint 14 esse script recorta o Caua da primeira prancha em `references/perso
 - `art/sprites/player/caua_ref_attack.png`
 
 Esses arquivos sao placeholders de integracao. A arte final comercial deve ser redesenhada/exportada como sprite sheet limpa, transparente e sem textos/grades da prancha.
+
+## Contrato Do Caua Final
+
+O recorte de prancha nao e arte final. A Sprint 15 adicionou um rig em camadas para provar vida no personagem, mas a versao comercial do Caua precisa ser uma sprite sheet limpa.
+
+Estados minimos:
+
+- `idle`: 6 a 8 frames, respiracao visivel, cabelo/roupa com micro movimento;
+- `walk`: 8 frames, peso nos passos, arma com atraso leve;
+- `attack_1`: golpe rapido;
+- `attack_2`: golpe medio, mais aberto;
+- `attack_3`: golpe pesado com antecipacao e follow-through;
+- `hurt`: 2 a 4 frames;
+- `dodge`: 4 a 6 frames;
+- `jump`: 4 a 6 frames ou pose unica com squash/stretch por codigo;
+- `low_health`: idle cansado/machucado;
+- `death`: queda/execucao curta.
+
+Padrao tecnico:
+
+- PNG transparente;
+- sem texto, grade, moldura ou fundo;
+- pivot sempre nos pes;
+- personagem cabendo no frame `384x1024` enquanto estivermos nesse prototipo;
+- todos os frames alinhados pelo chao;
+- filtro `Nearest` no Godot;
+- uma sheet por familia quando ficar grande: `caua_idle_walk.png`, `caua_combat.png`, `caua_damage.png`.
+
+Camadas recomendadas no Krita/Aseprite:
+
+- corpo/base;
+- camisa/jaqueta;
+- cabeca;
+- cabelo;
+- bracos;
+- pernas;
+- arma;
+- sangue/machucados;
+- sombra separada ou controlada no Godot.
+
+O rig `UseLayeredPrototype` em `CharacterSpriteVisual` serve como guia de movimento: respiracao, cabelo, torso, bracos, pernas e faca devem continuar existindo visualmente quando a sprite sheet final substituir o prototipo.

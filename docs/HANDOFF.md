@@ -234,12 +234,11 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. validar a Sprint 14 no Godot com `F5`;
-2. confirmar que os sprites `_game` removeram o fundo preto;
-3. confirmar que idle/walk/attack do Caua agora parecem o mesmo personagem usando `caua_ref_*`;
-4. confirmar que o grunt vira para o lado correto;
-5. confirmar que a Vila Esperanca mostra mais background pintado e menos blocagem antiga;
-6. depois integrar sprites finais desenhados no Krita usando as novas referencias em `references/personagens_ref/` e `references/cenarios/`.
+1. validar a Sprint 15 no Godot com `F5`;
+2. confirmar que o Caua em `LayeredPrototype` respira no idle;
+3. confirmar que andar, dash e ataque parecem mais vivos que o recorte de prancha;
+4. conferir tamanho/pes/sombra/colisao;
+5. depois iniciar a sprite sheet final do Caua no Krita/Aseprite.
 
 Estado da Sprint 14:
 
@@ -255,6 +254,19 @@ Estado da Sprint 14:
 - `VilaEsperancaParallax.tscn` reposicionado para mostrar melhor as camadas pintadas;
 - blocagem antiga da fase foi escondida/atenuada onde competia com o background;
 - bloqueadores dos props escondidos foram desligados para nao criar colisao invisivel;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`.
+
+Estado da Sprint 15:
+
+- `scripts/visual/CharacterSpriteVisual.cs` ganhou modo `UseLayeredPrototype`;
+- `scenes/actors/SideScrollerPlayer.tscn` ativa `UseLayeredPrototype = true`;
+- o Caua deixou de depender visualmente dos recortes `caua_ref_*` durante o jogo;
+- rig atual cria pernas, bracos, torso/camisa, cabeca, cabelo e faca/machete por codigo;
+- idle tem respiracao, cabelo e pulso no peito;
+- walk alterna pernas/bracos e adiciona peso;
+- attack anima windup/swing com torso, braco e arma;
+- dash inclina corpo/cabelo;
+- recortes `caua_ref_*` ficam apenas como fallback/referencia ate a sprite sheet final;
 - build C# validada com `dotnet build SangueNoAsfalto.csproj`.
 
 ## Regra Obrigatoria De Sprint

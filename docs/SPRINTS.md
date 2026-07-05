@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 14 - Integracao Visual De Assets`
+Sprint atual: `Sprint 15 - Personagem Vivo E Pipeline De Arte Final`
 
 Direcao oficial atual:
 
@@ -641,6 +641,59 @@ Pre-requisitos:
 - polimento minimo de bugs e pacing.
 
 Os docs de Steam/export da Sprint 11 permanecem como rascunho, nao como sprint ativa.
+
+## Sprint 15 - Personagem Vivo E Pipeline De Arte Final
+
+Status: implementada / aguardando validacao no Godot.
+
+Objetivo: parar de tratar recorte de prancha como arte do protagonista e preparar o jogo para um Caua com vida: respiracao, peso, cabelo, arma, golpes e leitura corporal.
+
+Problemas identificados no playtest:
+
+- o recorte `caua_ref_*` melhorou coerencia, mas ainda parecia uma imagem colada;
+- arte extraida de prancha traz artefatos transparentes e bordas sujas;
+- idle/walk/attack precisam comunicar corpo vivo, nao apenas troca de textura;
+- o jogo final precisa de sprite sheet propria, desenhada/exportada limpa.
+
+Entregas implementadas:
+
+- `scripts/visual/CharacterSpriteVisual.cs` ganhou modo `UseLayeredPrototype`;
+- `SideScrollerPlayer.tscn` ativa `UseLayeredPrototype = true`;
+- o Caua agora e desenhado em partes no runtime:
+  - pernas separadas;
+  - bracos separados;
+  - torso/camisa;
+  - cabeca;
+  - cabelo;
+  - faca/machete;
+  - pulso visual na camisa;
+- idle com respiracao, movimento de cabeca, cabelo e batimento/peito;
+- walk com pernas/bracos alternando e torso com peso;
+- attack com windup, swing de torso/braco/arma e esticada de alcance;
+- dash com inclinacao do corpo e cabelo para tras;
+- flash de dano tambem funciona no rig em camadas;
+- sprite recortado continua no projeto apenas como fallback/referencia, escondido no Caua;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Pendencias de validacao:
+
+- abrir no Godot e testar `F5`;
+- verificar tamanho do Caua na camera;
+- verificar se os pes batem com sombra/colisao;
+- testar J/K/Espaco andando e parado;
+- decidir se o rig em camadas fica como prototipo visual ou se voltamos para sprite sheet assim que a primeira sheet limpa existir.
+
+Proximo passo recomendado:
+
+- Sprint 16 deve focar em **sprite sheet final do Caua**:
+  - idle 6-8 frames;
+  - walk 8 frames;
+  - combo 1/2/3;
+  - hurt;
+  - dodge;
+  - low health;
+  - death;
+  - export transparente com pivot nos pes.
 
 ## Backlog Tecnico Permanente
 
