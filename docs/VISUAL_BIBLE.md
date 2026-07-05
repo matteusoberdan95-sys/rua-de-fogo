@@ -76,6 +76,15 @@ Elementos principais:
 
 O cenario deve parecer brasileiro sem virar caricatura. O foco e rua, periferia, concreto, improviso, religiosidade popular e decadencia sobrenatural.
 
+Direcao de producao:
+
+- referencia visual nao e arte final colada na cena;
+- rua deve ser composta em camadas visiveis e animaveis;
+- neon deve oscilar;
+- fios, panos, lixo e reflexos devem sugerir vento/chuva;
+- o chao precisa contar historia com poças, sangue, remendos, marcas de pneu e sujeira;
+- cada boss/fase deve mudar objetos, luz, clima e leitura da rua.
+
 ## Clima E Tempo
 
 O ciclo de horario e clima e um pilar visual do jogo.

@@ -44,7 +44,7 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 15 - Personagem Vivo E Pipeline De Arte Final` (implementada / aguardando validacao no Godot).
+Sprint atual: `Sprint 16 - Rua Viva E Inimigos Em Camadas` (implementada / aguardando validacao no Godot).
 
 Estamos em **prototipo alpha**. Meta atual: **fase jogavel de ~10 minutos** na Vila Esperanca, com visual proximo de `references/pillars` (pintura 2D + pixel aparente). Demo publica e Steam ficam bloqueadas ate la.
 
@@ -55,6 +55,8 @@ A Sprint 13 esta implementada: Caua e grunt com `AnimatedSprite2D`, parallax pin
 A Sprint 14 comecou corrigindo o problema visual dos sprites: fundo preto, escala diferente entre idle/walk e flip estranho do grunt. Os assets normalizados ficam em `art/sprites/**/*_game.png` e a ferramenta repetivel fica em `tools/normalize-sprites.ps1`. Em seguida, o Caua passou a usar recortes temporarios da prancha `references/personagens_ref/` (`caua_ref_*`) para manter a mesma roupa/silhueta entre parado, andando e atacando, e a fase passou a deixar o background pintado da Vila Esperanca aparecer mais que a blocagem antiga.
 
 A Sprint 15 troca o Caua recortado por um `LayeredPrototype` em `CharacterSpriteVisual`: corpo, cabeca, cabelo, pernas, bracos, camisa, faca e pulso sao partes separadas animadas por codigo. Isso ainda nao e arte final, mas ja prova respiracao, batimento/peito, cabelo mexendo, caminhada, dash e ataque com arma sem parecer imagem colada.
+
+A Sprint 16 aplica a mesma filosofia no cenario e no inimigo comum: `LayeredStreetPrototype` monta a Vila Esperanca com camadas nativas do Godot/C# (muros, cerca, boteco, postes, fio, chao molhado, pocos, lixo e neon animado), e o Quebra-Osso tambem usa `LayeredPrototype` em vez de sprite recortado. As imagens continuam como referencia, nao como runtime ativo.
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -82,14 +84,15 @@ Toda sprint so pode ser marcada como concluida depois de build C# sem erros, val
 
 ## Proximo passo recomendado
 
-Na outra maquina, validar Sprint 15 no Godot com `F5`:
+Na outra maquina, validar Sprint 16 no Godot com `F5`:
 
 - menu -> tutorial -> fase;
 - conferir se o Caua em `LayeredPrototype` respira no idle;
 - conferir se cabelo, torso, bracos, pernas e faca se movem;
 - conferir se andar, atacar e esquivar parecem mais vivos que o recorte anterior;
-- conferir se o grunt vira para o lado correto;
-- conferir se o cenario ficou menos "massa de poligonos" e mais proximo da arte pintada;
+- conferir se o Quebra-Osso tambem aparece como personagem em camadas, nao imagem;
+- conferir se o cenario ativo nao depende mais de `bg_far/bg_mid/bg_near`;
+- conferir se boteco, cerca, postes, neon, chao molhado e pocos tem leitura boa;
 - conferir alinhamento de pes/sombra/colisao;
 - depois produzir sprite sheet final no Krita/Aseprite usando o contrato documentado em `docs/ART_PIPELINE.md`.
 

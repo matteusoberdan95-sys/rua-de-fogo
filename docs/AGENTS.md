@@ -13,11 +13,13 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 06 - Vertical Slice Pequena`.
+Sprint atual: `Sprint 16 - Rua Viva E Inimigos Em Camadas`.
 
-Direcao atual: migrar do prototipo top-down para uma cena lateral/2.5D beat 'em up, mantendo o top-down como laboratorio de sistemas.
+Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 
 Pilar novo: clima, horario e rua viva fazem parte da identidade do jogo. Nao tratar chuva, noite, vento e tempestade como simples filtro visual.
+
+Regra visual atual: imagens de referencia guiam o resultado, mas nao devem virar imagem chapada no gameplay ativo. Personagens e cenario devem caminhar para rigs/sprite sheets/layers separados.
 
 ## Regra Obrigatoria De Sprint
 
@@ -55,10 +57,10 @@ Responsavel por IA, comportamento agressivo, perseguicao, ataque, dano e variaco
 
 Foco atual:
 
-- criar inimigo comum melhor;
-- criar inimigo rapido;
-- criar inimigo bruto;
-- adicionar ataques telegrafados.
+- manter inimigos em camadas ou sprite sheets limpas;
+- garantir que Quebra-Osso nao pareca recorte;
+- preparar variacoes futuras com o mesmo contrato visual;
+- preservar ataques telegrafados.
 
 Proximas entregas:
 
@@ -75,6 +77,7 @@ Foco atual:
 
 - manter cenas e scripts separados;
 - evitar acoplamento desnecessario;
+- garantir que `CharacterSpriteVisual` e `LayeredStreetPrototype` sejam ponte para arte final;
 - documentar caminhos importantes;
 - revisar mudancas antes de escalar o projeto.
 
@@ -93,7 +96,8 @@ Foco atual:
 - manter Godot .NET funcionando;
 - organizar pastas de arte e audio;
 - preparar build Windows;
-- cuidar de Git e versoes.
+- cuidar de Git e versoes;
+- manter docs/README/HANDOFF atualizados antes de trocar de maquina.
 
 Proximas entregas:
 
@@ -111,7 +115,8 @@ Foco atual:
 - consolidar a identidade do jogo;
 - manter a biblia visual;
 - transformar referencias em conceitos originais;
-- definir protagonista, inimigos e mundo.
+- definir protagonista, inimigos e mundo;
+- impedir que mockups de referencia sejam tratados como arte final.
 
 Proximas entregas:
 
@@ -163,7 +168,7 @@ Responsavel por ciclo de horario, clima, tensao da rua, eventos ambientais e rel
 Foco atual:
 
 - manter `docs/WEATHER_TIME_SYSTEM.md` como fonte do sistema;
-- garantir que a Sprint 02 ja prepare espaco para luzes, chuva e fundo em camadas;
+- garantir que a rua viva tenha luzes, chuva e fundo em camadas;
 - pensar clima como gameplay e narrativa, nao so decoracao.
 
 Proximas entregas:

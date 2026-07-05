@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 15 - Personagem Vivo E Pipeline De Arte Final`
+Sprint atual: `Sprint 16 - Rua Viva E Inimigos Em Camadas`
 
 Direcao oficial atual:
 
@@ -694,6 +694,51 @@ Proximo passo recomendado:
   - low health;
   - death;
   - export transparente com pivot nos pes.
+
+## Sprint 16 - Rua Viva E Inimigos Em Camadas
+
+Status: implementada / aguardando validacao no Godot.
+
+Objetivo: aplicar ao cenario e aos inimigos a mesma regra aprendida com o Caua: referencias guiam o visual, mas nao devem ser imagens coladas no gameplay ativo.
+
+Problemas identificados:
+
+- o background pintado melhorou a leitura, mas ainda era uma imagem grande por tras da fase;
+- o cenario precisava de partes separadas para animar neon, fios, lixo, agua e clima;
+- o inimigo comum ainda dependia de sprite recortado;
+- referencias devem ficar em `references/`/`art/` como direcao, nao como runtime final.
+
+Entregas implementadas:
+
+- criado `scripts/world/LayeredStreetPrototype.cs`;
+- `scenes/world/VilaEsperancaParallax.tscn` agora usa `Node2D` + `LayeredStreetPrototype`, sem `bg_far/bg_mid/bg_near` ativos;
+- rua viva montada por codigo com:
+  - ceu e glow distante;
+  - morro/favela distante;
+  - predios com janelas;
+  - fios;
+  - boteco;
+  - cerca de madeira;
+  - placa de vende-se;
+  - posters;
+  - postes;
+  - calcada;
+  - asfalto molhado;
+  - pocos, sangue, lixo e bueiro;
+  - neon e reflexos animados;
+- `CharacterSpriteVisual` ganhou `LayeredPrototypePreset`;
+- `SideScrollerEnemyGrunt.tscn` agora usa `UseLayeredPrototype = true` e `LayeredPreset = QuebraOsso`;
+- sprite antigo do inimigo fica escondido como fallback/referencia;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Pendencias de validacao:
+
+- abrir no Godot e testar `F5`;
+- confirmar se o cenario aparece na camera inteira;
+- confirmar se a rua em camadas nao ficou vazia em trechos avancados da fase;
+- confirmar se o Quebra-Osso tem escala boa contra o Caua;
+- ajustar cores/posicoes se o cenario ficar poligonal demais;
+- decidir se Sprint 17 sera sprite sheet final do Caua ou refinamento visual da rua.
 
 ## Backlog Tecnico Permanente
 

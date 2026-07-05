@@ -1,5 +1,11 @@
 namespace SangueNoAsfalto.Visual;
 
+public enum LayeredPrototypePreset
+{
+    Caua,
+    QuebraOsso
+}
+
 /// <summary>
 /// Controle visual de personagem. Aceita SpriteFrames tradicionais e um rig 2D em camadas
 /// para prototipar respiracao, cabelo, arma e impacto sem depender de recortes estaticos.
@@ -17,6 +23,9 @@ public partial class CharacterSpriteVisual : Node2D
 
     [Export]
     public bool UseLayeredPrototype { get; set; }
+
+    [Export]
+    public LayeredPrototypePreset LayeredPreset { get; set; } = LayeredPrototypePreset.Caua;
 
     private AnimatedSprite2D? _sprite;
     private Node2D? _rig;
@@ -220,24 +229,44 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void BuildLayeredPrototype()
     {
-        _rig = new Node2D { Name = "LayeredCauaRig", YSortEnabled = true };
+        _rig = new Node2D { Name = $"Layered{LayeredPreset}Rig", YSortEnabled = true };
         AddChild(_rig);
 
+        Color skin = LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.58f, 0.34f, 0.19f)
+            : new Color(0.50f, 0.29f, 0.17f);
+        Color backSkin = skin.Darkened(0.08f);
+        Color pants = LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.065f, 0.075f, 0.06f)
+            : new Color(0.17f, 0.085f, 0.28f);
+        Color backPants = pants.Darkened(0.12f);
+        Color shirt = LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.66f, 0.035f, 0.03f)
+            : new Color(0.025f, 0.025f, 0.027f);
+        Color vest = LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.13f, 0.09f, 0.075f)
+            : new Color(0.055f, 0.06f, 0.055f);
+        Color shoeAccent = LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.62f, 0.04f, 0.03f)
+            : new Color(0.18f, 0.16f, 0.13f);
+
         Node2D backLayer = AddJoint(_rig, "BackLayer", Vector2.Zero, 0);
-        _backLeg = AddLimb(backLayer, "BackLeg", new Vector2(-8f, -12f), new Color(0.045f, 0.052f, 0.045f), z: 0);
-        _backArm = AddArm(backLayer, "BackArm", new Vector2(-15f, -58f), new Color(0.54f, 0.3f, 0.16f), z: 1);
+        _backLeg = AddLimb(backLayer, "BackLeg", new Vector2(-8f, -12f), backPants, shoeAccent, z: 0);
+        _backArm = AddArm(backLayer, "BackArm", new Vector2(-15f, -58f), backSkin, z: 1);
 
         _torso = AddJoint(_rig, "Torso", new Vector2(0f, -56f), 4);
-        AddPolygon(_torso, "BackVest", new Color(0.13f, 0.09f, 0.075f), new[]
+        AddPolygon(_torso, "BackVest", vest, new[]
         {
             new Vector2(-20f, -19f), new Vector2(16f, -22f), new Vector2(22f, 8f), new Vector2(12f, 31f), new Vector2(-17f, 28f), new Vector2(-23f, 8f)
         }, 0);
         _shirtPulse = AddJoint(_torso, "ShirtPulse", Vector2.Zero, 2);
-        AddPolygon(_shirtPulse, "RedShirt", new Color(0.66f, 0.035f, 0.03f), new[]
+        AddPolygon(_shirtPulse, "TorsoCloth", shirt, new[]
         {
             new Vector2(-17f, -18f), new Vector2(17f, -18f), new Vector2(21f, 10f), new Vector2(12f, 34f), new Vector2(-13f, 32f), new Vector2(-21f, 9f)
         }, 0);
-        AddPolygon(_shirtPulse, "ChestMark", new Color(0.88f, 0.77f, 0.58f, 0.85f), new[]
+        AddPolygon(_shirtPulse, "ChestMark", LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.88f, 0.77f, 0.58f, 0.85f)
+            : new Color(0.82f, 0.78f, 0.66f, 0.7f), new[]
         {
             new Vector2(-11f, -2f), new Vector2(9f, -3f), new Vector2(11f, 4f), new Vector2(-11f, 5f)
         }, 1);
@@ -246,13 +275,13 @@ public partial class CharacterSpriteVisual : Node2D
             new Vector2(-17f, 28f), new Vector2(-6f, 34f), new Vector2(2f, 29f), new Vector2(14f, 35f), new Vector2(12f, 42f), new Vector2(-14f, 39f)
         }, 3);
 
-        _frontLeg = AddLimb(_rig, "FrontLeg", new Vector2(8f, -12f), new Color(0.065f, 0.075f, 0.06f), z: 6);
+        _frontLeg = AddLimb(_rig, "FrontLeg", new Vector2(8f, -12f), pants, shoeAccent, z: 6);
         _head = AddJoint(_rig, "Head", new Vector2(0f, -96f), 8);
-        AddPolygon(_head, "Neck", new Color(0.47f, 0.25f, 0.14f), new[]
+        AddPolygon(_head, "Neck", skin.Darkened(0.12f), new[]
         {
             new Vector2(-7f, 10f), new Vector2(8f, 10f), new Vector2(7f, 23f), new Vector2(-8f, 22f)
         }, 0);
-        AddPolygon(_head, "Face", new Color(0.58f, 0.34f, 0.19f), MakeEllipse(0f, 0f, 13f, 17f, 12), 2);
+        AddPolygon(_head, "Face", skin, MakeEllipse(0f, 0f, 13f, 17f, 12), 2);
         AddPolygon(_head, "Brow", new Color(0.075f, 0.045f, 0.035f), new[]
         {
             new Vector2(-9f, -4f), new Vector2(10f, -7f), new Vector2(14f, -3f), new Vector2(-8f, 1f)
@@ -262,22 +291,30 @@ public partial class CharacterSpriteVisual : Node2D
             new Vector2(8f, -1f), new Vector2(17f, 3f), new Vector2(7f, 7f)
         }, 5);
         _hair = AddJoint(_head, "Hair", new Vector2(-1f, -12f), 6);
-        AddPolygon(_hair, "HairSpikes", new Color(0.035f, 0.025f, 0.02f), new[]
+        AddPolygon(_hair, "HairSpikes", LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.035f, 0.025f, 0.02f)
+            : new Color(0.03f, 0.02f, 0.018f), LayeredPreset == LayeredPrototypePreset.Caua
+            ? new[]
         {
             new Vector2(-15f, 4f), new Vector2(-10f, -14f), new Vector2(-4f, -5f), new Vector2(1f, -19f), new Vector2(5f, -5f), new Vector2(14f, -13f), new Vector2(10f, 4f)
-        }, 0);
+        }
+            : MakeEllipse(0f, -3f, 12f, 8f, 10), 0);
 
-        _frontArm = AddArm(_rig, "FrontArm", new Vector2(15f, -58f), new Color(0.62f, 0.36f, 0.19f), z: 10);
-        _weapon = AddJoint(_frontArm, "Machete", new Vector2(19f, 28f), 8);
+        _frontArm = AddArm(_rig, "FrontArm", new Vector2(15f, -58f), skin.Lightened(0.04f), z: 10);
+        _weapon = AddJoint(_frontArm, LayeredPreset == LayeredPrototypePreset.Caua ? "Machete" : "Pipe", new Vector2(19f, 28f), 8);
         AddPolygon(_weapon, "Handle", new Color(0.13f, 0.07f, 0.035f), new[]
         {
             new Vector2(-3f, -3f), new Vector2(16f, -2f), new Vector2(16f, 3f), new Vector2(-3f, 3f)
         }, 0);
-        AddPolygon(_weapon, "Blade", new Color(0.73f, 0.71f, 0.62f), new[]
+        AddPolygon(_weapon, "Blade", LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.73f, 0.71f, 0.62f)
+            : new Color(0.45f, 0.46f, 0.42f), new[]
         {
             new Vector2(12f, -4f), new Vector2(54f, -8f), new Vector2(66f, -1f), new Vector2(50f, 6f), new Vector2(12f, 4f)
         }, 1);
-        AddPolygon(_weapon, "BladeBlood", new Color(0.56f, 0.015f, 0.015f, 0.86f), new[]
+        AddPolygon(_weapon, "BladeBlood", LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.56f, 0.015f, 0.015f, 0.86f)
+            : new Color(0.22f, 0.02f, 0.02f, 0.45f), new[]
         {
             new Vector2(37f, -5f), new Vector2(56f, -4f), new Vector2(50f, 1f), new Vector2(34f, 1f)
         }, 2);
@@ -290,7 +327,7 @@ public partial class CharacterSpriteVisual : Node2D
         return node;
     }
 
-    private static Node2D AddLimb(Node parent, string name, Vector2 position, Color cloth, int z)
+    private static Node2D AddLimb(Node parent, string name, Vector2 position, Color cloth, Color accent, int z)
     {
         Node2D leg = AddJoint(parent, name, position, z);
         AddPolygon(leg, "Thigh", cloth, new[]
@@ -305,7 +342,7 @@ public partial class CharacterSpriteVisual : Node2D
         {
             new Vector2(-10f, 11f), new Vector2(8f, 11f), new Vector2(17f, 17f), new Vector2(-12f, 18f)
         }, 2);
-        AddPolygon(leg, "ShoeRed", new Color(0.62f, 0.04f, 0.03f), new[]
+        AddPolygon(leg, "ShoeAccent", accent, new[]
         {
             new Vector2(-5f, 7f), new Vector2(7f, 8f), new Vector2(7f, 12f), new Vector2(-6f, 12f)
         }, 3);

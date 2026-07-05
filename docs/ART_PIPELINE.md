@@ -165,3 +165,32 @@ Camadas recomendadas no Krita/Aseprite:
 - sombra separada ou controlada no Godot.
 
 O rig `UseLayeredPrototype` em `CharacterSpriteVisual` serve como guia de movimento: respiracao, cabelo, torso, bracos, pernas e faca devem continuar existindo visualmente quando a sprite sheet final substituir o prototipo.
+
+## Contrato Do Cenario Final
+
+As imagens de referencia de cenario nao devem ser usadas como tela chapada no jogo final. A Sprint 16 criou `LayeredStreetPrototype` para provar o caminho certo: a rua precisa ser feita de partes.
+
+Camadas minimas por fase:
+
+- ceu/luz de horario;
+- favela/morro distante;
+- predios e janelas;
+- fios;
+- paredes/muros;
+- lojas/boteco/placas;
+- calcada;
+- asfalto;
+- poças/reflexos;
+- lixo/props;
+- sangue/manchas;
+- luzes/neon/postes;
+- efeitos de clima por cima.
+
+Cada camada deve poder:
+
+- receber animacao leve;
+- reagir a horario/clima;
+- ser substituida por arte final sem mexer no gameplay;
+- ter leitura separada de colisao.
+
+Regra: uma imagem grande pode existir como referencia ou mockup, mas a cena ativa deve preferir nodes, tiles, sprites recortados limpos ou layers exportadas separadamente.

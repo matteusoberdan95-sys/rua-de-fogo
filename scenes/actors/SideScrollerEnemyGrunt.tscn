@@ -42,8 +42,11 @@ position = Vector2(0, -4)
 script = ExtResource("5_sprite_visual")
 DisplayScale = 0.15
 SourceFacesRight = false
+UseLayeredPrototype = true
+LayeredPreset = 1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteVisual"]
+visible = false
 texture_filter = 0
 position = Vector2(0, -48)
 sprite_frames = SubResource("SpriteFrames_grunt")

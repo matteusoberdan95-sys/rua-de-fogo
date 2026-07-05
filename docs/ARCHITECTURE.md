@@ -194,3 +194,19 @@ Fluxo:
 - quando a sprite sheet final existir, basta desativar `UseLayeredPrototype`, apontar `AnimatedSprite2D` para a nova `SpriteFrames` e preservar o controller.
 
 Objetivo tecnico: separar a logica de gameplay da apresentacao do personagem, permitindo trocar prototipo visual por arte final sem reescrever combate/movimento.
+
+## Sprint 16 - Rua Viva E Inimigos Em Camadas
+
+Arquivos principais:
+
+- `scripts/world/LayeredStreetPrototype.cs`: constroi a Vila Esperanca ativa com nodes/poligonos/labels, sem bitmap de referencia em runtime.
+- `scenes/world/VilaEsperancaParallax.tscn`: agora e um `Node2D` com `LayeredStreetPrototype`.
+- `scripts/visual/CharacterSpriteVisual.cs`: adiciona `LayeredPrototypePreset`.
+- `scenes/actors/SideScrollerEnemyGrunt.tscn`: usa `LayeredPreset = QuebraOsso`.
+
+Regra tecnica:
+
+- imagens em `references/` e backgrounds antigos em `art/backgrounds/` podem ficar no repositorio como guia;
+- cenas ativas devem apontar para assets limpos ou nodes/layers editaveis;
+- se uma imagem grande for usada temporariamente, documentar como placeholder e planejar substituicao;
+- cenario vivo deve ser separado em partes animaveis: luz, fio, agua, lixo, placa, parede, chao e props.

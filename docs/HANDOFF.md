@@ -234,11 +234,12 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. validar a Sprint 15 no Godot com `F5`;
-2. confirmar que o Caua em `LayeredPrototype` respira no idle;
-3. confirmar que andar, dash e ataque parecem mais vivos que o recorte de prancha;
-4. conferir tamanho/pes/sombra/colisao;
-5. depois iniciar a sprite sheet final do Caua no Krita/Aseprite.
+1. validar a Sprint 16 no Godot com `F5`;
+2. confirmar que o Caua e o Quebra-Osso aparecem como personagens em camadas;
+3. confirmar que a Vila Esperanca usa `LayeredStreetPrototype` e nao imagens `bg_*` ativas;
+4. conferir se o cenario cobre a fase inteira e nao fica vazio em trechos avancados;
+5. conferir tamanho/pes/sombra/colisao;
+6. depois decidir entre sprite sheet final do Caua ou refinamento da rua viva.
 
 Estado da Sprint 14:
 
@@ -268,6 +269,17 @@ Estado da Sprint 15:
 - dash inclina corpo/cabelo;
 - recortes `caua_ref_*` ficam apenas como fallback/referencia ate a sprite sheet final;
 - build C# validada com `dotnet build SangueNoAsfalto.csproj`.
+
+Estado da Sprint 16:
+
+- criado `scripts/world/LayeredStreetPrototype.cs`;
+- `scenes/world/VilaEsperancaParallax.tscn` agora e `Node2D` com script, sem texturas `bg_far/bg_mid/bg_near` ativas;
+- cenario ativo e montado por camadas nativas: ceu, morro, casas, fios, boteco, cerca, placas, postes, calcada, asfalto, pocos, sangue, lixo e bueiro;
+- neon, fios/planks e reflexos tem animacao leve no `_Process`;
+- `CharacterSpriteVisual` ganhou `LayeredPrototypePreset`;
+- `SideScrollerEnemyGrunt.tscn` ativa `UseLayeredPrototype = true` com preset `QuebraOsso`;
+- sprite antigo do inimigo fica escondido como fallback;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos.
 
 ## Regra Obrigatoria De Sprint
 
