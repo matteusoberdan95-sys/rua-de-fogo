@@ -9,6 +9,15 @@ public partial class BeatEmUpHud : CanvasLayer
     private Label? _controlsLabel;
     private Label? _debugLabel;
     private Label? _tutorialLabel;
+    private Label? _stageTitleLabel;
+    private Label? _stageTaglineLabel;
+    private Label? _playerNameLabel;
+    private Label? _weaponSlotLabel;
+    private Label? _comboCalloutLabel;
+    private Label? _comboStatsLabel;
+    private ProgressBar? _healthBar;
+    private ProgressBar? _staminaBar;
+    private ProgressBar? _furyBar;
     private PanelContainer? _centerOverlay;
     private Label? _overlayTitleLabel;
     private Label? _overlayBodyLabel;
@@ -17,13 +26,22 @@ public partial class BeatEmUpHud : CanvasLayer
 
     public override void _Ready()
     {
-        _healthLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/HealthLabel");
-        _staminaLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/StaminaLabel");
-        _waveLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/WaveLabel");
-        _statusLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/StatusLabel");
-        _controlsLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/ControlsLabel");
-        _debugLabel = GetNodeOrNull<Label>("Panel/VBoxContainer/DebugLabel");
+        _healthLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/HealthLabel");
+        _staminaLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/StaminaLabel");
+        _waveLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/WaveLabel");
+        _statusLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/StatusLabel");
+        _controlsLabel = GetNodeOrNull<Label>("BottomBar/ControlsLabel");
+        _debugLabel = GetNodeOrNull<Label>("BottomBar/DebugLabel");
         _tutorialLabel = GetNodeOrNull<Label>("TutorialPanel/TutorialLabel");
+        _stageTitleLabel = GetNodeOrNull<Label>("StageBanner/StageTitleLabel");
+        _stageTaglineLabel = GetNodeOrNull<Label>("StageBanner/StageTaglineLabel");
+        _playerNameLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/PlayerNameLabel");
+        _weaponSlotLabel = GetNodeOrNull<Label>("WeaponStrip/WeaponSlotLabel");
+        _comboCalloutLabel = GetNodeOrNull<Label>("ComboCallout");
+        _comboStatsLabel = GetNodeOrNull<Label>("ComboStatsLabel");
+        _healthBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/HealthBar");
+        _staminaBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/StaminaBar");
+        _furyBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/FuryBar");
         _centerOverlay = GetNodeOrNull<PanelContainer>("CenterOverlay");
         _overlayTitleLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayTitle");
         _overlayBodyLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayBody");
@@ -43,17 +61,41 @@ public partial class BeatEmUpHud : CanvasLayer
         {
             if (_staminaLabel is not null)
             {
-                string weapon = _player.WeaponDurability > 0
-                    ? $"{_player.WeaponName} ({_player.WeaponDurability})"
-                    : _player.WeaponName;
-                _staminaLabel.Text = $"Stamina: {(int)_player.CurrentStamina}/{(int)_player.MaxStamina}  Arma: {weapon}  Continue: {_player.Continues}";
+                _staminaLabel.Text = $"Stamina {(int)_player.CurrentStamina}/{(int)_player.MaxStamina}";
             }
 
-            if (_debugLabel is not null)
+            if (_staminaBar is not null)
             {
-                Vector2 input = _player.LastMovementInput;
-                Vector2 position = _player.GlobalPosition;
-                _debugLabel.Text = $"Lane: {(int)position.Y}  Input: {input.X:0.0}, {input.Y:0.0}";
+                _staminaBar.MaxValue = _player.MaxStamina;
+                _staminaBar.Value = _player.CurrentStamina;
+            }
+
+            if (_furyBar is not null)
+            {
+                _furyBar.Value = _player.Fury;
+            }
+
+            if (_weaponSlotLabel is not null)
+            {
+                string durability = _player.WeaponDurability > 0
+                    ? $"Durabilidade {_player.WeaponDurability}"
+                    : "Sem durabilidade extra";
+                _weaponSlotLabel.Text = $"Arma: {_player.WeaponName}  |  {durability}  |  Continue x{_player.Continues}";
+            }
+
+            if (_comboCalloutLabel is not null)
+            {
+                _comboCalloutLabel.Visible = _player.ShowComboCallout;
+                _comboCalloutLabel.Text = _player.ShowComboCallout
+                    ? $"{_player.ComboCalloutText}\n{_player.ComboHitCount} HITS"
+                    : string.Empty;
+            }
+
+            if (_comboStatsLabel is not null)
+            {
+                _comboStatsLabel.Text = _player.ComboHitCount > 0
+                    ? $"Combo {_player.ComboHitCount}  |  Melhor {_player.BestCombo}"
+                    : $"Melhor combo {_player.BestCombo}";
             }
         }
 
@@ -61,12 +103,22 @@ public partial class BeatEmUpHud : CanvasLayer
         {
             if (_waveLabel is not null)
             {
-                _waveLabel.Text = $"Etapa: {_director.WaveNumber}/{_director.TotalWaves}  Inimigos: {_director.EnemiesRemaining}";
+                _waveLabel.Text = $"Etapa {_director.WaveNumber}/{_director.TotalWaves}  |  Inimigos {_director.EnemiesRemaining}";
             }
 
             if (_statusLabel is not null)
             {
                 _statusLabel.Text = _director.StatusText;
+            }
+
+            if (_stageTitleLabel is not null)
+            {
+                _stageTitleLabel.Text = $"ETAPA {_director.WaveNumber}: {_director.StageTitle}";
+            }
+
+            if (_stageTaglineLabel is not null)
+            {
+                _stageTaglineLabel.Text = _director.StageTagline;
             }
 
             if (_debugLabel is not null)
@@ -91,7 +143,13 @@ public partial class BeatEmUpHud : CanvasLayer
     {
         if (_healthLabel is not null)
         {
-            _healthLabel.Text = $"Vida: {current}/{maximum}";
+            _healthLabel.Text = $"Vida {current}/{maximum}";
+        }
+
+        if (_healthBar is not null)
+        {
+            _healthBar.MaxValue = maximum;
+            _healthBar.Value = current;
         }
     }
 

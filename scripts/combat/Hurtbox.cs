@@ -26,6 +26,11 @@ public partial class Hurtbox : Area2D
             return;
         }
 
+        if (hitbox.Source is SideScrollerPlayerController player)
+        {
+            player.RegisterCombatHit(hitbox.Damage);
+        }
+
         ApplyKnockback(hitbox);
         PlayFeedback(hitbox);
     }

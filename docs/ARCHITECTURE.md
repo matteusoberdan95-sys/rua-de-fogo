@@ -135,6 +135,21 @@ Fluxo atual:
 - a vertical slice continua sendo a fase unica da demo publica;
 - configuracoes persistentes continuam centralizadas no save local.
 
+## Sprint 10 - Identidade Visual Pillars
+
+Arquivos principais:
+
+- `scripts/ui/BeatEmUpHud.cs`: HUD reorganizado com barras, combo, furia, banner e slot de arma.
+- `scripts/player/SideScrollerPlayerController.cs`: combo de hits, melhor combo e furia.
+- `scripts/combat/Hurtbox.cs`: registra impactos do jogador para HUD/combo.
+- `scripts/core/SideScrollerDirector.cs`: titulo/tagline da etapa.
+- `scenes/levels/SideScrollerPrototype.tscn`: boteco, ponto final, props e labels da Vila Esperanca.
+- `scenes/actors/SideScrollerPlayer.tscn`: silhueta/cores do Caua aproximadas da referencia.
+
+Referencia visual:
+
+- usar `references/pillars/` como alvo de leitura para HUD, cenario, personagem e clima.
+
 ## Observacao Sobre C#
 
 O arquivo `.csproj` usa `Godot.NET.Sdk/4.4.1` como ponto de partida. Caso a versao instalada do Godot .NET seja outra, o editor pode atualizar esse valor automaticamente.

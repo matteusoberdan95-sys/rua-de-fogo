@@ -413,7 +413,44 @@ Pendencias levadas para sprints futuras:
 - pacote final para testers;
 - aproximar arte/HUD do visual das referencias em `references/pillars`.
 
-## Sprint 10 - Producao Steam
+## Sprint 10 - Identidade Visual Pillars
+
+Status: concluida.
+
+Objetivo: aproximar a demo das referencias em `references/pillars`, priorizando o que mais aparece em jogo.
+
+Prioridade dos pilares:
+
+1. `04-hud-combat-ui-weapons.png`: HUD com barras, combo, furia, slot de arma e banner de etapa.
+2. `02-stage-vila-esperanca-side-scroller.png`: boteco, ponto final, props urbanos e leitura da rua.
+3. `01-character-lineup-caua-enemies-boss.png`: silhueta/cores do Caua mais proximas da referencia.
+4. `07-weather-time-system.png`: refinamentos futuros de clima/horario.
+5. `03`, `05`, `06`, `08`, `09`: conteudo e producao comercial para sprints seguintes.
+
+Entregas implementadas:
+
+- `BeatEmUpHud` reorganizado com banner de etapa, retrato placeholder, barras de vida/stamina/furia, combo callout e faixa de arma;
+- `SideScrollerPlayerController` agora rastreia combo de hits, melhor combo e furia por impacto;
+- `Hurtbox` notifica o jogador quando acerta inimigos;
+- `SideScrollerDirector` expoe titulo e tagline da etapa `VILA ESPERANCA`;
+- `SideScrollerPrototype.tscn` recebeu boteco do Ze, placa SKOL, mesas, ponto final, cachorro e pichacao da referencia;
+- `SideScrollerPlayer.tscn` recebeu colete vermelho e regata branca mais proximos do Caua;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- HUD, combo, furia, banner, boteco, ponto final e silhueta do Caua aprovados;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Pendencias levadas para sprints futuras:
+
+- sprites finais do Caua e inimigos;
+- HUD final com tipografia/arte propria;
+- props interativos (boteco curando, objetos quebraveis, cachorro como hazard);
+- pagina/material Steam.
+
+## Sprint 11 - Producao Steam
 
 Status: proxima / pronta para iniciar.
 
@@ -422,7 +459,7 @@ Objetivo: transformar a demo em produto comercial.
 Entregas planejadas:
 
 - pagina Steam;
-- screenshots;
+- screenshots alinhadas com `references/pillars`;
 - trailer;
 - build demo;
 - achievements se fizer sentido;

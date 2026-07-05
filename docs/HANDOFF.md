@@ -189,10 +189,21 @@ Estado da Sprint 09:
 - build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
 - validada no Godot com `F5` e aprovada.
 
+Estado da Sprint 10:
+
+- Sprint 10 foi replanejada como `Identidade Visual Pillars`, usando `references/pillars` como alvo;
+- prioridade aplicada: HUD (`04`), Vila Esperanca (`02`), Caua (`01`);
+- `BeatEmUpHud` reorganizado com banner, barras, combo callout, furia e slot de arma;
+- `SideScrollerPlayerController` rastreia combo de hits, melhor combo e furia;
+- `SideScrollerPrototype.tscn` recebeu boteco do Ze, ponto final, cachorro e pichacao;
+- `SideScrollerPlayer.tscn` recebeu colete vermelho e regata branca;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
+- validada no Godot com `F5` e aprovada.
+
 Proximo passo recomendado:
 
-1. iniciar planejamento da `Sprint 10 - Producao Steam`;
-2. usar `references/pillars` como alvo visual para screenshots, HUD e arte;
+1. iniciar planejamento da `Sprint 11 - Producao Steam`;
+2. capturar screenshots e material de pagina alinhados com `references/pillars`;
 3. exportar build demo Windows com `docs/BUILD_WINDOWS.md`;
 4. manter a regra obrigatoria de build, Godot, docs, commit e push.
 

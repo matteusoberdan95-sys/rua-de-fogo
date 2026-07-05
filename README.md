@@ -43,7 +43,7 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 10 - Producao Steam`.
+Sprint atual: `Sprint 11 - Producao Steam`.
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -61,13 +61,15 @@ O controle atual usa `Espaco` para pulo visual do personagem e `K` para esquiva.
 
 A Sprint 09 foi validada jogando e adiciona menu inicial como cena principal, tutorial discreto no HUD, overlays melhores de morte/vitoria, painel simples de configuracoes/controles no menu e preset inicial de export Windows.
 
+A Sprint 10 foi validada jogando e aproximou a demo das referencias em `references/pillars` com HUD estilo arcade, combo/furia, banner da Vila Esperanca, boteco/ponto final e silhueta mais proxima do Caua.
+
 ## Regra obrigatoria de sprint
 
 Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
 
 ## Proximo passo recomendado
 
-Com a Sprint 09 concluida, o recomendado e planejar a Sprint 10:
+Com a Sprint 10 concluida, o recomendado e planejar a Sprint 11:
 
 - preparar pagina/material Steam;
 - capturar screenshots alinhadas com `references/pillars`;

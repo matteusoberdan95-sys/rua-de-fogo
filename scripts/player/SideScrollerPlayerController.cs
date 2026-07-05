@@ -68,6 +68,23 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public int Continues => _continues;
 
+    public int ComboHitCount { get; private set; }
+
+    public int BestCombo { get; private set; }
+
+    public float Fury { get; private set; }
+
+    public string ComboCalloutText => ComboHitCount switch
+    {
+        >= 48 => "RUTHLESS!",
+        >= 28 => "VICIOUS!",
+        >= 12 => "BRUTAL!",
+        >= 8 => "HEAVY HITS",
+        _ => string.Empty,
+    };
+
+    public bool ShowComboCallout => _comboCalloutRemaining > 0f && ComboHitCount >= 8;
+
     private readonly KeyPressLatch _attackLatch = new(Key.J);
     private readonly KeyPressLatch _dashLatch = new(Key.K);
     private readonly KeyPressLatch _jumpLatch = new(Key.Space);
@@ -86,6 +103,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private int _weaponDurability;
     private int _continues;
     private int _comboIndex;
+    private float _comboChainRemaining;
+    private float _comboCalloutRemaining;
 
     public override void _Ready()
     {
@@ -127,6 +146,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         TickAttack(dt);
         TickDash(dt, input);
         TickCombo(dt);
+        TickCombatStats(dt);
         TickShoot(dt);
         TickJump(dt);
         RegenerateStamina(dt);
@@ -246,6 +266,34 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         _comboResetRemaining -= dt;
+    }
+
+    private void TickCombatStats(float dt)
+    {
+        if (_comboChainRemaining > 0f)
+        {
+            _comboChainRemaining -= dt;
+            if (_comboChainRemaining <= 0f)
+            {
+                ComboHitCount = 0;
+            }
+        }
+
+        if (_comboCalloutRemaining > 0f)
+        {
+            _comboCalloutRemaining -= dt;
+        }
+
+        Fury = Math.Max(0f, Fury - 10f * dt);
+    }
+
+    public void RegisterCombatHit(int damage)
+    {
+        ComboHitCount++;
+        BestCombo = Math.Max(BestCombo, ComboHitCount);
+        _comboChainRemaining = ComboResetTime * 1.35f;
+        _comboCalloutRemaining = 1.8f;
+        Fury = Math.Min(100f, Fury + 6f + damage * 0.12f);
     }
 
     private void TickShoot(float dt)

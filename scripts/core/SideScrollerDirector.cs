@@ -58,6 +58,10 @@ public partial class SideScrollerDirector : Node
 
     public int EnemiesRemaining { get; private set; }
 
+    public string StageTitle { get; private set; } = "VILA ESPERANCA";
+
+    public string StageTagline { get; private set; } = "A rua nao esquece. Ela so espera.";
+
     public string StatusText { get; private set; } = "A rua acordou errada";
 
     public string ObjectiveText { get; private set; } = "Atravesse a Vila Esperanca";

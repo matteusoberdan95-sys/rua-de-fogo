@@ -114,3 +114,13 @@
 - [x] Documentacao de build Windows.
 - [x] Validar Sprint 09 no Godot com `F5`.
 - [x] Fechar sprint, commitar e fazer push apos validacao.
+
+## Marco 0.10 - Identidade Visual Pillars
+
+- [x] HUD aproximado da referencia `04-hud-combat-ui-weapons.png`.
+- [x] Combo de hits, melhor combo e furia placeholder.
+- [x] Banner/titulo da etapa Vila Esperanca.
+- [x] Boteco, ponto final e props da referencia `02-stage-vila-esperanca-side-scroller.png`.
+- [x] Silhueta/cores do Caua aproximadas da referencia `01-character-lineup-caua-enemies-boss.png`.
+- [x] Validar Sprint 10 no Godot com `F5`.
+- [x] Fechar sprint, commitar e fazer push apos validacao.
