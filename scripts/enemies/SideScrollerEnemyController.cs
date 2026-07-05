@@ -118,6 +118,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
         MoveAndSlide();
         GlobalPosition = new Vector2(GlobalPosition.X, Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
+        UpdateLocomotionVisual();
     }
 
     private void TryAttack()
@@ -219,6 +220,15 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private void UpdateFacingVisual()
     {
         _spriteVisual?.SetFacing(_facingSign);
+    }
+
+    private void UpdateLocomotionVisual()
+    {
+        bool moving = Velocity.LengthSquared() > 225f
+            && _telegraphRemaining <= 0f
+            && _attackTimeRemaining <= 0f
+            && _hitStunRemaining <= 0f;
+        _spriteVisual?.UpdateLocomotion(moving, _attackTimeRemaining > 0f, false);
     }
 
     private void OnDied()

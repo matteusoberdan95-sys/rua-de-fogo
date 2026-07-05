@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 09 - Demo Publica`
+Sprint atual: `Sprint 14 - Integracao Visual De Assets`
 
 Direcao oficial atual:
 
@@ -575,6 +575,48 @@ Proximo passo apos validacao:
 - animacao de ataque/hit/morte do Caua;
 - SFX ambiente (rua/chuva) + 5-8 efeitos de combate;
 - skin nos demais inimigos e menu principal.
+
+## Sprint 14 - Integracao Visual De Assets
+
+Status: iniciada / correcao tecnica aplicada.
+
+Objetivo: transformar as referencias novas em pipeline real de jogo, corrigindo primeiro os problemas que quebram a apresentacao: fundo preto em sprites, escala diferente entre idle/walk e inimigo virando para o lado errado.
+
+Problemas identificados:
+
+- `art/sprites/player/caua_idle.png`, `caua_walk_sheet.png` e `art/sprites/enemies/grunt_idle.png` nao tinham transparencia;
+- idle do Caua usava frame 1536x1024, enquanto walk usava frames 384x1024;
+- a troca idle/walk fazia o personagem parecer mudar de tamanho;
+- o script visual assumia que todo sprite-fonte olhava para a direita;
+- o grunt-fonte olhava para a esquerda, causando flip estranho;
+- inimigo comum ainda nao tem animacao de walk, entao parecia uma imagem estatica.
+
+Entregas implementadas:
+
+- criada ferramenta `tools/normalize-sprites.ps1`;
+- gerados assets normalizados:
+  - `art/sprites/player/caua_idle_game.png`;
+  - `art/sprites/player/caua_walk_sheet_game.png`;
+  - `art/sprites/enemies/grunt_idle_game.png`;
+- `SideScrollerPlayer.tscn` agora usa sprites `_game`;
+- `SideScrollerEnemyGrunt.tscn` agora usa sprite `_game`;
+- `CharacterSpriteVisual` recebeu `SourceFacesRight` para corrigir flip por asset;
+- grunt configurado com `SourceFacesRight = false`;
+- inimigo sem walk sheet ganhou bob leve ao se mover;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Referencias novas:
+
+- `references/personagens_ref/`: pranchas de personagens, inimigos, bosses e poses;
+- `references/cenarios/`: pranchas de cenarios/fases e atmosferas.
+
+Pendencias de validacao:
+
+- abrir no Godot e testar `F5`;
+- confirmar se o fundo preto sumiu;
+- confirmar se idle/walk mantem tamanho coerente;
+- confirmar se o grunt vira para o lado correto;
+- decidir quais referencias serao recortadas/desenhadas primeiro no Krita.
 
 ## Marco futuro - Demo Publica / Steam
 

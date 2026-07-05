@@ -167,3 +167,14 @@ Arquivos principais:
 ## Observacao Sobre C#
 
 O arquivo `.csproj` usa `Godot.NET.Sdk/4.4.1` como ponto de partida. Caso a versao instalada do Godot .NET seja outra, o editor pode atualizar esse valor automaticamente.
+
+## Sprint 14 - Integracao Visual
+
+Arquivos principais:
+
+- `tools/normalize-sprites.ps1`: gera sprites `_game.png` com alpha e frame padronizado.
+- `scripts/visual/CharacterSpriteVisual.cs`: controla escala, flip, pulo, locomocao e flash visual.
+- `scenes/actors/SideScrollerPlayer.tscn`: usa `caua_idle_game.png` e `caua_walk_sheet_game.png`.
+- `scenes/actors/SideScrollerEnemyGrunt.tscn`: usa `grunt_idle_game.png` e `SourceFacesRight = false`.
+
+Regra: referencias em `references/` nao devem ser ligadas direto ao jogo. Primeiro precisam virar assets em `art/` com transparencia, escala e pivot corretos.

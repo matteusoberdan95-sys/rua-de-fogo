@@ -6,8 +6,8 @@
 [ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
 [ext_resource type="PackedScene" path="res://scenes/actors/PlayerProjectile.tscn" id="5_projectile"]
 [ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="6_sprite_visual"]
-[ext_resource type="Texture2D" path="res://art/sprites/player/caua_idle.png" id="7_idle"]
-[ext_resource type="Texture2D" path="res://art/sprites/player/caua_walk_sheet.png" id="8_walk"]
+[ext_resource type="Texture2D" path="res://art/sprites/player/caua_idle_game.png" id="7_idle"]
+[ext_resource type="Texture2D" path="res://art/sprites/player/caua_walk_sheet_game.png" id="8_walk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_walk0"]
 atlas = ExtResource("8_walk")
@@ -84,7 +84,7 @@ polygon = PackedVector2Array(-24, -5, 24, -5, 31, 0, 24, 5, -24, 5, -31, 0)
 [node name="SpriteVisual" type="Node2D" parent="."]
 position = Vector2(-8, -6)
 script = ExtResource("6_sprite_visual")
-DisplayScale = 0.11
+DisplayScale = 0.15
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteVisual"]
 texture_filter = 0

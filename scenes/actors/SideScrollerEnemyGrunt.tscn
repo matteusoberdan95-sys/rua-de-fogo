@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/combat/Hurtbox.cs" id="3_hurtbox"]
 [ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
 [ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="5_sprite_visual"]
-[ext_resource type="Texture2D" path="res://art/sprites/enemies/grunt_idle.png" id="6_idle"]
+[ext_resource type="Texture2D" path="res://art/sprites/enemies/grunt_idle_game.png" id="6_idle"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_grunt"]
 animations = [{
@@ -40,7 +40,8 @@ polygon = PackedVector2Array(-22, -5, 22, -5, 29, 0, 22, 5, -22, 5, -29, 0)
 [node name="SpriteVisual" type="Node2D" parent="."]
 position = Vector2(0, -4)
 script = ExtResource("5_sprite_visual")
-DisplayScale = 0.1
+DisplayScale = 0.15
+SourceFacesRight = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteVisual"]
 texture_filter = 0

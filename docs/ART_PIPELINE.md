@@ -80,6 +80,8 @@ Personagens:
 - PNG com fundo transparente.
 - Sprite sheet quando houver animacao.
 - Pivot consistente nos pes.
+- Frame padrao atual para prototipo: `384x1024`, personagem alinhado pelos pes.
+- Nome de arquivo de jogo pode usar sufixo `_game.png` quando for asset recortado/normalizado.
 
 Tiles:
 
@@ -90,3 +92,19 @@ Efeitos:
 
 - PNG separado ou particulas no Godot.
 - Sangue deve ter variacoes pequenas para nao repetir demais.
+
+## Normalizacao Temporaria De Sprites
+
+A Sprint 14 adicionou uma ferramenta para corrigir assets de referencia que vieram com fundo preto ou enquadramento inconsistente:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/normalize-sprites.ps1
+```
+
+Ela gera:
+
+- `art/sprites/player/caua_idle_game.png`
+- `art/sprites/player/caua_walk_sheet_game.png`
+- `art/sprites/enemies/grunt_idle_game.png`
+
+Isso nao substitui o trabalho final no Krita. E uma ponte para o jogo parar de parecer uma colagem com fundo preto enquanto desenhamos sprites finais.

@@ -234,11 +234,21 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. validar Sprints 12 e 13 no Godot com `F5`;
-2. ajustar escala/alinhamento dos sprites se necessario;
-3. redesenhar placeholders no Krita (mesmos nomes de arquivo);
-4. apos aprovacao, marcar sprints como concluidas;
-5. proxima sprint: animacoes hit/morte, SFX ambiente, skin nos demais inimigos e menu.
+1. validar a Sprint 14 no Godot com `F5`;
+2. confirmar que os sprites `_game` removeram o fundo preto;
+3. confirmar que idle/walk do Caua nao mudam mais de tamanho;
+4. confirmar que o grunt vira para o lado correto;
+5. depois integrar sprites finais desenhados no Krita usando as novas referencias em `references/personagens_ref/` e `references/cenarios/`.
+
+Estado da Sprint 14:
+
+- criada `tools/normalize-sprites.ps1`;
+- gerados `caua_idle_game.png`, `caua_walk_sheet_game.png` e `grunt_idle_game.png`;
+- `SideScrollerPlayer.tscn` e `SideScrollerEnemyGrunt.tscn` apontam para os sprites normalizados;
+- `CharacterSpriteVisual` agora tem `SourceFacesRight`;
+- grunt usa `SourceFacesRight = false`;
+- inimigo sem walk sheet tem bob visual leve quando anda;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`.
 
 ## Regra Obrigatoria De Sprint
 
