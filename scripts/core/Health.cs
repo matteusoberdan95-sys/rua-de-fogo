@@ -36,11 +36,11 @@ public partial class Health : Node
         }
     }
 
-    public void Damage(int amount)
+    public bool Damage(int amount)
     {
         if (amount <= 0 || CurrentHealth <= 0 || IsInvulnerable)
         {
-            return;
+            return false;
         }
 
         CurrentHealth = Mathf.Max(CurrentHealth - amount, 0);
@@ -55,6 +55,8 @@ public partial class Health : Node
         {
             EmitSignal(SignalName.Died);
         }
+
+        return true;
     }
 
     public void Heal(int amount)

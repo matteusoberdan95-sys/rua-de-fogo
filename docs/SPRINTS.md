@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 02 - Prototipo Beat 'em Up`
+Sprint atual: `Sprint 06 - Vertical Slice Pequena`
 
 Direcao oficial atual:
 
@@ -24,6 +24,18 @@ Uma tarefa so conta como pronta quando:
 - foi testada jogando;
 - esta documentada quando muda fluxo, controle, cena ou arquitetura;
 - nao quebra o prototipo anterior sem motivo claro.
+
+## Regra Obrigatoria De Fechamento De Sprint
+
+Uma sprint so pode ser marcada como `concluida` depois de:
+
+- rodar `dotnet build SangueNoAsfalto.csproj` com 0 erros;
+- validar no Godot com `F5`;
+- atualizar `README.md` e documentos relevantes em `docs/`;
+- commitar as alteracoes;
+- fazer push para o remoto configurado.
+
+Se ainda nao houve validacao no Godot, a sprint deve ficar como `implementada / aguardando validacao`.
 
 ## Sprint 00 - Fundacao
 
@@ -59,7 +71,7 @@ Entregas:
 
 ## Sprint 02 - Prototipo Beat 'em Up
 
-Status: implementada / em validacao jogavel.
+Status: concluida como base jogavel / ainda pede ajuste fino no Godot.
 
 Objetivo: criar uma segunda cena lateral/2.5D para testar se a direcao visual e de gameplay funciona melhor que o top-down.
 
@@ -77,7 +89,7 @@ Entregas implementadas:
 - prototipo top-down mantido intacto em `PrototypeArena.tscn`;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
-Pendencias de validacao:
+Pendencias levadas para ajuste fino:
 
 - testar no Godot com `F5`;
 - ajustar velocidade, alcance, camera e ritmo apos jogar;
@@ -93,7 +105,7 @@ Agentes principais:
 
 ## Sprint 03 - Feedback De Combate
 
-Status: futura.
+Status: concluida.
 
 Objetivo: fazer cada golpe parecer pesado e sangrento.
 
@@ -108,6 +120,30 @@ Entregas planejadas:
 - indicador de invulnerabilidade mais claro;
 - ataque inimigo telegrafado.
 
+Entregas implementadas:
+
+- feedback centralizado em `scripts/core/CombatFeedback.cs`;
+- flash vermelho no alvo quando dano entra;
+- sangue, mancha no chao e impacto visual placeholder gerados por codigo;
+- hit pause curto ao acertar;
+- knockback com hit-stun via `ICombatKnockbackReceiver`;
+- slash visual placeholder no combo lateral do jogador;
+- telegraph do inimigo lateral com pulso de cor mais forte;
+- som placeholder de impacto gerado por codigo;
+- indicador de invulnerabilidade do jogador com pulso visual azul/ciano.
+
+Validado jogando:
+
+- combate lateral esta funcionando e ficando mais pesado;
+- sangue foi aumentado apos teste;
+- bug de slow motion persistente apos matar inimigos foi corrigido.
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos ao encerrar.
+
+Recomendacao:
+
+- iniciar a Sprint 04 para melhorar a identidade visual da primeira rua;
+- nao iniciar clima/tempo dinamico antes da rua base ter leitura visual melhor.
+
 Agentes principais:
 
 - Goku: sensacao de golpe.
@@ -117,7 +153,7 @@ Agentes principais:
 
 ## Sprint 04 - Identidade Visual Da Primeira Rua
 
-Status: futura.
+Status: concluida.
 
 Objetivo: trocar blocagem feia por uma fase ainda simples, mas com cara do jogo.
 
@@ -134,6 +170,25 @@ Entregas planejadas:
 - primeiro sprite melhor do protagonista;
 - primeiro sprite melhor do inimigo comum.
 
+Entregas implementadas:
+
+- asfalto mais escuro com brilho molhado, reflexos e rachaduras;
+- camadas simples de fundo com neblina, casas, caixas d'agua e fios;
+- boteco/mercadinho fechado com placa, porta de aco e linhas de metal;
+- muros com pichacao, aviso sobrenatural e cartaz rasgado;
+- props urbanos: sacos de lixo, bueiro, carro quebrado mais detalhado e altar de rua com vela;
+- postes com cones de luz desenhados e pools de luz no asfalto;
+- terceiro poste falhando como landmark central;
+- paleta aproximada da biblia visual aplicada na rua;
+- protagonista com jaqueta, bandagem, cabelo, bracos e lamina mais reconheciveis;
+- inimigo comum com olhos fortes, mandibula quebrada, costelas/brilho e silhueta mais agressiva.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- leitura visual aprovada;
+- props, reflexos e silhuetas ficaram bons para seguir para clima/tempo.
+
 Agentes principais:
 
 - Gohan: direcao visual.
@@ -144,7 +199,7 @@ Agentes principais:
 
 ## Sprint 05 - Prototipo De Clima E Tempo
 
-Status: futura.
+Status: concluida.
 
 Objetivo: provar que horario e clima mudam a sensacao da fase sem quebrar o gameplay.
 
@@ -159,6 +214,27 @@ Entregas planejadas:
 - uma zona simples de lama ou poca;
 - documentar limites do sistema para a vertical slice.
 
+Entregas implementadas:
+
+- criado `scripts/world/TimeOfDayController.cs`;
+- criado `scripts/world/WeatherController.cs`;
+- `SideScrollerPrototype.tscn` agora tem `TimeOfDayController` e `WeatherController`;
+- ciclo visual simples entre amanhecer, manha, tarde, por do sol e noite;
+- luzes/pools de poste reagem ao horario;
+- camada visual de garoa/chuva forte/tempestade com gotas `Line2D` geradas por codigo;
+- neblina e lama/poca placeholder com intensidade por clima;
+- relampago placeholder em tempestade;
+- build C# validada com 0 erros e 0 avisos;
+- chuva ajustada para aparecer com gotas `Line2D` geradas por codigo.
+
+Validado jogando:
+
+- validada no Godot com `F5`;
+- ceu muda de cor corretamente;
+- relampagos aparecem;
+- chuva ficou visivel apos ajuste das gotas;
+- resultado visual aprovado para seguir.
+
 Agentes principais:
 
 - Shenlong: sistema de clima e tempo.
@@ -168,7 +244,7 @@ Agentes principais:
 
 ## Sprint 06 - Vertical Slice Pequena
 
-Status: futura.
+Status: proxima / pronta para iniciar.
 
 Objetivo: criar uma fase curta com inicio, meio e fim.
 

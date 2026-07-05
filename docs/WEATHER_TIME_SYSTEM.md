@@ -179,12 +179,31 @@ As referencias pilar deste sistema estao em:
 
 ## Quando Implementar
 
-Sprint 02 ainda foca na cena lateral jogavel.
+Sprint 05 iniciou a camada visual simples do sistema.
 
-O sistema completo de clima entra depois, mas ja deve influenciar o design da cena:
+Implementado nesta primeira camada:
+
+- `TimeOfDayController` simples;
+- `WeatherController` simples;
+- transicoes visuais entre horarios;
+- chuva/garoa placeholder;
+- relampago placeholder;
+- neblina e lama/poca visual;
+- luzes de poste reagindo ao horario.
+
+O sistema completo de clima entra depois, mas ja deve continuar influenciando o design da cena:
 
 - deixar espaco para postes;
 - criar fundo em camadas;
 - preparar areas de chuva/reflexo;
 - pensar em ruas que possam mudar de horario;
 - manter clima e boss conectados desde o planejamento.
+
+Limites atuais:
+
+- clima ainda e visual, sem impacto direto em gameplay;
+- chuva ainda e placeholder com gotas `Line2D` geradas por codigo;
+- relampago ainda e placeholder desenhado com `Polygon2D`;
+- lama/poca ainda nao altera velocidade do jogador;
+- audio ambiente de chuva/trovao ainda nao foi implementado;
+- estados de clima ainda nao alteram spawns ou comportamento de inimigos.

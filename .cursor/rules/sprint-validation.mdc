@@ -1,0 +1,17 @@
+---
+description: Mandatory sprint validation and delivery workflow
+alwaysApply: true
+---
+
+# Sprint Validation Workflow
+
+Toda sprint do projeto `Sangue no Asfalto` deve seguir este fluxo obrigatório:
+
+1. Implementar a fatia planejada mantendo o jogo jogável.
+2. Rodar `dotnet build SangueNoAsfalto.csproj` e corrigir erros/avisos relevantes.
+3. Atualizar `README.md` e docs em `docs/` quando mudar sprint, fluxo, cena, controle, arquitetura ou direção.
+4. Validar no Godot com `F5` antes de marcar a sprint como concluída.
+5. Só depois da validação no Godot, marcar a sprint como `concluida` em `docs/SPRINTS.md`.
+6. Após concluir a sprint, fazer commit e push das alterações.
+
+Se a validação no Godot ainda não aconteceu, a sprint deve ficar como `implementada / aguardando validacao` e não pode ser fechada.

@@ -36,6 +36,30 @@ O objetivo do marco `0.1` e validar o loop basico:
 
 O prototipo top-down continua existindo como laboratorio de sistemas em `PrototypeArena.tscn`. A cena principal atual e lateral/2.5D beat 'em up, com clima, horario, chuva, luz, sangue e tensao urbana como pilares do jogo.
 
+## Estado atual
+
+Sprint atual: `Sprint 06 - Vertical Slice Pequena`.
+
+O prototipo lateral ja tem movimento por lanes, ondas de inimigos, combo, tiro, esquiva, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
+
+A Sprint 04 foi validada jogando e adicionou uma primeira passada de identidade visual na rua: asfalto molhado, reflexos, rachaduras, luzes de poste desenhadas, boteco/mercadinho fechado, pichacoes, fios, props urbanos, altar de rua e silhuetas melhores para protagonista e inimigo comum.
+
+A Sprint 05 foi validada jogando e iniciou o sistema visual de clima/tempo com `TimeOfDayController`, `WeatherController`, ciclo simples de horario, chuva/garoa placeholder visivel, neblina, lama/poca visual, relampago e luzes reagindo ao horario.
+
+## Regra obrigatoria de sprint
+
+Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
+
+## Proximo passo recomendado
+
+Com a Sprint 05 concluida, o recomendado e iniciar a Sprint 06:
+
+- criar uma fase curta com inicio, meio e fim;
+- estruturar encontros de combate;
+- adicionar checkpoint simples;
+- planejar mini-chefe, tela de morte e tela de vitoria;
+- manter a cena jogavel durante toda a sprint.
+
 ## Documentos importantes
 
 - `docs/PROJECT_BRIEF.md`: resumo do projeto, tecnologias e escopo.

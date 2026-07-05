@@ -13,11 +13,23 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 02 - Prototipo Beat 'em Up`.
+Sprint atual: `Sprint 06 - Vertical Slice Pequena`.
 
 Direcao atual: migrar do prototipo top-down para uma cena lateral/2.5D beat 'em up, mantendo o top-down como laboratorio de sistemas.
 
 Pilar novo: clima, horario e rua viva fazem parte da identidade do jogo. Nao tratar chuva, noite, vento e tempestade como simples filtro visual.
+
+## Regra Obrigatoria De Sprint
+
+Nenhum agente deve marcar uma sprint como concluida sem:
+
+- `dotnet build SangueNoAsfalto.csproj` com 0 erros;
+- validacao no Godot com `F5`;
+- docs atualizados;
+- commit criado;
+- push feito para o remoto.
+
+Se faltar validacao no Godot, manter a sprint como `implementada / aguardando validacao`.
 
 ## Goku - Gameplay
 

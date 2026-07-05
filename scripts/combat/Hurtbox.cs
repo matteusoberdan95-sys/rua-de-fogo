@@ -23,8 +23,14 @@ public partial class Hurtbox : Area2D
             return;
         }
 
-        _health?.Damage(hitbox.Damage);
+        bool damaged = _health?.Damage(hitbox.Damage) == true;
+        if (!damaged)
+        {
+            return;
+        }
+
         ApplyKnockback(hitbox);
+        PlayFeedback(hitbox);
     }
 
     private void ApplyKnockback(Hitbox hitbox)
@@ -35,6 +41,23 @@ public partial class Hurtbox : Area2D
         }
 
         Vector2 direction = body.GlobalPosition.DirectionTo(source.GlobalPosition) * -1f;
-        body.Velocity += direction * hitbox.KnockbackForce;
+        Vector2 impulse = direction * hitbox.KnockbackForce;
+        if (Owner is ICombatKnockbackReceiver receiver)
+        {
+            receiver.ReceiveKnockback(impulse, hitbox.HitStunDuration);
+            return;
+        }
+
+        body.Velocity += impulse;
+    }
+
+    private void PlayFeedback(Hitbox hitbox)
+    {
+        if (Owner is not Node2D target || hitbox.Source is not Node2D source)
+        {
+            return;
+        }
+
+        CombatFeedback.PlayHit(target, source, hitbox.Damage);
     }
 }

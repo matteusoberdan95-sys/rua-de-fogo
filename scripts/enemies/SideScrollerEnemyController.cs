@@ -4,7 +4,7 @@ using SangueNoAsfalto.Core;
 
 namespace SangueNoAsfalto.Enemies;
 
-public partial class SideScrollerEnemyController : CharacterBody2D
+public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnockbackReceiver
 {
     [Export]
     public float MoveSpeed { get; set; } = 120f;
@@ -42,6 +42,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D
     private float _cooldownRemaining;
     private float _telegraphRemaining;
     private float _attackTimeRemaining;
+    private float _hitStunRemaining;
     private int _facingSign = -1;
 
     public override void _Ready()
@@ -73,6 +74,13 @@ public partial class SideScrollerEnemyController : CharacterBody2D
         _cooldownRemaining = Mathf.Max(_cooldownRemaining - dt, 0f);
         TickTelegraph(dt);
         TickAttack(dt);
+
+        if (TickHitStun(dt))
+        {
+            MoveAndSlide();
+            GlobalPosition = new Vector2(GlobalPosition.X, Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
+            return;
+        }
 
         _target ??= GetTree().GetFirstNodeInGroup("side_player") as Node2D;
         _target ??= GetTree().GetFirstNodeInGroup("player") as Node2D;
@@ -134,6 +142,9 @@ public partial class SideScrollerEnemyController : CharacterBody2D
         }
 
         _telegraphRemaining -= dt;
+        float pulse = 0.55f + Mathf.Sin(_telegraphRemaining * 85f) * 0.45f;
+        Modulate = Colors.White.Lerp(new Color(1f, 0.22f, 0.1f, 1f), pulse);
+
         if (_telegraphRemaining <= 0f)
         {
             _attackTimeRemaining = AttackDuration;
@@ -154,6 +165,23 @@ public partial class SideScrollerEnemyController : CharacterBody2D
         {
             SetAttackCollision(false);
         }
+    }
+
+    private bool TickHitStun(float dt)
+    {
+        if (_hitStunRemaining <= 0f)
+        {
+            return false;
+        }
+
+        _hitStunRemaining -= dt;
+        Velocity = Velocity.MoveToward(Vector2.Zero, 1050f * dt);
+        if (_hitStunRemaining <= 0f)
+        {
+            Velocity = Vector2.Zero;
+        }
+
+        return true;
     }
 
     private void UpdateAttackArc()
@@ -178,6 +206,16 @@ public partial class SideScrollerEnemyController : CharacterBody2D
         {
             _attackCollision.Disabled = !enabled;
         }
+    }
+
+    public void ReceiveKnockback(Vector2 impulse, float duration)
+    {
+        _telegraphRemaining = 0f;
+        _attackTimeRemaining = 0f;
+        _hitStunRemaining = Mathf.Max(_hitStunRemaining, duration);
+        Velocity = impulse;
+        Modulate = Colors.White;
+        SetAttackCollision(false);
     }
 
     private void UpdateFacingVisual()

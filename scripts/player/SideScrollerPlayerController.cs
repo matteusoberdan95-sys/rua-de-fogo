@@ -4,7 +4,7 @@ using SangueNoAsfalto.Core;
 
 namespace SangueNoAsfalto.Player;
 
-public partial class SideScrollerPlayerController : CharacterBody2D
+public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnockbackReceiver
 {
     [Export]
     public float HorizontalSpeed { get; set; } = 260f;
@@ -70,6 +70,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D
     private float _attackTimeRemaining;
     private float _comboResetRemaining;
     private float _shootCooldownRemaining;
+    private float _hitStunRemaining;
     private int _comboIndex;
 
     public override void _Ready()
@@ -115,6 +116,13 @@ public partial class SideScrollerPlayerController : CharacterBody2D
         UpdateAttackArc();
         UpdateFacingVisual();
         UpdateInvulnerabilityVisual();
+
+        if (TickHitStun(dt))
+        {
+            MoveAndSlide();
+            ClampToPlayableArea();
+            return;
+        }
 
         if (_dashTimeRemaining <= 0f)
         {
@@ -235,6 +243,23 @@ public partial class SideScrollerPlayerController : CharacterBody2D
         CurrentStamina = Mathf.Min(CurrentStamina + StaminaRegenPerSecond * dt, MaxStamina);
     }
 
+    private bool TickHitStun(float dt)
+    {
+        if (_hitStunRemaining <= 0f)
+        {
+            return false;
+        }
+
+        _hitStunRemaining -= dt;
+        Velocity = Velocity.MoveToward(Vector2.Zero, 1300f * dt);
+        if (_hitStunRemaining <= 0f)
+        {
+            Velocity = Vector2.Zero;
+        }
+
+        return true;
+    }
+
     private void StartAttack()
     {
         if (_attackTimeRemaining > 0f)
@@ -259,6 +284,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D
         }
 
         SetAttackCollision(true);
+        SpawnSlashEffect(_comboIndex);
     }
 
     private void StartDash(Vector2 input)
@@ -318,6 +344,58 @@ public partial class SideScrollerPlayerController : CharacterBody2D
         }
     }
 
+    private void SpawnSlashEffect(int comboIndex)
+    {
+        Node? parent = GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        float reach = comboIndex == 2 ? 92f : 72f;
+        float height = comboIndex == 2 ? 54f : 40f;
+        Polygon2D slash = new()
+        {
+            Color = comboIndex == 2
+                ? new Color(1f, 0.16f, 0.08f, 0.9f)
+                : new Color(1f, 0.86f, 0.48f, 0.78f),
+            Polygon =
+            [
+                new Vector2(0f, -height * 0.5f),
+                new Vector2(reach, -height * 0.18f),
+                new Vector2(reach + 18f, 0f),
+                new Vector2(reach, height * 0.18f),
+                new Vector2(0f, height * 0.5f),
+                new Vector2(24f, 0f)
+            ],
+            ZIndex = 12
+        };
+
+        parent.AddChild(slash);
+        slash.GlobalPosition = GlobalPosition + new Vector2(FacingSign * 16f, -8f);
+        slash.Scale = new Vector2(FacingSign, 1f);
+        slash.Rotation = comboIndex switch
+        {
+            1 => -0.18f * FacingSign,
+            2 => 0.22f * FacingSign,
+            _ => 0f,
+        };
+
+        Tween tween = slash.CreateTween();
+        tween.TweenProperty(slash, "scale", new Vector2(slash.Scale.X * 1.16f, slash.Scale.Y * 1.22f), 0.055f);
+        tween.Parallel().TweenProperty(slash, "modulate:a", 0f, 0.09f);
+        tween.TweenCallback(Callable.From(slash.QueueFree));
+    }
+
+    public void ReceiveKnockback(Vector2 impulse, float duration)
+    {
+        _dashTimeRemaining = 0f;
+        _attackTimeRemaining = 0f;
+        _hitStunRemaining = Mathf.Max(_hitStunRemaining, duration);
+        Velocity = impulse;
+        SetAttackCollision(false);
+    }
+
     private void ClampToPlayableArea()
     {
         GlobalPosition = new Vector2(
@@ -340,7 +418,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D
     {
         if (_health is not null && _health.IsInvulnerable)
         {
-            Modulate = new Color(0.78f, 0.9f, 1f, 0.72f);
+            float pulse = 0.55f + Mathf.Sin(Time.GetTicksMsec() * 0.035f) * 0.25f;
+            Modulate = Colors.White.Lerp(new Color(0.28f, 0.86f, 1f, 0.62f), pulse);
             return;
         }
 

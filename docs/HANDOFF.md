@@ -90,6 +90,67 @@ Scripts novos da Sprint 02:
 - `scripts/core/SideScrollerDirector.cs`
 - `scripts/ui/BeatEmUpHud.cs`
 
+Scripts iniciados na Sprint 03:
+
+- `scripts/core/CombatFeedback.cs`: feedback visual de impacto, sangue placeholder, mancha no chao, som placeholder e hit pause.
+- `scripts/combat/Hitbox.cs`: agora expoe `HitStunDuration` e o contrato `ICombatKnockbackReceiver`.
+- `scripts/combat/Hurtbox.cs`: dispara feedback somente quando o dano entra de verdade.
+
+Estado validado da Sprint 03:
+
+- prototipo lateral testado no Godot com `F5`;
+- combate esta mais pesado e legivel;
+- sangue aumentado apos teste;
+- bug de slow motion persistente apos derrotar inimigos corrigido;
+- som placeholder de impacto adicionado;
+- indicador de invulnerabilidade do jogador melhorado com pulso azul/ciano;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`.
+
+Estado da Sprint 04:
+
+- `scenes/levels/SideScrollerPrototype.tscn` recebeu primeira passada visual: asfalto molhado, rachaduras, reflexos, fios, neblina, caixas d'agua, boteco/mercadinho fechado, pichacoes, props urbanos, bueiro, altar e postes com pools de luz;
+- `scenes/actors/SideScrollerPlayer.tscn` recebeu silhueta melhor com jaqueta, bandagem, cabelo, bracos e lamina mais forte;
+- `scenes/actors/SideScrollerEnemyGrunt.tscn` recebeu silhueta mais agressiva com olhos fortes, mandibula, costelas/brilho, garra e espinhos;
+- validada no Godot com `F5` e aprovada.
+
+Scripts iniciados na Sprint 05:
+
+- `scripts/world/TimeOfDayController.cs`: ciclo visual simples de horario e luzes reagindo ao estado.
+- `scripts/world/WeatherController.cs`: clima visual placeholder com garoa, chuva forte, tempestade, neblina, lama/poca e relampago.
+
+Estado da Sprint 05:
+
+- `SideScrollerPrototype.tscn` recebeu `TimeOfDayController` e `WeatherController`;
+- ciclo visual entre amanhecer, manha, tarde, por do sol e noite;
+- chuva/garoa placeholder com gotas `Line2D` geradas por codigo;
+- relampago placeholder em tempestade;
+- lama/poca e neblina mudam por estado de clima;
+- luzes/pools de poste reagem ao horario;
+- build C# validada com `dotnet build SangueNoAsfalto.csproj`;
+- validada no Godot com `F5`;
+- chuva ficou visivel apos ajuste para gotas `Line2D` geradas por codigo.
+
+Proximo passo recomendado:
+
+1. commitar e fazer push da Sprint 05;
+2. iniciar `Sprint 06 - Vertical Slice Pequena`;
+3. planejar fase curta com inicio, meio, fim, checkpoint, mini-chefe e telas basicas;
+4. manter build e cena jogavel a cada fatia.
+
+## Regra Obrigatoria De Sprint
+
+Toda sprint deve seguir este fluxo:
+
+1. implementar mantendo o jogo jogavel;
+2. rodar `dotnet build SangueNoAsfalto.csproj`;
+3. atualizar `README.md` e docs relevantes;
+4. validar no Godot com `F5`;
+5. so entao marcar como `concluida`;
+6. commitar;
+7. fazer push.
+
+Se nao foi validada no Godot, a sprint deve ficar como `implementada / aguardando validacao`.
+
 ## Regras Para Trabalhar Em Outro PC
 
 Antes de trocar de maquina:

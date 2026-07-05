@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerEnemyGrunt.tscn" id="2_enemy"]
 [ext_resource type="Script" path="res://scripts/core/InputBootstrap.cs" id="3_input"]
 [ext_resource type="Script" path="res://scripts/core/SideScrollerDirector.cs" id="4_director"]
 [ext_resource type="Script" path="res://scripts/ui/BeatEmUpHud.cs" id="5_hud"]
+[ext_resource type="Script" path="res://scripts/world/TimeOfDayController.cs" id="6_time"]
+[ext_resource type="Script" path="res://scripts/world/WeatherController.cs" id="7_weather"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_north"]
 size = Vector2(2400, 34)
@@ -32,6 +34,18 @@ size = Vector2(26, 130)
 [node name="InputBootstrap" type="Node" parent="."]
 script = ExtResource("3_input")
 
+[node name="TimeOfDayController" type="Node" parent="."]
+script = ExtResource("6_time")
+InitialState = 0
+AutoCycle = true
+SecondsPerState = 18.0
+
+[node name="WeatherController" type="Node" parent="."]
+script = ExtResource("7_weather")
+InitialState = 1
+AutoCycle = true
+SecondsPerState = 22.0
+
 [node name="Sky" type="Polygon2D" parent="."]
 color = Color(0.05, 0.055, 0.065, 1)
 polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 260, -1280, 260)
@@ -40,17 +54,37 @@ polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 260, -1280, 260)
 color = Color(0.72, 0.29, 0.12, 0.18)
 polygon = PackedVector2Array(-1280, 70, 1280, 40, 1280, 260, -1280, 260)
 
+[node name="NightVignette" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.26)
+polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 720, -1280, 720)
+
+[node name="FarMist" type="Polygon2D" parent="."]
+color = Color(0.23, 0.28, 0.28, 0.12)
+polygon = PackedVector2Array(-1280, 198, 1280, 176, 1280, 285, -1280, 310)
+
 [node name="FavelaBack" type="Polygon2D" parent="."]
 color = Color(0.09, 0.09, 0.095, 1)
 polygon = PackedVector2Array(-1280, 210, -1150, 168, -1040, 190, -960, 155, -840, 185, -720, 145, -600, 172, -510, 150, -390, 184, -260, 146, -110, 176, 20, 150, 160, 186, 310, 142, 450, 170, 590, 134, 710, 180, 860, 146, 1000, 174, 1140, 136, 1280, 166, 1280, 310, -1280, 310)
+
+[node name="RooftopWaterTanks" type="Polygon2D" parent="."]
+color = Color(0.055, 0.06, 0.062, 1)
+polygon = PackedVector2Array(-1110, 168, -1068, 168, -1068, 202, -1110, 202, -1089, 150, 470, 146, 516, 146, 516, 180, 470, 180, 493, 130, 910, 152, 955, 152, 955, 187, 910, 187, 932, 135)
 
 [node name="HousesBack" type="Polygon2D" parent="."]
 color = Color(0.12, 0.105, 0.095, 1)
 polygon = PackedVector2Array(-1240, 250, -1120, 250, -1120, 190, -1010, 190, -1010, 250, -900, 250, -900, 205, -790, 205, -790, 250, -650, 250, -650, 180, -520, 180, -520, 250, -360, 250, -360, 198, -220, 198, -220, 250, -70, 250, -70, 188, 70, 188, 70, 250, 230, 250, 230, 205, 365, 205, 365, 250, 520, 250, 520, 178, 650, 178, 650, 250, 790, 250, 790, 200, 920, 200, 920, 250, 1070, 250, 1070, 185, 1210, 185, 1210, 250)
 
+[node name="HangingWiresBack" type="Polygon2D" parent="."]
+color = Color(0.025, 0.026, 0.026, 1)
+polygon = PackedVector2Array(-1280, 156, -920, 184, -530, 160, -120, 188, 280, 158, 710, 184, 1280, 148, 1280, 154, 710, 190, 280, 164, -120, 194, -530, 166, -920, 190, -1280, 162)
+
 [node name="Road" type="Polygon2D" parent="."]
-color = Color(0.055, 0.058, 0.062, 1)
+color = Color(0.043, 0.048, 0.05, 1)
 polygon = PackedVector2Array(-1280, 250, 1280, 250, 1280, 720, -1280, 720)
+
+[node name="WetRoadSheen" type="Polygon2D" parent="."]
+color = Color(0.29, 0.32, 0.31, 0.11)
+polygon = PackedVector2Array(-1280, 278, 1280, 258, 1280, 720, -1280, 720)
 
 [node name="LaneBandBack" type="Polygon2D" parent="."]
 color = Color(0.085, 0.08, 0.075, 1)
@@ -63,6 +97,10 @@ polygon = PackedVector2Array(-1280, 345, 1280, 345, 1280, 435, -1280, 435)
 [node name="LaneBandFront" type="Polygon2D" parent="."]
 color = Color(0.055, 0.052, 0.052, 1)
 polygon = PackedVector2Array(-1280, 435, 1280, 435, 1280, 720, -1280, 720)
+
+[node name="AsphaltCracks" type="Polygon2D" parent="."]
+color = Color(0.01, 0.012, 0.013, 0.74)
+polygon = PackedVector2Array(-1090, 382, -1010, 386, -948, 374, -940, 379, -1008, 394, -1090, 389, -520, 468, -470, 458, -424, 468, -374, 454, -372, 461, -424, 476, -470, 466, -520, 476, 225, 356, 270, 365, 340, 350, 392, 360, 392, 367, 340, 358, 270, 372, 225, 364, 760, 438, 840, 426, 900, 438, 980, 420, 980, 428, 900, 446, 840, 434, 760, 446)
 
 [node name="LaneGuideA" type="Polygon2D" parent="."]
 color = Color(0.55, 0.42, 0.2, 0.18)
@@ -82,6 +120,21 @@ position = Vector2(455, 445)
 color = Color(0.64, 0.55, 0.38, 0.12)
 polygon = PackedVector2Array(-118, -13, 96, -10, 125, 7, 42, 19, -104, 12)
 
+[node name="WetReflectionB" type="Polygon2D" parent="."]
+position = Vector2(-860, 365)
+color = Color(0.82, 0.56, 0.2, 0.15)
+polygon = PackedVector2Array(-150, -10, 86, -14, 170, 6, 72, 24, -132, 17)
+
+[node name="WetReflectionC" type="Polygon2D" parent="."]
+position = Vector2(895, 390)
+color = Color(0.82, 0.48, 0.14, 0.13)
+polygon = PackedVector2Array(-128, -9, 104, -13, 155, 8, 52, 22, -122, 14)
+
+[node name="MudPatch" type="Polygon2D" parent="."]
+position = Vector2(-80, 452)
+color = Color(0.18, 0.13, 0.08, 0.36)
+polygon = PackedVector2Array(-170, -18, -95, -36, 12, -30, 146, -12, 170, 10, 98, 28, -65, 34, -160, 14)
+
 [node name="Kiosk" type="Polygon2D" parent="."]
 position = Vector2(-640, 245)
 color = Color(0.16, 0.12, 0.085, 1)
@@ -92,6 +145,34 @@ position = Vector2(42, 18)
 color = Color(0.045, 0.045, 0.048, 1)
 polygon = PackedVector2Array(-44, -35, 44, -35, 44, 35, -44, 35)
 
+[node name="KioskShutterLines" type="Polygon2D" parent="Kiosk"]
+position = Vector2(42, 18)
+color = Color(0.34, 0.31, 0.25, 0.55)
+polygon = PackedVector2Array(-44, -28, 44, -28, 44, -24, -44, -24, -44, -14, 44, -14, 44, -10, -44, -10, -44, 0, 44, 0, 44, 4, -44, 4, -44, 14, 44, 14, 44, 18, -44, 18, -44, 28, 44, 28, 44, 32, -44, 32)
+
+[node name="KioskSign" type="Polygon2D" parent="Kiosk"]
+position = Vector2(-44, -48)
+color = Color(0.37, 0.08, 0.04, 1)
+polygon = PackedVector2Array(-74, -14, 74, -14, 70, 14, -70, 14)
+
+[node name="KioskSignLetters" type="Polygon2D" parent="Kiosk/KioskSign"]
+color = Color(0.86, 0.66, 0.28, 0.9)
+polygon = PackedVector2Array(-54, -5, -44, -5, -44, 5, -54, 5, -30, -5, -8, -5, -8, 5, -30, 5, 8, -5, 38, -5, 38, 5, 8, 5)
+
+[node name="ClosedMarket" type="Polygon2D" parent="."]
+position = Vector2(-255, 246)
+color = Color(0.105, 0.095, 0.082, 1)
+polygon = PackedVector2Array(-125, -54, 125, -54, 125, 48, -125, 48)
+
+[node name="ClosedMarketShutter" type="Polygon2D" parent="ClosedMarket"]
+position = Vector2(0, 12)
+color = Color(0.23, 0.22, 0.19, 1)
+polygon = PackedVector2Array(-88, -38, 88, -38, 88, 38, -88, 38)
+
+[node name="ClosedMarketShutterLines" type="Polygon2D" parent="ClosedMarket/ClosedMarketShutter"]
+color = Color(0.5, 0.45, 0.33, 0.32)
+polygon = PackedVector2Array(-88, -28, 88, -28, 88, -24, -88, -24, -88, -10, 88, -10, 88, -6, -88, -6, -88, 8, 88, 8, 88, 12, -88, 12, -88, 26, 88, 26, 88, 30, -88, 30)
+
 [node name="GraffitiWall" type="Polygon2D" parent="."]
 position = Vector2(235, 235)
 color = Color(0.14, 0.13, 0.115, 1)
@@ -101,6 +182,20 @@ polygon = PackedVector2Array(-220, -52, 220, -52, 220, 45, -220, 45)
 color = Color(0.58, 0.03, 0.04, 0.9)
 polygon = PackedVector2Array(-160, 10, -118, -24, -75, 12, -35, -20, 10, 14, 52, -18, 92, 14, 134, -20, 164, 10, 150, 25, 96, -2, 52, 28, 5, 2, -36, 30, -76, 0, -118, 26, -156, 24)
 
+[node name="GraffitiWarning" type="Polygon2D" parent="GraffitiWall"]
+position = Vector2(70, -17)
+color = Color(0.42, 0.52, 0.22, 0.75)
+polygon = PackedVector2Array(-48, -8, 44, -8, 38, -2, -18, -2, -8, 8, -48, 8)
+
+[node name="TornPosterA" type="Polygon2D" parent="GraffitiWall"]
+position = Vector2(-130, -12)
+color = Color(0.75, 0.68, 0.52, 0.76)
+polygon = PackedVector2Array(-22, -28, 20, -24, 16, 28, -18, 22)
+
+[node name="TornPosterMark" type="Polygon2D" parent="GraffitiWall/TornPosterA"]
+color = Color(0.28, 0.02, 0.025, 0.85)
+polygon = PackedVector2Array(-10, -10, 8, -8, 11, 6, -4, 12, -13, 2)
+
 [node name="BrokenCar" type="Polygon2D" parent="."]
 position = Vector2(725, 315)
 color = Color(0.11, 0.09, 0.075, 1)
@@ -109,6 +204,47 @@ polygon = PackedVector2Array(-130, 30, -98, -22, -32, -40, 48, -35, 113, 0, 128,
 [node name="CarRust" type="Polygon2D" parent="BrokenCar"]
 color = Color(0.45, 0.16, 0.04, 0.75)
 polygon = PackedVector2Array(-92, 8, -36, -12, 16, -6, 74, 16, 30, 27, -64, 24)
+
+[node name="BrokenCarGlass" type="Polygon2D" parent="BrokenCar"]
+color = Color(0.08, 0.14, 0.15, 0.82)
+polygon = PackedVector2Array(-58, -20, -16, -32, 34, -28, 70, -6, 10, -5)
+
+[node name="TrashBagsA" type="Polygon2D" parent="."]
+position = Vector2(-458, 476)
+color = Color(0.015, 0.018, 0.018, 1)
+polygon = PackedVector2Array(-28, 18, -21, -10, -4, -22, 16, -14, 28, 12, 10, 21, -12, 22, 18, 16, 28, -4, 48, -9, 64, 7, 55, 22, 32, 24)
+
+[node name="TrashBagsHighlight" type="Polygon2D" parent="TrashBagsA"]
+color = Color(0.16, 0.18, 0.17, 0.5)
+polygon = PackedVector2Array(-18, -2, 2, -13, 17, -8, 8, -2, 28, 3, 47, 1, 54, 8, 33, 9)
+
+[node name="DrainGrate" type="Polygon2D" parent="."]
+position = Vector2(170, 462)
+color = Color(0.018, 0.02, 0.021, 1)
+polygon = PackedVector2Array(-48, -10, 48, -10, 58, 6, 42, 18, -42, 18, -58, 6)
+
+[node name="DrainBars" type="Polygon2D" parent="DrainGrate"]
+color = Color(0.25, 0.28, 0.27, 0.65)
+polygon = PackedVector2Array(-34, -7, -28, -7, -24, 14, -30, 14, -12, -8, -6, -8, -3, 15, -9, 15, 12, -8, 18, -8, 16, 15, 10, 15, 34, -6, 40, -6, 32, 13, 26, 13)
+
+[node name="RoadsideAltar" type="Polygon2D" parent="."]
+position = Vector2(545, 456)
+color = Color(0.12, 0.1, 0.075, 1)
+polygon = PackedVector2Array(-30, 18, 30, 18, 22, -6, 8, -24, -8, -24, -22, -6)
+
+[node name="AltarCloth" type="Polygon2D" parent="RoadsideAltar"]
+color = Color(0.45, 0.02, 0.035, 0.88)
+polygon = PackedVector2Array(-19, -3, 19, -3, 25, 12, -24, 12)
+
+[node name="CandleStub" type="Polygon2D" parent="RoadsideAltar"]
+position = Vector2(4, -18)
+color = Color(0.83, 0.75, 0.55, 1)
+polygon = PackedVector2Array(-4, -9, 5, -9, 5, 8, -4, 8)
+
+[node name="CandleGlow" type="Polygon2D" parent="RoadsideAltar/CandleStub"]
+position = Vector2(1, -12)
+color = Color(1, 0.58, 0.14, 0.58)
+polygon = PackedVector2Array(0, -15, 10, 1, 0, 14, -10, 1)
 
 [node name="PostA" type="Polygon2D" parent="."]
 position = Vector2(-930, 250)
@@ -120,6 +256,11 @@ position = Vector2(23, -100)
 color = Color(1, 0.62, 0.18, 0.5)
 polygon = PackedVector2Array(-42, -16, 28, -14, 58, 20, 7, 46, -52, 25)
 
+[node name="PostALightPool" type="Polygon2D" parent="."]
+position = Vector2(-878, 365)
+color = Color(0.9, 0.55, 0.16, 0.12)
+polygon = PackedVector2Array(-170, -28, 110, -26, 184, 18, 80, 54, -154, 42)
+
 [node name="PostB" type="Polygon2D" parent="."]
 position = Vector2(865, 250)
 color = Color(0.17, 0.16, 0.13, 1)
@@ -129,6 +270,58 @@ polygon = PackedVector2Array(-8, -115, 8, -115, 8, 115, -8, 115)
 position = Vector2(-24, -100)
 color = Color(1, 0.54, 0.12, 0.4)
 polygon = PackedVector2Array(-58, 20, -28, -14, 42, -16, 52, 25, -7, 46)
+
+[node name="PostBLightPool" type="Polygon2D" parent="."]
+position = Vector2(812, 390)
+color = Color(0.86, 0.45, 0.11, 0.11)
+polygon = PackedVector2Array(-160, -26, 120, -30, 190, 20, 72, 58, -150, 40)
+
+[node name="PostC" type="Polygon2D" parent="."]
+position = Vector2(-80, 250)
+color = Color(0.145, 0.14, 0.118, 1)
+polygon = PackedVector2Array(-7, -108, 7, -108, 7, 112, -7, 112)
+
+[node name="PostCLight" type="Polygon2D" parent="PostC"]
+position = Vector2(24, -94)
+color = Color(1, 0.64, 0.18, 0.32)
+polygon = PackedVector2Array(-34, -12, 26, -12, 48, 16, 4, 38, -42, 18)
+
+[node name="PostCFlickerDark" type="Polygon2D" parent="PostC/PostCLight"]
+color = Color(0, 0, 0, 0.28)
+polygon = PackedVector2Array(-12, -10, 14, -10, 7, 26, -18, 20)
+
+[node name="PostCLightPool" type="Polygon2D" parent="."]
+position = Vector2(-28, 382)
+color = Color(0.8, 0.52, 0.2, 0.08)
+polygon = PackedVector2Array(-138, -24, 118, -30, 166, 12, 58, 48, -130, 36)
+
+[node name="ForegroundWire" type="Polygon2D" parent="."]
+color = Color(0.01, 0.011, 0.011, 1)
+polygon = PackedVector2Array(-930, 142, -80, 154, 865, 136, 865, 142, -80, 160, -930, 148)
+
+[node name="WeatherLayer" type="Node2D" parent="."]
+
+[node name="FogLayer" type="Polygon2D" parent="WeatherLayer"]
+color = Color(0.28, 0.34, 0.34, 0.16)
+polygon = PackedVector2Array(-1280, 230, 1280, 210, 1280, 520, -1280, 560)
+
+[node name="RainLayer" type="Node2D" parent="WeatherLayer"]
+
+[node name="RainA" type="Polygon2D" parent="WeatherLayer/RainLayer"]
+color = Color(0.68, 0.78, 0.82, 0.18)
+polygon = PackedVector2Array(-1180, -120, -1168, -120, -1260, 160, -1272, 160, -760, -90, -748, -90, -840, 190, -852, 190, -350, -130, -338, -130, -430, 150, -442, 150, 120, -80, 132, -80, 40, 200, 28, 200, 680, -130, 692, -130, 600, 150, 588, 150)
+
+[node name="RainB" type="Polygon2D" parent="WeatherLayer/RainLayer"]
+color = Color(0.68, 0.78, 0.82, 0.18)
+polygon = PackedVector2Array(-970, 60, -958, 60, -1050, 340, -1062, 340, -510, 90, -498, 90, -590, 370, -602, 370, -40, 35, -28, 35, -120, 315, -132, 315, 430, 65, 442, 65, 350, 345, 338, 345, 950, 25, 962, 25, 870, 305, 858, 305)
+
+[node name="RainC" type="Polygon2D" parent="WeatherLayer/RainLayer"]
+color = Color(0.68, 0.78, 0.82, 0.18)
+polygon = PackedVector2Array(-1240, 300, -1228, 300, -1320, 580, -1332, 580, -720, 260, -708, 260, -800, 540, -812, 540, -220, 285, -208, 285, -300, 565, -312, 565, 250, 250, 262, 250, 170, 530, 158, 530, 780, 280, 792, 280, 700, 560, 688, 560, 1160, 245, 1172, 245, 1080, 525, 1068, 525)
+
+[node name="LightningFlash" type="Polygon2D" parent="WeatherLayer"]
+color = Color(0.75, 0.86, 1, 0)
+polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 720, -1280, 720)
 
 [node name="WorldBounds" type="Node2D" parent="."]
 
