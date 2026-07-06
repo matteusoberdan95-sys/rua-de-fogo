@@ -57,6 +57,7 @@ dotnet build SangueNoAsfalto.csproj
 - **Correcao visual Sprint 29:** camadas antigas `Road`/`LaneBand`/`NightVignette` foram escondidas e a rua nova teve `ZIndex` corrigido para aparecer no gameplay.
 - **Sprint 30 concluida:** HUD compacto, camera mais aberta, chuva/vinheta menos invasivas e contorno sutil de leitura nos personagens, validada no Godot.
 - **Sprint 31 concluida:** personagens expressivos, telegraph/morte legiveis, `CombatPacing` (combate mais lento e com peso), validada no Godot.
+- **Sprint 32 concluida:** `StageAssetLibrary`, landmarks por ato e pipeline de assets, validada no Godot.
 - **Sprint 33 implementada:** clima por ato, pocas de lama/eletrica, vento, apagao e trovao nos chefes — aguardando validacao F5.
 
 ### Regra visual
