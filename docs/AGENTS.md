@@ -13,9 +13,9 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 24 - Deck Marcial e Golpes Por Estilo` (planejada).
+Sprint atual: `Sprint 28 - Defesa, Parry e Postura` (implementada — aguardando validacao).
 
-Direcao de combate: `docs/COMBAT_DESIGN.md` — S23 entregou catalogo/XP; S24 entrega **golpes visiveis por estilo** (`MoveCatalog`); depois clima como gameplay (Shenlong) e boss com assinatura climatica.
+Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro. Proximo: polimento Fase 1 (`docs/STAGE_01_VILA_ESPERANCA.md`).
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 

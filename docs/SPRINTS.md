@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 24 - Deck Marcial e Golpes Por Estilo` (planejada).
+Sprint atual: `Sprint 27 - Combate Arcade e Defesa` (implementada — aguardando validacao).
 
 Ultima sprint concluida: `Sprint 22 - Combate Plastico E Impacto` (validada no Godot).
 
@@ -937,45 +937,118 @@ Validacao:
 
 - aprovada no playtest; progressao marcial, parry, fim da fase e portao ok.
 
-## Sprint 24 - Deck Marcial e Golpes Por Estilo (planejada)
+## Sprint 24 - Deck Marcial e Golpes Por Estilo (implementada)
 
-Status: planejada.
+Status: implementada (aguardando validacao no Godot).
 
-### Consenso dos agents (pos-S23)
+Objetivo: transformar desbloqueio de XP em deck de golpes jogavel — cada estilo muda animacao, timing e leitura do combo J/J/J.
 
-| Agente | Papel | Por que agora |
-|--------|-------|---------------|
-| **Goku** | Gameplay | Sprint 23 so multiplica dano — falta o jogador **sentir** Boxe vs Muay Thai |
-| **Trunks** | UI | HUD precisa listar tecnicas do deck ativo, nao so o nome do estilo |
-| **Gohan** | Design | Identidade marcial vem dos golpes, nao de numeros invisiveis |
-| **Piccolo** | Arquitetura | `MoveCatalog` desacopla animacao/dano do controller |
-| **Freeza** | Balance | Cada estilo com trade-offs claros antes de escalar dificuldade |
-| **Shenlong** | Clima | **Sprint 25** — chuva/lama afetando combate e boss com assinatura climatica |
+Entregas implementadas:
 
-**Nao agora:** sprites Krita finais (paralelo), trilha completa (Marco 0.8), segunda fase — dependem de combate por estilo estar legivel.
+- `MoveCatalog.cs` — resolver de golpe por estilo, slot de combo e corrida;
+- Boxe: jab / cross / hook + hook corrida;
+- Muay Thai: jab / teep / joelhada + teep corrida;
+- Capoeira (Nv9): bencao / meia-lua no combo e na corrida;
+- `CharacterSpriteVisual` — animacoes Cross, Hook, Teep, Joelhada, Meia-lua, etc.;
+- HUD `Tecnicas:` com deck do estilo + ultimo golpe;
+- tutorial atualizado;
+- `dotnet build` validado.
 
-Objetivo: transformar desbloqueio de XP em **deck de golpes jogavel** — cada estilo muda animacao, timing e leitura do combo J/J/J.
+Validacao:
 
-Entregas planejadas:
+- playtest pendente (Nv3 Boxe, Nv5 Muay Thai, corrida por estilo).
 
-- `MoveCatalog.cs` + ids de golpe por estilo (`JabCross`, `Teep`, `MeiaLua`, etc.);
-- `SideScrollerPlayerController` resolve combo via catalogo ativo (nao hardcoded 24/30/50);
-- `CharacterSpriteVisual` — pelo menos **Boxe** (Nv3) e **Muay Thai** (Nv5) com animacoes distintas no rig;
-- golpe **correndo exclusivo** por estilo (Capoeira meia-lua ou Boxe hook corrida como MVP);
-- HUD: painel compacto `Tecnicas: jab · cross · hook` conforme estilo;
-- tutorial: "XP muda seus golpes, nao so o dano";
-- `dotnet build` + validacao F5.
+## Sprint 25 - Rig 2D e Silhuetas (implementada)
 
-Criterios de pronto:
+Status: implementada (aguardando validacao no Godot).
 
-- subir para Nv3 e ver combo diferente de Rua;
-- corrida + J com estilo desbloqueado executa golpe exclusivo;
-- HUD lista tecnicas corretas ao trocar de nivel/estilo.
+Objetivo: personagens com rig 2D em camadas (nao imagens coladas). Referencias em `art/` guiam silhueta; runtime usa poligonos animados.
 
-## Backlog Tecnico Permanente
+Entregas implementadas:
 
+- revertido uso de sprites no gameplay — `UseLayeredPrototype = true` no Caua e grunt;
+- `LayeredPrototypePreset` expandido: QuebraOsso, Fast, Brute, Infected, MiniBoss;
+- `EnemyLayeredVisual.cs` — inimigos-bloco ganham rig em camadas automaticamente;
+- Caua: bandagem, patch no ombro, olhos humanos, mandibula, cachecol;
+- Inimigos: olhos corrompidos, variantes (garras, braco de concreto, veias, espinhos/clava);
+- props de cenario ao longo da fase (`LayeredStreetPrototype`);
+- `dotnet build` validado.
+
+Validacao:
+
+- playtest pendente: Caua e inimigos parecem personagens em camadas, nao blocos nem PNG colado.
+
+## Sprint 26 - Anatomia, Dano e Cenario Vivo (implementada)
+
+Status: implementada (aguardando validacao no Godot).
+
+Objetivo: personagens menos "South Park" — pernas/braços segmentados, dano visivel no rosto/roupa, golpes com peso, props quebraveis e plano da Fase 1.
+
+Entregas:
+
+- pernas com joelho (coxa + canela) e bracos com cotovelo;
+- walk/run com passada, elevacao de pe, balanco de bracos;
+- jab/cross/teep com apoio na perna de tras e extensao de antebraco;
+- dano progressivo: olho roxo, sangue no nariz (gotejando), mancha no rosto, rasgo na roupa, sangue no torso;
+- rosto: orelhas, boca, olhos (humanos no Caua, corruptos nos inimigos);
+- `BreakableStageProp` — caixote, cerca, lixo, placa, garrafa;
+- props espalhados na Vila + `docs/STAGE_01_VILA_ESPERANCA.md`;
+- `dotnet build` validado.
+
+Validacao:
+
+- andar/correr: pes visivelmente alternando;
+- levar golpe: olho roxo + nariz sangrando;
+- quebrar caixote/placa com soco;
+- ler plano da fase 1 no doc.
+
+## Sprint 27 - Combate Arcade e Defesa (implementada)
+
+Status: implementada (aguardando validacao no Godot).
+
+Referencia de sensacao: Final Fight 3 (combo 4 hits, corrida, dash), Cadillacs & Dinosaurs (variedade de golpes), Blasphemous (peso no impacto) — sem copiar moves.
+
+Entregas:
+
+- combo **4 golpes** por estilo (Rua: soco · cruzado · chute · joelhada);
+- **encadeamento** no meio do golpe (cancel ~48%) + buffer de J;
+- **corrida + J** = golpe de corrida; **dash K + J** = ataque no dash;
+- **Q segurar** = defender (chip de dano, gasta stamina, pose de guarda);
+- **Q no timing** ou contra telegraph `! PARRY !` = parry + contra brutal;
+- anim `uppercut`, pose `guard`, feedback de bloqueio;
+- `dotnet build` validado.
+
+Validacao:
+
+- J J J J encadeia 4 golpes diferentes;
+- segurar Q reduz dano; parry no telegraph funciona;
+- correr e bater / dash e bater sentem distintos.
+
+## Sprint 28 - Defesa, Parry e Postura (implementada)
+
+Status: implementada (aguardando validacao no Godot).
+
+Objetivo: defesa com peso de impacto, parry responsivo no toque de Q e postura que quebra em poucos golpes.
+
+Entregas:
+
+- **tap vs hold em Q:** toque abre janela de parry (~0,36s); guarda sustentada so apos ~0,1s segurando (corrige bug que zerava parry no mesmo frame);
+- **bloqueio com knockback:** jogador empurrado para tras proporcional ao golpe inimigo + micro-stun;
+- **postura mais agressiva:** max 85, ~36+ por block, combo de bloqueios consecutivos, regen pausada na guarda;
+- feedback reforcado: `PlayBlock` com shake de camera, hit-pause e faisca maior;
+- `PostureComponent.RegenPaused` para pausar recuperacao durante guarda/impacto;
+- HUD: hint `SEGURE Q = defender | TOQUE Q no !PARRY! = parry`;
+- `dotnet build` validado.
+
+Validacao:
+
+- segurar Q: bloqueia, empurra, postura sobe; ~3 hits fortes quebram guarda;
+- toque rapido Q no `! PARRY !` ou no impacto: parry + contra;
+- inimigos nao ficam batendo indefinidamente sem consequencia.
+
+## Sprint 29 - (planejada)
+
+- polimento da Fase 1 Vila Esperanca (`docs/STAGE_01_VILA_ESPERANCA.md`);
+- validar Sprints 24–28 no Godot e fechar marcos pendentes;
 - manter `dotnet build SangueNoAsfalto.csproj` sem erros;
-- nao quebrar a cena top-down enquanto a lateral nao substituir oficialmente;
-- versionar mudancas importantes;
-- atualizar `docs/SPRINTS.md` ao final de cada sprint;
-- atualizar `docs/HANDOFF.md` quando o fluxo mudar.
+- atualizar docs ao final de cada sprint.

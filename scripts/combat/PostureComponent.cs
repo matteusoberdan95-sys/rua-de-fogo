@@ -26,6 +26,9 @@ public partial class PostureComponent : Node
 
     public float BrokenTimeRemaining => _brokenRemaining;
 
+    /// <summary>Quando true, a postura não recupera (ex.: segurando guarda).</summary>
+    public bool RegenPaused { get; set; }
+
     private float _brokenRemaining;
 
     public override void _Process(double delta)
@@ -43,7 +46,7 @@ public partial class PostureComponent : Node
             return;
         }
 
-        if (CurrentPosture <= 0f)
+        if (RegenPaused || CurrentPosture <= 0f)
         {
             return;
         }

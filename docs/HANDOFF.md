@@ -52,11 +52,17 @@ No Godot:
 
 - `A/D` ou setas esquerda/direita: mover pela rua
 - `W/S` ou setas cima/baixo: trocar lane/profundidade
-- `J` ou botao esquerdo: combo/ataque
-- `L` ou botao direito: tiro
-- `K`: esquiva
-- `Espaco`: pulo
+- duplo-tap `A` ou `D`: correr
+- `J` ou botao esquerdo: combo/ataque (4 golpes por estilo marcial)
+- `L` ou botao direito: pistola
+- `E`: recarregar pistola
+- `K`: esquiva / dash
+- `Espaco`: pulo (voadora com `J` no ar)
+- **segurar `Q`**: defender (chip de dano, empurra para tras, enche postura)
+- **toque rapido `Q`**: parry no `! PARRY !` ou no impacto do golpe
 - `R`: reiniciar
+- `M`: voltar ao menu (morte/vitoria)
+- `F9`: modo screenshot
 
 ## Cenas Atuais
 
@@ -234,8 +240,29 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. iniciar **Sprint 24** — deck marcial e golpes visiveis por estilo (`MoveCatalog`);
-2. Sprint 25 candidata: clima afeta combate + boss com assinatura climatica (Shenlong).
+1. validar **Sprints 24–28** no Godot (F5): golpes por estilo, rig em camadas, props quebraveis, defesa/parry/postura;
+2. fechar marcos pendentes em `docs/BACKLOG.md` apos playtest;
+3. iniciar **Sprint 29** — polimento Fase 1 (`docs/STAGE_01_VILA_ESPERANCA.md`).
+
+Estado da Sprint 28:
+
+- implementada; tap vs hold em Q, knockback no block, postura agressiva, `RegenPaused`; aguardando playtest.
+
+Estado da Sprint 27:
+
+- implementada; combo 4 golpes, corrida+dash+J, defesa com Q; aguardando playtest.
+
+Estado da Sprint 26:
+
+- implementada; anatomia segmentada, dano progressivo, `BreakableStageProp`; aguardando playtest.
+
+Estado da Sprint 25:
+
+- implementada; rig 2D em camadas, `EnemyLayeredVisual`; aguardando playtest.
+
+Estado da Sprint 24:
+
+- implementada; `MoveCatalog`, animacoes por estilo e HUD de tecnicas; aguardando playtest.
 
 Estado da Sprint 23:
 

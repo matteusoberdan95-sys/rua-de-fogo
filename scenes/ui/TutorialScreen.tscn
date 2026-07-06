@@ -60,7 +60,7 @@ Espaco: pular
 R: reiniciar trecho
 M: menu (morte ou vitoria)
 
-Combate comeca desarmado (Estilo: Rua). XP sobe ao acertar inimigos e desbloqueia estilos (Boxe Nv3, Muay Thai Nv5...). Cada golpe gasta stamina — Cauã ofega quando cansado.
+Combate comeca desarmado (Estilo: Rua). XP sobe rapido — Nv2 desbloqueia Boxe (guarda alta, cross, hook); Nv4 Muay Thai (teep, joelhada). Cada golpe mostra o nome na tela. Combo: J -> J -> J encadeia golpes diferentes.
 Armas no chao sao temporarias. Postura cheia = vulneravel a golpe mortal apos parry.
 Objetivo: atravesse a fase, ative o checkpoint no altar e sobreviva aos chefes.
 A sessao completa leva cerca de 10 minutos."

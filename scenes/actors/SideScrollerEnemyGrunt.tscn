@@ -19,6 +19,22 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_idle")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_idle")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
@@ -43,10 +59,10 @@ polygon = PackedVector2Array(-22, -5, 22, -5, 29, 0, 22, 5, -22, 5, -29, 0)
 [node name="SpriteVisual" type="Node2D" parent="."]
 position = Vector2(0, -4)
 script = ExtResource("5_sprite_visual")
-DisplayScale = 0.15
-SourceFacesRight = false
 UseLayeredPrototype = true
+DisplayScale = 0.128
 LayeredPreset = 1
+SourceFacesRight = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteVisual"]
 visible = false

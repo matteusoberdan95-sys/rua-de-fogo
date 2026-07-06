@@ -17,11 +17,11 @@ public static class CombatStyleCatalog
     private static readonly StyleUnlockInfo[] UnlockOrder =
     [
         new(CombatStyleKind.Rua, 1, "Rua", "Sobrevivencia"),
-        new(CombatStyleKind.Boxe, 3, "Boxe", "Pressao e ritmo"),
-        new(CombatStyleKind.MuayThai, 5, "Muay Thai", "Clinch e pernas"),
-        new(CombatStyleKind.Karate, 7, "Karate", "Linha e impacto"),
-        new(CombatStyleKind.Capoeira, 9, "Capoeira", "Mobilidade"),
-        new(CombatStyleKind.JiuJitsu, 11, "Jiu-Jitsu", "Controle"),
+        new(CombatStyleKind.Boxe, 2, "Boxe", "Pressao e ritmo"),
+        new(CombatStyleKind.MuayThai, 4, "Muay Thai", "Clinch e pernas"),
+        new(CombatStyleKind.Karate, 6, "Karate", "Linha e impacto"),
+        new(CombatStyleKind.Capoeira, 8, "Capoeira", "Mobilidade"),
+        new(CombatStyleKind.JiuJitsu, 10, "Jiu-Jitsu", "Controle"),
     ];
 
     public static CombatStyleKind GetActiveStyle(int playerLevel)

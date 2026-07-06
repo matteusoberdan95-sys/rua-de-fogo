@@ -1,111 +1,76 @@
 # Sangue no Asfalto
 
-Prototipo inicial de um beat 'em up/hack and slash dark fantasy em cenario suburbano brasileiro, feito em Godot 4 .NET com C#.
+Prototipo alpha de beat 'em up / hack and slash dark fantasy em cenario suburbano brasileiro, feito em **Godot 4.7 .NET** com **C#**.
 
 ## Como abrir
 
-1. Instale a versao `.NET` do Godot 4.
+1. Instale a versao **.NET** do Godot 4.7.
 2. Abra esta pasta pelo Godot.
-3. Se o editor pedir para atualizar a versao do `Godot.NET.Sdk`, aceite ou ajuste o arquivo `SangueNoAsfalto.csproj` para a versao do seu editor.
-4. Execute com `F5`. A cena principal atual e `res://scenes/ui/MainMenu.tscn`.
+3. Se o editor pedir para atualizar o `Godot.NET.Sdk`, aceite ou ajuste `SangueNoAsfalto.csproj`.
+4. Execute com **F5**. A cena principal e `res://scenes/ui/MainMenu.tscn` (menu → tutorial → fase lateral).
 
-## Controles
+Validacao rapida no terminal:
 
-- `A/D` ou setas esquerda/direita: mover pela rua
-- `W/S` ou setas cima/baixo: trocar lane/profundidade
-- `J` ou botao esquerdo do mouse: atacar
-- `L` ou botao direito do mouse: disparar
-- `K`: esquivar
-- `Espaco`: pular
-- `R`: reiniciar a arena
-- `M`: voltar ao menu nos estados de morte/vitoria
-- `F1`: alternar HUD debug
-- `F2`: alternar controles alternativos
-- `F4`: limpar save durante a demo
-- `F9`: modo screenshot (esconde tutorial/controles para capturas)
+```powershell
+dotnet build SangueNoAsfalto.csproj
+```
 
-## Primeiro marco
+## Controles (fase lateral — `SideScrollerPrototype`)
 
-O objetivo do marco `0.1` e validar o loop basico:
+| Tecla | Acao |
+|-------|------|
+| `A/D` ou setas | Mover pela rua |
+| `W/S` ou setas cima/baixo | Trocar lane / profundidade |
+| Duplo-tap `A` ou `D` | Correr |
+| `J` ou botao esquerdo | Combo de ataque (4 golpes por estilo marcial) |
+| `L` ou botao direito | Pistola (municao limitada, sangramento) |
+| `E` | Recarregar pistola |
+| `K` | Esquiva / dash |
+| `Espaco` | Pulo (voadora com `J` no ar) |
+| **Segurar `Q`** | Defender (chip de dano, empurra para tras, enche postura) |
+| **Toque rapido `Q`** | Parry no timing ou no `! PARRY !` do inimigo |
+| `R` | Reiniciar |
+| `M` | Voltar ao menu (morte/vitoria) |
+| `F1` | HUD debug |
+| `F9` | Modo screenshot |
 
-- movimentacao responsiva;
-- ataque corpo a corpo;
-- stamina;
-- combo simples;
-- disparo de curto alcance;
-- ondas de inimigos;
-- inimigo perseguidor;
-- vida e morte;
-- arena pequena com clima suburbano brasileiro.
+## Estado atual (Jul/2026)
 
-## Direcao atual
+**Sprint atual:** `Sprint 28 — Defesa, Parry e Postura` (implementada — aguardando validacao no Godot).
 
-O prototipo top-down continua existindo como laboratorio de sistemas em `PrototypeArena.tscn`. A cena principal atual e lateral/2.5D beat 'em up, com clima, horario, chuva, luz, sangue e tensao urbana como pilares do jogo.
+**Proxima:** Sprint 29 — polimento da Fase 1 Vila Esperanca (ver `docs/STAGE_01_VILA_ESPERANCA.md`).
 
-## Estado atual
+### O que ja funciona
 
-Sprint atual: `Sprint 19 - Movimento, Spawn E Sidearm` (implementada / aguardando validacao).
+- **Fase lateral ~10 min** na Vila Esperanca: spawn por progresso, chefes, portao SAIDA.
+- **Rig 2D em camadas** (`CharacterSpriteVisual`, `EnemyLayeredVisual`) — personagens animados por codigo, sem sprites colados no gameplay.
+- **Anatomia segmentada:** pernas com joelho, bracos com cotovelo, walk/run com passada.
+- **Dano progressivo:** olho roxo, sangue no nariz, rasgo na roupa.
+- **Combate arcade:** combo 4 golpes, buffer/cancel, corrida+J, dash+J.
+- **Estilos marciais por XP:** Rua, Boxe, Muay Thai, Karate, Capoeira, Jiu-Jitsu (`MoveCatalog`, `CombatStyleCatalog`).
+- **Armas improvisadas** no chao (vergalhao, martelo, faca) + finishers gore.
+- **Postura / parry estilo Sekiro:** segurar Q bloqueia; toque Q no telegraph = parry + contra brutal.
+- **Defesa com peso:** bloqueio empurra o jogador, postura quebra em ~3 hits fortes, camera shake no impacto.
+- **Props quebraveis** (`BreakableStageProp`): caixote, cerca, lixo, placa.
+- **Clima e horario** dinamicos, chuva, parallax pintado, HUD arcade.
 
-Proxima: **Sprint 19** — armas improvisadas no chao + finishers gore. Ver `docs/COMBAT_DESIGN.md`.
+### Regra visual
 
-Estamos em **prototipo alpha**. Meta atual: **fase jogavel de ~10 minutos** na Vila Esperanca, com visual proximo de `references/pillars` (pintura 2D + pixel aparente). Demo publica e Steam ficam bloqueadas ate la.
+Imagens em `art/` e `references/` sao **referencia**. O runtime usa **rig 2D em camadas** (`UseLayeredPrototype = true`).
 
-A Sprint 12 esta implementada: fase repacingada (~10 min), tutorial dedicado, clima por ato e props da Vila Esperanca.
+### Regra de sprint
 
-A Sprint 13 esta implementada: Caua e grunt com `AnimatedSprite2D`, parallax pintado em 3 camadas, HUD tematizado e estilo visual travado no Krita/pixel aparente. Assets placeholder em `art/` prontos para substituicao.
-
-A Sprint 14 comecou corrigindo o problema visual dos sprites: fundo preto, escala diferente entre idle/walk e flip estranho do grunt. Os assets normalizados ficam em `art/sprites/**/*_game.png` e a ferramenta repetivel fica em `tools/normalize-sprites.ps1`. Em seguida, o Caua passou a usar recortes temporarios da prancha `references/personagens_ref/` (`caua_ref_*`) para manter a mesma roupa/silhueta entre parado, andando e atacando, e a fase passou a deixar o background pintado da Vila Esperanca aparecer mais que a blocagem antiga.
-
-A Sprint 15 troca o Caua recortado por um `LayeredPrototype` em `CharacterSpriteVisual`: corpo, cabeca, cabelo, pernas, bracos, camisa, faca e pulso sao partes separadas animadas por codigo. Isso ainda nao e arte final, mas ja prova respiracao, batimento/peito, cabelo mexendo, caminhada, dash e ataque com arma sem parecer imagem colada.
-
-A Sprint 16 foi validada: cenario em camadas (`LayeredStreetPrototype`), Quebra-Osso em `LayeredPrototype`, escala e leitura da rua ok.
-
-A Sprint 17 foi validada: combo, hurt, telegraph e trails no rig.
-
-A Sprint 18 remove a faca fixa: combo desarmado (soco/chute/voadora), inimigo com soco/cabecada, machucado visual por HP e HUD `Estilo: Rua | Punhos`.
-
-O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
-
-A Sprint 04 foi validada jogando e adicionou uma primeira passada de identidade visual na rua: asfalto molhado, reflexos, rachaduras, luzes de poste desenhadas, boteco/mercadinho fechado, pichacoes, fios, props urbanos, altar de rua e silhuetas melhores para protagonista e inimigo comum.
-
-A Sprint 05 foi validada jogando e iniciou o sistema visual de clima/tempo com `TimeOfDayController`, `WeatherController`, ciclo simples de horario, chuva/garoa placeholder visivel, neblina, lama/poca visual, relampago e luzes reagindo ao horario.
-
-A Sprint 06 foi validada jogando e implementou a primeira vertical slice pequena: entrada da rua, checkpoint, segundo encontro, mini-chefe placeholder, tela/mensagem de morte e vitoria via HUD.
-
-A Sprint 07 foi validada jogando e iniciou os sistemas de jogo: save local, checkpoint persistente, arma improvisada com durabilidade, pickups de cura/arma/continue, continue simples, configuracao de HUD debug e remapeamento minimo. A organizacao de imports C# agora fica centralizada em `GlobalUsings.cs`.
-
-A Sprint 08 foi validada jogando e expandiu o conteudo alpha com inimigo rapido, bruto, infectado, segundo mini-chefe, chefe placeholder alpha e encontros por composicao.
-
-O controle atual usa `Espaco` para pulo visual do personagem e `K` para esquiva.
-
-A Sprint 09 foi validada jogando e adiciona menu inicial como cena principal, tutorial discreto no HUD, overlays melhores de morte/vitoria, painel simples de configuracoes/controles no menu e preset inicial de export Windows.
-
-A Sprint 10 foi validada jogando e aproximou a demo das referencias em `references/pillars` com HUD estilo arcade, combo/furia, banner da Vila Esperanca, boteco/ponto final e silhueta mais proxima do Caua.
-
-A Sprint 11 foi validada jogando e preparou material Steam, checklist QC, pacote demo, versao `Demo v1.0`, modo screenshot com `F9` e HUD simplificado com HP, stamina, XP/nivel, arma e habilidades.
-
-## Regra obrigatoria de sprint
-
-Toda sprint so pode ser marcada como concluida depois de build C# sem erros, validacao no Godot com `F5`, docs atualizados, commit e push.
-
-## Proximo passo recomendado
-
-**Sprint 24** — deck marcial: golpes e animacoes distintas por estilo (Boxe, Muay Thai, etc.), nao so multiplicadores de dano. Ver `docs/SPRINTS.md`.
+Toda sprint so e concluida apos: `dotnet build` sem erros, validacao F5 no Godot, docs atualizados, commit e push.
 
 ## Documentos importantes
 
-- `docs/COMBAT_DESIGN.md`: combate desarmado, armas improvisadas, progressao marcial.
-- `docs/VISUAL_BIBLE.md`: direcao visual do jogo.
-- `docs/WEATHER_TIME_SYSTEM.md`: clima, horario e rua viva.
-- `docs/ART_PIPELINE.md`: fluxo de arte e referencias.
-- `docs/GODOT_BEGINNER_GUIDE.md`: guia pratico para mexer no Godot.
-- `docs/ROADMAP.md`: fases do projeto.
-- `docs/SPRINTS.md`: planejamento das sprints e sprint atual.
-- `docs/HANDOFF.md`: como continuar em Codex, CLI ou outro PC.
-- `docs/BUILD_WINDOWS.md`: passo de exportacao Windows.
-- `docs/STEAM_PAGE.md`: rascunho da pagina Steam.
-- `docs/SCREENSHOTS_STEAM.md`: lista de screenshots para marketing.
-- `docs/QC_DEMO_CHECKLIST.md`: checklist antes de distribuir build.
-- `docs/DEMO_PACKAGE.md`: pacote para testers.
-- `docs/LAUNCH_PLAN.md`: fases e preco sugerido.
-- `docs/AGENTS.md`: responsabilidades dos agentes.
+| Documento | Conteudo |
+|-----------|----------|
+| `docs/SPRINTS.md` | Planejamento e sprint atual |
+| `docs/HANDOFF.md` | Continuar em outro PC / Codex / CLI |
+| `docs/STAGE_01_VILA_ESPERANCA.md` | Plano da Fase 1 |
+| `docs/COMBAT_DESIGN.md` | Combate, armas, progressao marcial |
+| `docs/VISUAL_BIBLE.md` | Direcao visual |
+| `docs/ARCHITECTURE.md` | Arquitetura de codigo |
+| `docs/BACKLOG.md` | Marcos e checklist |
+| `docs/AGENTS.md` | Responsabilidades dos agentes |

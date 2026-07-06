@@ -29,6 +29,48 @@ public static class CombatFeedback
         ShakeCamera(source, weight);
     }
 
+    public static void PlayPropBreak(Node2D prop, Vector2 direction, World.BreakableStageProp.PropKind kind)
+    {
+        Node? parent = prop.GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        Color debrisColor = kind switch
+        {
+            World.BreakableStageProp.PropKind.KioskBottle => new Color(0.22f, 0.58f, 0.18f, 0.9f),
+            World.BreakableStageProp.PropKind.StreetSign => new Color(0.56f, 0.52f, 0.42f),
+            World.BreakableStageProp.PropKind.TrashBag => new Color(0.05f, 0.06f, 0.06f),
+            _ => new Color(0.22f, 0.16f, 0.11f),
+        };
+
+        for (int i = 0; i < 6; i++)
+        {
+            Polygon2D shard = new()
+            {
+                Color = debrisColor,
+                Polygon =
+                [
+                    Vector2.Zero,
+                    new Vector2(8f, -4f),
+                    new Vector2(6f, 6f),
+                ],
+                GlobalPosition = prop.GlobalPosition + direction * 8f + new Vector2(GD.Randf() * 18f - 9f, GD.Randf() * 10f - 14f),
+                Rotation = GD.Randf() * Mathf.Tau,
+                ZIndex = 12,
+            };
+            parent.AddChild(shard);
+            Vector2 impulse = direction * (80f + GD.Randf() * 60f) + new Vector2(0f, -90f - GD.Randf() * 40f);
+            Tween tween = shard.CreateTween();
+            tween.TweenProperty(shard, "global_position", shard.GlobalPosition + impulse * 0.18f, 0.22);
+            tween.Parallel().TweenProperty(shard, "modulate:a", 0f, 0.35);
+            tween.TweenCallback(Callable.From(() => shard.QueueFree()));
+        }
+
+        PlayImpactSound(parent, 18);
+    }
+
     public static void PlayFinisher(Node2D target, Node2D source, ImprovisedWeaponKind weapon)
     {
         Vector2 impactDirection = source.GlobalPosition.DirectionTo(target.GlobalPosition);
@@ -135,6 +177,89 @@ public static class CombatFeedback
         SpawnImpactSpark(defender, direction, 52);
         HitPause(defender.GetTree(), 2.1f);
         ShakeCamera(defender, 1.6f);
+    }
+
+    public static void PlayBlock(Node2D defender, Node2D? attacker)
+    {
+        Vector2 direction = attacker is not null
+            ? defender.GlobalPosition.DirectionTo(attacker.GlobalPosition)
+            : Vector2.Right;
+        SpawnImpactSpark(defender, direction, 22);
+        HitPause(defender.GetTree(), 0.58f);
+        ShakeCamera(defender, 0.72f);
+    }
+
+    public static void PlayPostureBreak(Node2D defender)
+    {
+        SpawnImpactSpark(defender, Vector2.Right, 28);
+        HitPause(defender.GetTree(), 0.9f);
+        ShakeCamera(defender, 1.2f);
+    }
+
+    public static void SpawnMoveCallout(Node2D actor, string moveName, CombatStyleKind style)
+    {
+        if (string.IsNullOrWhiteSpace(moveName))
+        {
+            return;
+        }
+
+        Node? parent = actor.GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        Color color = style switch
+        {
+            CombatStyleKind.Boxe => new Color(1f, 0.52f, 0.18f),
+            CombatStyleKind.MuayThai => new Color(1f, 0.88f, 0.22f),
+            CombatStyleKind.Capoeira => new Color(0.45f, 0.98f, 0.42f),
+            CombatStyleKind.Karate => new Color(0.92f, 0.92f, 0.98f),
+            _ => new Color(0.95f, 0.82f, 0.55f),
+        };
+
+        Label callout = new()
+        {
+            Text = moveName.ToUpperInvariant(),
+            ZIndex = 36,
+        };
+        callout.AddThemeFontSizeOverride("font_size", style == CombatStyleKind.Rua ? 17 : 22);
+        callout.AddThemeColorOverride("font_color", color);
+        callout.AddThemeColorOverride("font_outline_color", Colors.Black);
+        callout.AddThemeConstantOverride("outline_size", 5);
+
+        parent.AddChild(callout);
+        callout.GlobalPosition = actor.GlobalPosition + new Vector2(-36f, -78f);
+
+        Tween tween = callout.CreateTween();
+        tween.TweenProperty(callout, "position", callout.Position + new Vector2(0f, -32f), 0.34f);
+        tween.Parallel().TweenProperty(callout, "scale", Vector2.One * 1.18f, 0.12f);
+        tween.TweenProperty(callout, "modulate:a", 0f, 0.22f);
+        tween.TweenCallback(Callable.From(callout.QueueFree));
+    }
+
+    public static void PlayStyleUnlock(Node2D player, StyleUnlockInfo unlock)
+    {
+        SpawnMoveCallout(player, unlock.DisplayName + "!", unlock.Kind);
+        ShakeCamera(player, 1.2f);
+
+        Node? parent = player.GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        ColorRect burst = new()
+        {
+            Color = new Color(1f, 0.78f, 0.22f, 0.28f),
+            Size = new Vector2(180f, 90f),
+            Position = player.Position + new Vector2(-90f, -110f),
+            ZIndex = 28,
+        };
+        parent.AddChild(burst);
+        Tween tween = burst.CreateTween();
+        tween.TweenProperty(burst, "modulate:a", 0f, 0.45f);
+        tween.TweenCallback(Callable.From(burst.QueueFree));
     }
 
     public static void PlayParryCounterKill(Node2D target, Node2D source)

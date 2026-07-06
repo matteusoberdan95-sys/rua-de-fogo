@@ -13,6 +13,7 @@ public partial class BeatEmUpHud : CanvasLayer
     private Label? _debugLabel;
     private Label? _styleToast;
     private Label? _parryHint;
+    private Label? _techniquesLabel;
     private ProgressBar? _healthBar;
     private ProgressBar? _staminaBar;
     private ProgressBar? _xpBar;
@@ -34,6 +35,7 @@ public partial class BeatEmUpHud : CanvasLayer
         _staminaLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/StaminaLabel");
         _xpLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/XpLabel");
         _weaponLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/WeaponLabel");
+        _techniquesLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/TechniquesLabel");
         _debugLabel = GetNodeOrNull<Label>("DebugLabel");
         _healthBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/HealthBar");
         _staminaBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/StaminaBar");
@@ -64,7 +66,7 @@ public partial class BeatEmUpHud : CanvasLayer
         _parryHint = new Label
         {
             Name = "ParryHint",
-            Text = "Q — DEFLETIR AGORA!",
+            Text = "SEGURE Q = defender  |  TOQUE Q no !PARRY! = parry",
             HorizontalAlignment = HorizontalAlignment.Center,
             Visible = false,
             ZIndex = 41,
@@ -77,6 +79,17 @@ public partial class BeatEmUpHud : CanvasLayer
         _parryHint.OffsetLeft = -180f;
         _parryHint.OffsetRight = 180f;
         AddChild(_parryHint);
+
+        if (_techniquesLabel is null)
+        {
+            _techniquesLabel = new Label
+            {
+                Name = "TechniquesLabel",
+            };
+            _techniquesLabel.AddThemeFontSizeOverride("font_size", 13);
+            _techniquesLabel.AddThemeColorOverride("font_color", new Color(0.82f, 0.78f, 0.62f));
+            GetNodeOrNull<VBoxContainer>("PlayerPanel/StatsColumn")?.AddChild(_techniquesLabel);
+        }
 
         if (_player is not null)
         {
@@ -133,7 +146,15 @@ public partial class BeatEmUpHud : CanvasLayer
         {
             if (_levelLabel is not null)
             {
-                _levelLabel.Text = $"CAUA  Nv {_player.Level}";
+                Color styleColor = _player.ActiveCombatStyle switch
+                {
+                    CombatStyleKind.Boxe => new Color(1f, 0.55f, 0.22f),
+                    CombatStyleKind.MuayThai => new Color(1f, 0.88f, 0.28f),
+                    CombatStyleKind.Capoeira => new Color(0.5f, 0.98f, 0.45f),
+                    _ => new Color(0.95f, 0.82f, 0.62f),
+                };
+                _levelLabel.Text = $"CAUA  Nv {_player.Level}  [{_player.CombatStyleName}]";
+                _levelLabel.AddThemeColorOverride("font_color", styleColor);
             }
 
             if (_staminaLabel is not null)
@@ -175,6 +196,23 @@ public partial class BeatEmUpHud : CanvasLayer
                     : string.Empty;
                 _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}{nextStyle}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}{reload}";
             }
+
+            if (_techniquesLabel is not null)
+            {
+                string current = MoveCatalog.GetComboMoveName(
+                    _player.ActiveCombatStyle,
+                    _player.ComboChainSlot,
+                    _player.IsRunning);
+                string next = MoveCatalog.GetNextComboMoveName(
+                    _player.ActiveCombatStyle,
+                    _player.ComboChainSlot,
+                    _player.IsRunning);
+                string lastMove = string.IsNullOrEmpty(_player.LastMoveDisplayName)
+                    ? string.Empty
+                    : $"  |  ultimo: {_player.LastMoveDisplayName}";
+                _techniquesLabel.Text = $"Golpe: {current}  ->  prox: {next}{lastMove}";
+            }
+
             UpdateParryHint();
         }
 

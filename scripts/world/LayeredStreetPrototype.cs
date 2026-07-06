@@ -58,6 +58,8 @@ public partial class LayeredStreetPrototype : Node2D
         AddNearStreet(nearRoot);
 
         AddExtendedStreetSegments();
+        AddImmersionAlongRoute();
+        AddDestructibles();
         AddStageExitGate();
         AddVignette();
     }
@@ -349,6 +351,96 @@ public partial class LayeredStreetPrototype : Node2D
         label.AddThemeColorOverride("font_color", color);
         parent.AddChild(label);
         return label;
+    }
+
+    private void AddImmersionAlongRoute()
+    {
+        Node2D? midRoot = GetNodeOrNull<Node2D>("MidStreet/MidRoot");
+        Node2D? nearRoot = GetNodeOrNull<Node2D>("NearStreet/NearRoot");
+        if (midRoot is null || nearRoot is null)
+        {
+            return;
+        }
+
+        AddRoadsideAltar(midRoot, 470f, 318f);
+        AddBusShelter(midRoot, 1180f, 308f);
+        AddBrokenCar(nearRoot, 2050f, 478f);
+        AddPoliceSilhouette(nearRoot, 890f, 488f);
+        AddLabel(midRoot, "ZoneLabelA", "BARRACO DO MARTINS", new Vector2(1080f, 148f), 16, new Color(0.88f, 0.62f, 0.22f), 9);
+        AddLabel(midRoot, "ZoneLabelB", "FIM DA VILA", new Vector2(2480f, 148f), 16, new Color(0.75f, 0.58f, 0.22f), 9);
+    }
+
+    private void AddRoadsideAltar(Node2D root, float x, float y)
+    {
+        AddRect(root, "AltarBase", new Vector2(x - 30f, y + 6f), new Vector2(60f, 24f), new Color(0.12f, 0.1f, 0.075f), 6);
+        AddPoly(root, "AltarStone", new Color(0.16f, 0.14f, 0.11f), [
+            new Vector2(x - 22f, y - 6f), new Vector2(x + 22f, y - 6f), new Vector2(x + 14f, y - 24f), new Vector2(x - 14f, y - 24f)
+        ], 7);
+        AddRect(root, "AltarCloth", new Vector2(x - 19f, y - 3f), new Vector2(38f, 15f), new Color(0.45f, 0.02f, 0.035f, 0.88f), 8);
+        AddPoly(root, "AltarCandle", new Color(1f, 0.58f, 0.14f, 0.58f), [
+            new Vector2(x + 4f, y - 30f), new Vector2(x + 14f, y - 14f), new Vector2(x + 4f, y - 1f), new Vector2(x - 6f, y - 14f)
+        ], 9);
+    }
+
+    private void AddBusShelter(Node2D root, float x, float y)
+    {
+        AddRect(root, "BusRoof", new Vector2(x - 70f, y - 48f), new Vector2(140f, 12f), new Color(0.14f, 0.13f, 0.11f), 6);
+        AddRect(root, "BusBack", new Vector2(x - 62f, y - 36f), new Vector2(124f, 86f), new Color(0.08f, 0.085f, 0.08f, 0.85f), 5);
+        AddRect(root, "BusBench", new Vector2(x - 48f, y + 18f), new Vector2(96f, 10f), new Color(0.22f, 0.18f, 0.14f), 7);
+        AddLabel(root, "BusSign", "ONIBUS", new Vector2(x - 34f, y - 38f), 14, new Color(0.82f, 0.72f, 0.28f), 8);
+    }
+
+    private void AddBrokenCar(Node2D root, float x, float y)
+    {
+        AddPoly(root, "CarBody", new Color(0.11f, 0.115f, 0.12f), [
+            new Vector2(x - 90f, y + 8f), new Vector2(x + 70f, y + 4f), new Vector2(x + 96f, y - 18f), new Vector2(x + 40f, y - 34f),
+            new Vector2(x - 40f, y - 30f), new Vector2(x - 98f, y - 8f)
+        ], 8);
+        AddPoly(root, "CarWindow", new Color(0.04f, 0.05f, 0.06f, 0.9f), [
+            new Vector2(x - 18f, y - 26f), new Vector2(x + 34f, y - 28f), new Vector2(x + 22f, y - 12f), new Vector2(x - 10f, y - 10f)
+        ], 9);
+        AddPoly(root, "CarDent", new Color(0.28f, 0.03f, 0.03f, 0.55f), [
+            new Vector2(x + 48f, y - 8f), new Vector2(x + 72f, y - 4f), new Vector2(x + 64f, y + 10f), new Vector2(x + 44f, y + 6f)
+        ], 10);
+    }
+
+    private void AddPoliceSilhouette(Node2D root, float x, float y)
+    {
+        AddPoly(root, "PoliceCar", new Color(0.09f, 0.11f, 0.14f), [
+            new Vector2(x - 72f, y + 6f), new Vector2(x + 58f, y + 4f), new Vector2(x + 78f, y - 12f), new Vector2(x + 10f, y - 22f), new Vector2(x - 58f, y - 10f)
+        ], 8);
+        AddRect(root, "PoliceLightL", new Vector2(x - 8f, y - 26f), new Vector2(12f, 6f), new Color(0.9f, 0.15f, 0.12f, 0.75f), 9);
+        AddRect(root, "PoliceLightR", new Vector2(x + 8f, y - 26f), new Vector2(12f, 6f), new Color(0.15f, 0.35f, 0.95f, 0.75f), 9);
+    }
+
+    private void AddDestructibles()
+    {
+        Node2D? nearRoot = GetNodeOrNull<Node2D>("NearStreet/NearRoot");
+        if (nearRoot is null)
+        {
+            return;
+        }
+
+        SpawnBreakable(nearRoot, new Vector2(-820f, 520f), BreakableStageProp.PropKind.Crate);
+        SpawnBreakable(nearRoot, new Vector2(-420f, 518f), BreakableStageProp.PropKind.TrashBag);
+        SpawnBreakable(nearRoot, new Vector2(180f, 512f), BreakableStageProp.PropKind.FencePlank);
+        SpawnBreakable(nearRoot, new Vector2(620f, 508f), BreakableStageProp.PropKind.KioskBottle);
+        SpawnBreakable(nearRoot, new Vector2(980f, 510f), BreakableStageProp.PropKind.Crate);
+        SpawnBreakable(nearRoot, new Vector2(1420f, 514f), BreakableStageProp.PropKind.StreetSign);
+        SpawnBreakable(nearRoot, new Vector2(1880f, 516f), BreakableStageProp.PropKind.TrashBag);
+        SpawnBreakable(nearRoot, new Vector2(2340f, 512f), BreakableStageProp.PropKind.FencePlank);
+        SpawnBreakable(nearRoot, new Vector2(2780f, 508f), BreakableStageProp.PropKind.Crate);
+    }
+
+    private static void SpawnBreakable(Node parent, Vector2 position, BreakableStageProp.PropKind kind)
+    {
+        BreakableStageProp prop = new()
+        {
+            Name = $"Breakable_{kind}_{(int)position.X}",
+            Position = position,
+            Kind = kind,
+        };
+        parent.AddChild(prop);
     }
 
     private void AddVignette()

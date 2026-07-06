@@ -1,6 +1,7 @@
 namespace SangueNoAsfalto.Enemies;
 
 using SangueNoAsfalto.Ui;
+using SangueNoAsfalto.Visual;
 
 public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnockbackReceiver
 {
@@ -68,6 +69,17 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         AddToGroup("side_enemy");
 
         _spriteVisual = GetNodeOrNull<CharacterSpriteVisual>("SpriteVisual");
+        if (_spriteVisual is null)
+        {
+            LayeredPrototypePreset preset = EnemyLayeredVisual.ResolvePreset(this);
+            _spriteVisual = EnemyLayeredVisual.AttachLayeredRig(this, preset);
+        }
+        else
+        {
+            _spriteVisual.EnsureLayeredRig(EnemyLayeredVisual.ResolvePreset(this));
+            EnemyLayeredVisual.HideBlockMeshes(this);
+        }
+
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
 

@@ -214,9 +214,42 @@
 
 ## Marco 0.21 - Golpes Por Estilo (Sprint 24)
 
-- [ ] `MoveCatalog` e resolver de combo por estilo ativo.
-- [ ] Animacoes/golpes distintos para pelo menos Boxe e Muay Thai.
-- [ ] Golpe exclusivo correndo por estilo (ex.: Capoeira meia-lua).
-- [ ] HUD lista tecnicas do estilo equipado.
+- [x] `MoveCatalog` e resolver de combo por estilo ativo.
+- [x] Animacoes/golpes distintos para Boxe e Muay Thai.
+- [x] Golpe exclusivo correndo por estilo (Boxe hook, Muay teep, Capoeira meia-lua).
+- [x] HUD lista tecnicas do estilo equipado.
 - [ ] Validar Sprint 24 no Godot.
+- [ ] Fechar sprint apos validacao.
+
+## Marco 0.22 - Rig 2D e Silhuetas (Sprint 25)
+
+- [x] `UseLayeredPrototype = true` no Caua e inimigos.
+- [x] `EnemyLayeredVisual.cs` — rigs automaticos para inimigos-bloco.
+- [x] Presets QuebraOsso, Fast, Brute, Infected, MiniBoss.
+- [ ] Validar Sprint 25 no Godot.
+- [ ] Fechar sprint apos validacao.
+
+## Marco 0.23 - Anatomia, Dano e Cenario (Sprint 26)
+
+- [x] Pernas/bracos segmentados, walk/run melhorados.
+- [x] Dano progressivo (olho roxo, sangue, rasgo na roupa).
+- [x] `BreakableStageProp` e props na Vila.
+- [x] `docs/STAGE_01_VILA_ESPERANCA.md`.
+- [ ] Validar Sprint 26 no Godot.
+- [ ] Fechar sprint apos validacao.
+
+## Marco 0.24 - Combate Arcade (Sprint 27)
+
+- [x] Combo 4 golpes por estilo, buffer/cancel.
+- [x] Corrida+J e dash+J.
+- [x] Q segurar = defender; Q toque = parry.
+- [ ] Validar Sprint 27 no Godot.
+- [ ] Fechar sprint apos validacao.
+
+## Marco 0.25 - Defesa e Postura (Sprint 28)
+
+- [x] Tap vs hold em Q (parry nao zera no mesmo frame).
+- [x] Knockback ao bloquear + feedback de impacto.
+- [x] Postura quebra em ~3 hits; regen pausada na guarda.
+- [ ] Validar Sprint 28 no Godot.
 - [ ] Fechar sprint apos validacao.

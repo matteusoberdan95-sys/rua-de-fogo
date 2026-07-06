@@ -26,6 +26,11 @@ public partial class Hurtbox : Area2D
             {
                 return;
             }
+
+            if (playerDefender.TryBlock(hitbox))
+            {
+                return;
+            }
         }
 
         bool damaged = _health?.Damage(hitbox.Damage) == true;
