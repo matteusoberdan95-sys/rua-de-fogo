@@ -12,6 +12,8 @@ public partial class InputBootstrap : Node
         ConfigureKeyAction("jump", Key.Space);
         ConfigureKeyAction("attack", Key.J);
         ConfigureKeyAction("shoot", Key.L);
+        ConfigureKeyAction("reload", Key.E);
+        ConfigureKeyAction("parry", Key.Q);
         ConfigureKeyAction("restart", Key.R);
         RemoveKey("dash", Key.Space);
         AddMouseButton("attack", MouseButton.Left);

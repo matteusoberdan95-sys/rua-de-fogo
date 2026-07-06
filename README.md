@@ -90,13 +90,9 @@ Toda sprint so pode ser marcada como concluida depois de build C# sem erros, val
 
 ## Proximo passo recomendado
 
-Iniciar **Sprint 20** no Godot:
+Iniciar **Sprint 23** — estilos marciais por XP (Boxe, Muay Thai, etc.) conforme `docs/COMBAT_DESIGN.md`.
 
-- armas improvisadas no chao (vergalhao, martelo, faca) com durabilidade;
-- finishers gore quando inimigo estiver critico;
-- reload da pistola e pickup de municao.
-
-Depois: Sprint 21 (estilos marciais por XP).
+Proximas melhorias opcionais: barra de postura no inimigo, ofegante do Caua com stamina baixa, SFX de impacto.
 
 ## Documentos importantes
 

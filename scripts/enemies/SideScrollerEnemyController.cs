@@ -18,13 +18,13 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     public float AttackRangeY { get; set; } = 34f;
 
     [Export]
-    public float AttackCooldown { get; set; } = 0.95f;
+    public float AttackCooldown { get; set; } = 1.15f;
 
     [Export]
-    public float TelegraphDuration { get; set; } = 0.18f;
+    public float TelegraphDuration { get; set; } = 0.24f;
 
     [Export]
-    public float AttackDuration { get; set; } = 0.11f;
+    public float AttackDuration { get; set; } = 0.14f;
 
     [Export]
     public float MinLaneY { get; set; } = 260f;
@@ -43,6 +43,11 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private int _attackPatternIndex;
     private CharacterSpriteVisual? _spriteVisual;
     private Health? _health;
+    private PostureComponent? _posture;
+
+    public PostureComponent? Posture => _posture;
+
+    public bool IsPostureBroken => _posture?.IsBroken == true;
 
     public override void _Ready()
     {
@@ -62,11 +67,17 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         SetAttackCollision(false);
 
         _health = GetNodeOrNull<Health>("Health");
+        _posture = GetNodeOrNull<PostureComponent>("Posture");
         if (_health is not null)
         {
             _health.Died += OnDied;
             _health.Changed += OnHealthChanged;
             OnHealthChanged(_health.CurrentHealth, _health.MaxHealth);
+        }
+
+        if (_posture is not null)
+        {
+            _posture.PostureBroken += OnPostureBroken;
         }
     }
 
@@ -81,6 +92,14 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         {
             MoveAndSlide();
             GlobalPosition = new Vector2(GlobalPosition.X, Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
+            return;
+        }
+
+        if (_posture?.IsBroken == true)
+        {
+            Velocity = Velocity.MoveToward(Vector2.Zero, 900f * dt);
+            MoveAndSlide();
+            UpdateLocomotionVisual();
             return;
         }
 
@@ -183,6 +202,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         if (_hitStunRemaining <= 0f)
         {
             Velocity = Vector2.Zero;
+            Modulate = Colors.White;
         }
 
         return true;
@@ -218,8 +238,9 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         _attackTimeRemaining = 0f;
         _hitStunRemaining = Mathf.Max(_hitStunRemaining, duration);
         Velocity = impulse;
-        Modulate = Colors.White;
+        Modulate = Colors.White.Lerp(new Color(1f, 0.62f, 0.58f), 0.35f);
         SetAttackCollision(false);
+        _spriteVisual?.PlayHitReaction(impulse.Normalized(), Mathf.Clamp(duration / 0.14f, 0.8f, 2.2f));
     }
 
     private void UpdateFacingVisual()
@@ -244,6 +265,25 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private void OnHealthChanged(int current, int maximum)
     {
         _spriteVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
+    }
+
+    public void OnParried(SideScrollerPlayerController player)
+    {
+        _telegraphRemaining = 0f;
+        _attackTimeRemaining = 0f;
+        _hitStunRemaining = Mathf.Max(_hitStunRemaining, 0.35f);
+        SetAttackCollision(false);
+        Velocity = (GlobalPosition - player.GlobalPosition).Normalized() * 180f;
+    }
+
+    private void OnPostureBroken()
+    {
+        _telegraphRemaining = 0f;
+        _attackTimeRemaining = 0f;
+        _hitStunRemaining = 0f;
+        SetAttackCollision(false);
+        Velocity = Vector2.Zero;
+        Modulate = new Color(1f, 0.72f, 0.38f);
     }
 
     private void OnDied()

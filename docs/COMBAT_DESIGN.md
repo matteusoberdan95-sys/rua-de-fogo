@@ -54,7 +54,7 @@ Ver tabela de estilos marciais abaixo. Corrida desbloqueia golpes exclusivos por
 
 ## Sidearm — pistola (Sprint 19)
 
-- 7 balas iniciais; sem reload ainda (Sprint 20).
+- 7 balas iniciais; **E** recarrega (1.25s) ou pickup de municao.
 - Animacao sacar/atirar no rig.
 - Projetil pequeno, rapido, baixo knockback.
 - **Sangramento**: DOT 5 HP/s por 3.5s (base hemorragia).
@@ -130,7 +130,7 @@ Sistema existente a evoluir: `WeaponPickup`, `HasImprovisedWeapon`, `WeaponDurab
 Sprint 17  → personagens vivos              ✅
 Sprint 18  → combate desarmado              ✅
 Sprint 19  → movimento, spawn, sidearm      ✅ aprovada
-Sprint 20  → armas improvisadas + finishers
+Sprint 20  → armas improvisadas + finishers      ✅ implementada
 Sprint 21  → arvore XP / estilos marciais
 Paralelo   → SFX ambiente + sprite Krita (pos contrato de golpes)
 ```

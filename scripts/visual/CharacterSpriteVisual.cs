@@ -42,6 +42,7 @@ public partial class CharacterSpriteVisual : Node2D
     private Node2D? _clothSway;
     private Node2D? _hairTail;
     private Polygon2D? _faceBruise;
+    private Polygon2D? _painGrimace;
     private Polygon2D? _torsoBlood;
     private Polygon2D? _criticalLimp;
     private Vector2 _basePosition;
@@ -59,6 +60,10 @@ public partial class CharacterSpriteVisual : Node2D
     private bool _isRunning;
     private float _shootAnimTime;
     private Node2D? _sidearm;
+    private Node2D? _improvisedWeapon;
+    private ImprovisedWeaponKind _equippedWeaponKind;
+    private bool _finisherAttack;
+    private float _reloadAnimTime;
     private EnemyDamageVisualTier _damageTier = EnemyDamageVisualTier.Intact;
     private int _facingSign = 1;
 
@@ -99,6 +104,10 @@ public partial class CharacterSpriteVisual : Node2D
         if (_hurtTime > 0f)
         {
             _hurtTime = Mathf.Max(_hurtTime - dt, 0f);
+            if (_hurtTime <= 0f && _painGrimace is not null)
+            {
+                _painGrimace.Visible = false;
+            }
         }
 
         if (_flashTime > 0f)
@@ -180,9 +189,13 @@ public partial class CharacterSpriteVisual : Node2D
         bool isDashing,
         bool isHurt = false,
         bool isTelegraphing = false,
-        bool isRunning = false)
+        bool isRunning = false,
+        bool isFinisherAttack = false,
+        bool isReloading = false,
+        bool isParrying = false)
     {
         _isRunning = isRunning;
+        _finisherAttack = isFinisherAttack;
         if (_shootAnimTime > 0f)
         {
             _shootAnimTime = Mathf.Max(_shootAnimTime - (float)GetProcessDeltaTime(), 0f);
@@ -211,8 +224,16 @@ public partial class CharacterSpriteVisual : Node2D
                 return;
             }
 
+            if (_reloadAnimTime > 0f)
+            {
+                _reloadAnimTime = Mathf.Max(_reloadAnimTime - (float)GetProcessDeltaTime(), 0f);
+            }
+
             string nextState = isHurt || _hurtTime > 0f ? "hurt"
+                : isParrying || _layeredState == "parry" ? "parry"
+                : isReloading || _reloadAnimTime > 0f ? "reload"
                 : isTelegraphing ? "telegraph"
+                : isFinisherAttack ? "finisher"
                 : isAttacking ? "attack"
                 : isDashing ? "dash"
                 : isMoving ? "walk"
@@ -271,6 +292,122 @@ public partial class CharacterSpriteVisual : Node2D
         _sprite.Play(animationName);
     }
 
+    public void SetEquippedWeapon(ImprovisedWeaponKind kind)
+    {
+        _equippedWeaponKind = kind;
+        if (!UseLayeredPrototype || _frontArm is null)
+        {
+            return;
+        }
+
+        _improvisedWeapon?.QueueFree();
+        _improvisedWeapon = null;
+
+        if (kind == ImprovisedWeaponKind.None)
+        {
+            return;
+        }
+
+        _improvisedWeapon = AddJoint(_frontArm, "ImprovisedWeapon", new Vector2(8f, 28f), 5);
+        BuildImprovisedWeaponMesh(kind);
+    }
+
+    public void PlayWeaponAttack(ImprovisedWeaponKind kind)
+    {
+        _equippedWeaponKind = kind;
+        SetLayeredState("attack");
+    }
+
+    public void PlayFinisherAttack(ImprovisedWeaponKind kind)
+    {
+        _equippedWeaponKind = kind;
+        _finisherAttack = true;
+        SetLayeredState("finisher");
+    }
+
+    public void PlayReload()
+    {
+        if (!UseLayeredPrototype)
+        {
+            return;
+        }
+
+        _reloadAnimTime = 1.25f;
+        SetLayeredState("reload");
+    }
+
+    public void EndReload()
+    {
+        _reloadAnimTime = 0f;
+        if (_layeredState == "reload")
+        {
+            SetLayeredState("idle");
+        }
+    }
+
+    private void BuildImprovisedWeaponMesh(ImprovisedWeaponKind kind)
+    {
+        if (_improvisedWeapon is null)
+        {
+            return;
+        }
+
+        switch (kind)
+        {
+            case ImprovisedWeaponKind.Hammer:
+                AddPolygon(_improvisedWeapon, "Handle", new Color(0.22f, 0.12f, 0.06f), new[]
+                {
+                    new Vector2(-3f, -4f), new Vector2(4f, -4f), new Vector2(4f, 24f), new Vector2(-3f, 24f)
+                }, 0);
+                AddPolygon(_improvisedWeapon, "Head", new Color(0.28f, 0.28f, 0.3f), new[]
+                {
+                    new Vector2(-12f, -16f), new Vector2(12f, -16f), new Vector2(14f, 2f), new Vector2(-14f, 2f)
+                }, 1);
+                break;
+            case ImprovisedWeaponKind.Knife:
+                AddPolygon(_improvisedWeapon, "Grip", new Color(0.12f, 0.08f, 0.05f), new[]
+                {
+                    new Vector2(-2f, -2f), new Vector2(5f, -2f), new Vector2(5f, 10f), new Vector2(-2f, 10f)
+                }, 0);
+                AddPolygon(_improvisedWeapon, "Blade", new Color(0.72f, 0.74f, 0.78f), new[]
+                {
+                    new Vector2(-3f, 10f), new Vector2(4f, 10f), new Vector2(2f, 28f), new Vector2(-1f, 28f)
+                }, 1);
+                AddPolygon(_improvisedWeapon, "Edge", new Color(0.9f, 0.92f, 0.95f, 0.85f), new[]
+                {
+                    new Vector2(2f, 12f), new Vector2(4f, 10f), new Vector2(2f, 28f)
+                }, 2);
+                break;
+            default:
+                AddPolygon(_improvisedWeapon, "Handle", new Color(0.18f, 0.09f, 0.05f), new[]
+                {
+                    new Vector2(-3f, -2f), new Vector2(4f, -2f), new Vector2(4f, 14f), new Vector2(-3f, 14f)
+                }, 0);
+                AddPolygon(_improvisedWeapon, "Bar", new Color(0.78f, 0.72f, 0.52f), new[]
+                {
+                    new Vector2(-26f, -5f), new Vector2(22f, -8f), new Vector2(34f, 0f), new Vector2(22f, 8f), new Vector2(-26f, 5f)
+                }, 1);
+                break;
+        }
+    }
+
+    public void PlayParryWindup()
+    {
+        SetLayeredState("parry");
+    }
+
+    public void PlayParry()
+    {
+        _flashTime = 0.14f;
+        SetLayeredState("parry");
+    }
+
+    public void PlayPostureKill()
+    {
+        _finisherAttack = true;
+        SetLayeredState("finisher");
+    }
+
     public void SetAttackCombo(int comboIndex)
     {
         _attackComboIndex = Mathf.Clamp(comboIndex, 0, 2);
@@ -283,17 +420,25 @@ public partial class CharacterSpriteVisual : Node2D
 
     public void PlayHitReaction(Vector2 direction, float severity = 1f)
     {
-        _flashTime = 0.12f;
-        _hurtTime = Mathf.Clamp(0.14f + severity * 0.05f, 0.14f, 0.38f);
-        _hurtStrength = Mathf.Clamp(severity, 0.5f, 2.5f);
+        _flashTime = 0.16f;
+        float addedHurt = Mathf.Clamp(0.22f + severity * 0.12f, 0.22f, 0.62f);
+        _hurtTime = Mathf.Min(_hurtTime + addedHurt, 0.72f);
+        _hurtStrength = Mathf.Clamp(_hurtStrength + severity * 0.35f, 0.5f, 3.5f);
         if (direction.LengthSquared() > 0.01f)
         {
             _hurtDirection = direction.Normalized();
         }
 
+        if (_painGrimace is not null)
+        {
+            _painGrimace.Visible = true;
+        }
+
         if (UseLayeredPrototype)
         {
-            SetLayeredState("hurt");
+            _layeredState = "hurt";
+            _stateTime = 0f;
+            _impactSpawned = false;
             return;
         }
 
@@ -333,6 +478,11 @@ public partial class CharacterSpriteVisual : Node2D
         if (_layeredState == nextState)
         {
             return;
+        }
+
+        if (_layeredState == "finisher")
+        {
+            _finisherAttack = false;
         }
 
         _layeredState = nextState;
@@ -427,6 +577,11 @@ public partial class CharacterSpriteVisual : Node2D
             new Vector2(-12f, -2f), new Vector2(-2f, -4f), new Vector2(0f, 4f), new Vector2(-10f, 6f)
         }, 7);
         _faceBruise.Visible = false;
+        _painGrimace = AddPolygon(_head, "PainGrimace", new Color(0.42f, 0.06f, 0.08f, 0.92f), new[]
+        {
+            new Vector2(-7f, 8f), new Vector2(7f, 8f), new Vector2(5f, 12f), new Vector2(0f, 10f), new Vector2(-5f, 12f)
+        }, 8);
+        _painGrimace.Visible = false;
         _hair = AddJoint(_head, "Hair", new Vector2(-1f, -12f), 6);
         AddPolygon(_hair, "HairSpikes", LayeredPreset == LayeredPrototypePreset.Caua
             ? new Color(0.035f, 0.025f, 0.02f)
@@ -600,7 +755,24 @@ public partial class CharacterSpriteVisual : Node2D
                 AnimateWalk(walk, walkOpposite, limpFactor);
                 break;
             case "attack":
-                AnimateUnarmedAttack();
+                if (_equippedWeaponKind != ImprovisedWeaponKind.None)
+                {
+                    AnimateWeaponAttack();
+                }
+                else
+                {
+                    AnimateUnarmedAttack();
+                }
+
+                break;
+            case "finisher":
+                AnimateFinisherAttack();
+                break;
+            case "reload":
+                AnimateReload();
+                break;
+            case "parry":
+                AnimateParry();
                 break;
             case "dash":
                 AnimateDash();
@@ -683,6 +855,194 @@ public partial class CharacterSpriteVisual : Node2D
         if (_backArm is not null)
         {
             _backArm.Rotation = walk * 0.22f - 0.12f;
+        }
+    }
+
+    private void AnimateWeaponAttack()
+    {
+        switch (_equippedWeaponKind)
+        {
+            case ImprovisedWeaponKind.Hammer:
+                AnimateHammerSwing();
+                break;
+            case ImprovisedWeaponKind.Knife:
+                AnimateKnifeSlash();
+                break;
+            default:
+                AnimateRebarSwing();
+                break;
+        }
+    }
+
+    private void AnimateRebarSwing()
+    {
+        float duration = 0.16f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float swing = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = swing * 0.18f;
+            _torso.Position += new Vector2(swing * 8f, 0f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -0.2f - swing * 1.15f;
+            _frontArm.Position = new Vector2(14f + swing * 10f, -58f);
+        }
+
+        if (_improvisedWeapon is not null)
+        {
+            _improvisedWeapon.Rotation = -swing * 0.35f;
+        }
+
+        TrySpawnImpact(0, swing, _frontArm);
+    }
+
+    private void AnimateHammerSwing()
+    {
+        float duration = 0.2f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float raise = t < 0.35f ? t / 0.35f : 1f - ((t - 0.35f) / 0.65f);
+        float smash = t >= 0.35f ? Mathf.Sin(((t - 0.35f) / 0.65f) * Mathf.Pi) : 0f;
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -raise * 0.22f + smash * 0.28f;
+            _torso.Position += new Vector2(smash * 6f, raise * -4f + smash * 3f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -1.1f * raise + smash * 0.95f;
+            _frontArm.Position = new Vector2(12f, -58f - raise * 8f + smash * 4f);
+        }
+
+        if (_improvisedWeapon is not null)
+        {
+            _improvisedWeapon.Rotation = -raise * 0.4f + smash * 0.5f;
+        }
+
+        TrySpawnImpact(1, smash, _frontArm);
+    }
+
+    private void AnimateKnifeSlash()
+    {
+        float duration = 0.14f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float slash = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = slash * 0.1f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.35f - slash * 1.35f;
+            _frontArm.Position = new Vector2(16f + slash * 14f, -56f - slash * 4f);
+        }
+
+        if (_improvisedWeapon is not null)
+        {
+            _improvisedWeapon.Rotation = slash * 0.6f;
+        }
+
+        TrySpawnImpact(1, slash, _frontArm);
+    }
+
+    private void AnimateFinisherAttack()
+    {
+        float duration = 0.58f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float windup = t < 0.35f ? t / 0.35f : 0f;
+        float strike = t >= 0.35f ? Mathf.Sin(((t - 0.35f) / 0.65f) * Mathf.Pi) : 0f;
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = _equippedWeaponKind == ImprovisedWeaponKind.Hammer
+                ? -windup * 0.28f + strike * 0.34f
+                : windup * -0.12f + strike * 0.22f;
+            _torso.Position += new Vector2(strike * 14f, _equippedWeaponKind == ImprovisedWeaponKind.Rebar ? strike * 6f : -strike * 2f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = _equippedWeaponKind switch
+            {
+                ImprovisedWeaponKind.Hammer => -1.25f * windup + strike * 1.05f,
+                ImprovisedWeaponKind.Knife => 0.55f - strike * 1.55f,
+                _ => -0.35f - strike * 1.25f,
+            };
+            _frontArm.Position = new Vector2(14f + strike * 18f, -58f);
+        }
+
+        if (_frontLeg is not null && _equippedWeaponKind == ImprovisedWeaponKind.Rebar)
+        {
+            _frontLeg.Rotation = -strike * 0.85f;
+            _frontLeg.Position = new Vector2(8f + strike * 16f, -12f - strike * 8f);
+        }
+
+        if (_improvisedWeapon is not null)
+        {
+            _improvisedWeapon.Rotation = strike * 0.45f;
+        }
+
+        TrySpawnImpact(2, strike, _equippedWeaponKind == ImprovisedWeaponKind.Rebar ? _frontLeg : _frontArm);
+    }
+
+    private void AnimateReload()
+    {
+        float t = 1f - Mathf.Clamp(_reloadAnimTime / 1.25f, 0f, 1f);
+        float phase = t < 0.45f ? t / 0.45f : 1f - ((t - 0.45f) / 0.55f);
+
+        if (_sidearm is not null)
+        {
+            _sidearm.Visible = true;
+        }
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -phase * 0.06f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -0.45f * phase;
+            _frontArm.Position = new Vector2(12f - phase * 4f, -58f);
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.75f * phase;
+        }
+
+        if (_sidearm is not null)
+        {
+            _sidearm.Rotation = 0.25f + phase * 0.35f;
+        }
+    }
+
+    private void AnimateParry()
+    {
+        float t = Mathf.Clamp(_stateTime / 0.26f, 0f, 1f);
+        float guard = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -guard * 0.08f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -0.55f - guard * 0.35f;
+            _frontArm.Position = new Vector2(10f, -58f);
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.75f - guard * 0.2f;
         }
     }
 
@@ -808,30 +1168,31 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateJab()
     {
-        float duration = 0.14f;
+        float duration = 0.22f;
         float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float extend = Mathf.Sin(t * Mathf.Pi);
+        float windup = t < 0.38f ? t / 0.38f : 0f;
+        float extend = t >= 0.38f ? Mathf.Sin(((t - 0.38f) / 0.62f) * Mathf.Pi) : 0f;
 
         if (_torso is not null)
         {
-            _torso.Rotation = extend * 0.08f;
-            _torso.Position += new Vector2(extend * 6f, 0f);
+            _torso.Rotation = -windup * 0.06f + extend * 0.1f;
+            _torso.Position += new Vector2(-windup * 4f + extend * 8f, 0f);
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.08f - extend * 0.95f;
-            _frontArm.Position = new Vector2(15f + extend * 22f, -58f - extend * 2f);
+            _frontArm.Rotation = 0.2f - windup * 0.55f - extend * 1.05f;
+            _frontArm.Position = new Vector2(12f - windup * 6f + extend * 26f, -58f - extend * 3f);
         }
 
         if (_backArm is not null)
         {
-            _backArm.Rotation = -0.12f - extend * 0.25f;
+            _backArm.Rotation = -0.12f - extend * 0.3f;
         }
 
         if (_head is not null)
         {
-            _head.Position += new Vector2(extend * 2f, 0f);
+            _head.Position += new Vector2(extend * 3f, 0f);
         }
 
         TrySpawnImpact(0, extend, _frontArm);
@@ -865,20 +1226,21 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateSideKick()
     {
-        float duration = 0.18f;
+        float duration = 0.28f;
         float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float extend = Mathf.Sin(t * Mathf.Pi);
+        float windup = t < 0.32f ? t / 0.32f : 0f;
+        float extend = t >= 0.32f ? Mathf.Sin(((t - 0.32f) / 0.68f) * Mathf.Pi) : 0f;
 
         if (_torso is not null)
         {
-            _torso.Rotation = -extend * 0.12f;
-            _torso.Position += new Vector2(extend * 4f, -extend * 1.5f);
+            _torso.Rotation = windup * 0.08f - extend * 0.16f;
+            _torso.Position += new Vector2(-windup * 5f + extend * 6f, -extend * 2f);
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = -0.04f - extend * 0.95f;
-            _frontLeg.Position = new Vector2(8f + extend * 18f, -12f - extend * 4f);
+            _frontLeg.Rotation = windup * 0.25f - extend * 1.05f;
+            _frontLeg.Position = new Vector2(6f - windup * 4f + extend * 22f, -12f - extend * 5f);
         }
 
         if (_backLeg is not null)
@@ -901,15 +1263,16 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateFlyingKick()
     {
-        float duration = 0.22f;
+        float duration = 0.34f;
         float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float extend = Mathf.Sin(t * Mathf.Pi);
+        float windup = t < 0.28f ? t / 0.28f : 0f;
+        float extend = t >= 0.28f ? Mathf.Sin(((t - 0.28f) / 0.72f) * Mathf.Pi) : 0f;
         float lift = extend * 18f;
 
         if (_torso is not null)
         {
-            _torso.Rotation = extend * 0.18f;
-            _torso.Position += new Vector2(extend * 10f, -lift);
+            _torso.Rotation = -windup * 0.1f + extend * 0.2f;
+            _torso.Position += new Vector2(-windup * 3f + extend * 12f, -lift);
         }
 
         if (_head is not null)
@@ -960,45 +1323,56 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateHurt()
     {
-        float t = 1f - Mathf.Clamp(_hurtTime / 0.28f, 0f, 1f);
+        float maxHurt = 0.55f + _hurtStrength * 0.08f;
+        float t = 1f - Mathf.Clamp(_hurtTime / maxHurt, 0f, 1f);
         float recoil = Mathf.Sin(t * Mathf.Pi);
-        float lean = _hurtDirection.X * recoil * 0.18f * _hurtStrength;
+        float lean = _hurtDirection.X * recoil * 0.32f * _hurtStrength;
+        float buckle = recoil * _hurtStrength;
 
         if (_torso is not null)
         {
             _torso.Rotation = lean;
-            _torso.Position += new Vector2(_hurtDirection.X * recoil * 7f * _hurtStrength, -recoil * 2f);
+            _torso.Position += new Vector2(_hurtDirection.X * recoil * 11f * _hurtStrength, buckle * 3f);
+            _torso.Modulate = Colors.White.Lerp(new Color(1f, 0.55f, 0.5f), recoil * 0.45f);
         }
 
         if (_head is not null)
         {
-            _head.Rotation = -lean * 0.8f;
-            _head.Position += new Vector2(_hurtDirection.X * recoil * 4f, recoil * 1.5f);
+            _head.Rotation = -lean * 1.1f;
+            _head.Position += new Vector2(_hurtDirection.X * recoil * 9f, recoil * 3f);
+        }
+
+        if (_painGrimace is not null)
+        {
+            _painGrimace.Visible = true;
+            _painGrimace.Scale = Vector2.One * (0.85f + recoil * 0.35f);
         }
 
         if (_hair is not null)
         {
-            _hair.Rotation += _hurtDirection.X * recoil * 0.18f;
+            _hair.Rotation += _hurtDirection.X * recoil * 0.28f;
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.42f * recoil;
+            _frontArm.Rotation = 0.55f * recoil;
+            _frontArm.Position += new Vector2(_hurtDirection.X * recoil * 4f, 0f);
         }
 
         if (_backArm is not null)
         {
-            _backArm.Rotation = -0.55f * recoil;
+            _backArm.Rotation = -0.72f * recoil;
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = -0.12f * recoil;
+            _frontLeg.Rotation = -0.28f * buckle;
+            _frontLeg.Position += new Vector2(0f, buckle * 4f);
         }
 
         if (_backLeg is not null)
         {
-            _backLeg.Rotation = 0.1f * recoil;
+            _backLeg.Rotation = 0.18f * buckle;
         }
     }
 

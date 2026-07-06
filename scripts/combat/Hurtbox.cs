@@ -20,6 +20,14 @@ public partial class Hurtbox : Area2D
             return;
         }
 
+        if (Owner is SideScrollerPlayerController playerDefender && hitbox.Source is not SideScrollerPlayerController)
+        {
+            if (playerDefender.TryParry(hitbox))
+            {
+                return;
+            }
+        }
+
         bool damaged = _health?.Damage(hitbox.Damage) == true;
         if (!damaged)
         {
@@ -35,6 +43,16 @@ public partial class Hurtbox : Area2D
             }
         }
 
+        if (Owner is SideScrollerPlayerController hurtPlayer && hitbox.Source is not SideScrollerPlayerController)
+        {
+            hurtPlayer.Posture?.AddPosture(hitbox.PostureDamage);
+        }
+
+        if (Owner is SideScrollerEnemyController enemy && hitbox.Source is SideScrollerPlayerController)
+        {
+            enemy.Posture?.AddPosture(hitbox.PostureDamage * 0.55f);
+        }
+
         ApplyKnockback(hitbox);
         ApplyBleed(hitbox);
         PlayFeedback(hitbox);
@@ -42,13 +60,31 @@ public partial class Hurtbox : Area2D
 
     private void ApplyBleed(Hitbox hitbox)
     {
-        if (hitbox is not Projectile projectile || !projectile.ApplyBleedOnHit || Owner is null)
+        if (Owner is null)
+        {
+            return;
+        }
+
+        float duration;
+        float dps;
+
+        if (hitbox is Projectile projectile && projectile.ApplyBleedOnHit)
+        {
+            duration = projectile.BleedDuration;
+            dps = projectile.BleedDamagePerSecond;
+        }
+        else if (hitbox.ApplyBleedOnHit)
+        {
+            duration = hitbox.BleedDuration;
+            dps = hitbox.BleedDamagePerSecond;
+        }
+        else
         {
             return;
         }
 
         BleedEffect? bleed = Owner.GetNodeOrNull<BleedEffect>("BleedEffect");
-        bleed?.Apply(projectile.BleedDuration, projectile.BleedDamagePerSecond);
+        bleed?.Apply(duration, dps);
     }
 
     private void ApplyKnockback(Hitbox hitbox)
@@ -59,10 +95,12 @@ public partial class Hurtbox : Area2D
         }
 
         Vector2 direction = body.GlobalPosition.DirectionTo(source.GlobalPosition) * -1f;
-        Vector2 impulse = direction * hitbox.KnockbackForce;
+        float knockback = CombatImpactFeel.ScaleKnockback(hitbox.Damage, hitbox.KnockbackForce);
+        float stun = CombatImpactFeel.ScaleHitStun(hitbox.Damage, hitbox.HitStunDuration);
+        Vector2 impulse = direction * knockback;
         if (Owner is ICombatKnockbackReceiver receiver)
         {
-            receiver.ReceiveKnockback(impulse, hitbox.HitStunDuration);
+            receiver.ReceiveKnockback(impulse, stun);
             return;
         }
 
@@ -77,5 +115,17 @@ public partial class Hurtbox : Area2D
         }
 
         CombatFeedback.PlayHit(target, source, hitbox.Damage);
+
+        if (hitbox.IsFinisherHit && hitbox.Source is SideScrollerPlayerController finisherPlayer)
+        {
+            if (hitbox.IsPostureKill)
+            {
+                CombatFeedback.PlayPostureKill(target, source);
+                return;
+            }
+
+            ImprovisedWeaponKind weapon = finisherPlayer.EquippedWeaponKind;
+            CombatFeedback.PlayFinisher(target, source, weapon);
+        }
     }
 }

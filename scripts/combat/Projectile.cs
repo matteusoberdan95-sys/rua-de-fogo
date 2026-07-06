@@ -8,15 +8,6 @@ public partial class Projectile : Hitbox
     [Export]
     public float Lifetime { get; set; } = 1.2f;
 
-    [Export]
-    public bool ApplyBleedOnHit { get; set; }
-
-    [Export]
-    public float BleedDuration { get; set; } = 3f;
-
-    [Export]
-    public float BleedDamagePerSecond { get; set; } = 4f;
-
     public Vector2 Direction { get; set; } = Vector2.Right;
 
     public override void _Ready()

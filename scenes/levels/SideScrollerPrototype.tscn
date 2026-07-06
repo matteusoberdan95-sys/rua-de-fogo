@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=29 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world/VilaEsperancaParallax.tscn" id="1_parallax"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
@@ -18,6 +18,9 @@
 [ext_resource type="PackedScene" path="res://scenes/pickups/HealthPickup.tscn" id="8_healthpickup"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/WeaponPickup.tscn" id="9_weaponpickup"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/ContinuePickup.tscn" id="10_continuepickup"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/HammerPickup.tscn" id="11_hammerpickup"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/KnifePickup.tscn" id="12_knifepickup"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/AmmoPickup.tscn" id="13_ammpickup"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_north"]
 size = Vector2(2400, 34)
@@ -478,7 +481,7 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_south")
 
 [node name="West" type="StaticBody2D" parent="WorldBounds"]
-position = Vector2(-1125, 375)
+position = Vector2(-925, 375)
 collision_layer = 1
 collision_mask = 0
 
@@ -486,7 +489,7 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_west")
 
 [node name="East" type="StaticBody2D" parent="WorldBounds"]
-position = Vector2(1125, 375)
+position = Vector2(3425, 375)
 collision_layer = 1
 collision_mask = 0
 
@@ -530,6 +533,15 @@ position = Vector2(-760, 405)
 
 [node name="WeaponPickup" parent="." instance=ExtResource("9_weaponpickup")]
 position = Vector2(-330, 405)
+
+[node name="HammerPickup" parent="." instance=ExtResource("11_hammerpickup")]
+position = Vector2(-40, 405)
+
+[node name="KnifePickup" parent="." instance=ExtResource("12_knifepickup")]
+position = Vector2(120, 438)
+
+[node name="AmmoPickup" parent="." instance=ExtResource("13_ammpickup")]
+position = Vector2(360, 405)
 
 [node name="HealthPickup" parent="." instance=ExtResource("8_healthpickup")]
 position = Vector2(225, 438)
@@ -612,6 +624,16 @@ layout_mode = 2
 text = "XP 0/100"
 
 [node name="XpBar" type="ProgressBar" parent="Hud/PlayerPanel/StatsColumn"]
+custom_minimum_size = Vector2(300, 10)
+layout_mode = 2
+max_value = 100.0
+show_percentage = false
+
+[node name="PostureLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
+layout_mode = 2
+text = "Postura"
+
+[node name="PostureBar" type="ProgressBar" parent="Hud/PlayerPanel/StatsColumn"]
 custom_minimum_size = Vector2(300, 10)
 layout_mode = 2
 max_value = 100.0

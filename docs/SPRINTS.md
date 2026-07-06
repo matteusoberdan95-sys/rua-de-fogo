@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 20 - Armas Improvisadas E Finishers` (planejada).
+Sprint atual: `Sprint 23 - Progressao Marcial Por XP` (planejada).
 
-Ultima sprint concluida: `Sprint 19 - Movimento, Spawn E Sidearm` (validada no Godot).
+Ultima sprint concluida: `Sprint 22 - Combate Plastico E Impacto` (validada no Godot).
 
 Referencia: `docs/COMBAT_DESIGN.md`
 
@@ -853,11 +853,71 @@ Validacao:
 
 - aprovada no playtest; corrida, voadora no ar, spawn a frente, pistola e machucado do Caua ok.
 
-## Sprint 20 - Armas Improvisadas E Finishers (planejada)
+## Sprint 20 - Armas Improvisadas E Finishers
 
-Martelo, faca, vergalhao no chao; durabilidade; finalizadores estilizados conforme arma e HP critico. Ver `docs/COMBAT_DESIGN.md`.
+Status: concluida (validada no Godot).
 
-## Sprint 21 - Progressao Marcial Por XP (planejada)
+Objetivo: armas temporarias no chao com durabilidade, golpes e finishers por tipo, reload da pistola e VFX de sangramento.
+
+Entregas implementadas:
+
+- **3 armas**: vergalhao (6), martelo (4), faca (5) — pickups na fase;
+- golpe basico por arma com animacao no rig;
+- **finalizador**: J perto de inimigo critico (<33% HP) com arma equipada;
+- finishers com hit pause longo, zoom de camera e burst de sangue;
+- **facas** causam sangramento (DOT) no golpe basico e finisher;
+- **E** recarrega pistola (1.25s); pickup de municao (+4 balas);
+- **BleedEffect** com gotas visuais enquanto inimigo sangra;
+- tutorial e HUD atualizados;
+- `dotnet build` validado.
+
+Validacao:
+
+- aprovada no playtest.
+
+## Sprint 21 - Fase Scroll E Postura/Parry
+
+Status: concluida (validada no Godot).
+
+Objetivo: fase longa estilo Final Fight com spawn conforme avanco; sistema de postura e parry (Sekiro) com golpe mortal.
+
+Entregas implementadas:
+
+- **Fase ~4000px** (-760 ate ~3180); limites de camera e mundo estendidos;
+- **spawn por progresso** (`StageScrollSpawns`) — inimigos entram pela borda direita (fade-in) conforme X do jogador;
+- sem ondas vazias / backtrack; checkpoint no meio (~480);
+- **PostureComponent** (jogador + inimigo grunt);
+- **Q = parry** — deflect no timing; enche postura do inimigo;
+- postura quebrada = inimigo vulneravel; **J = golpe mortal** brutal;
+- barra de postura no HUD; tutorial atualizado;
+- `dotnet build` validado.
+
+Validacao:
+
+- aprovada no playtest; fase scroll e parry/postura ok.
+
+## Sprint 22 - Combate Plastico E Impacto
+
+Status: concluida (validada no Godot).
+
+Objetivo: combate menos generico — golpes pesados, dor explicita no inimigo, stamina por golpe, feedback de impacto como diferencial do jogo.
+
+Entregas implementadas:
+
+- golpes com **windup** e duracao maior (jab/chute/voadora);
+- **stamina por golpe** (10/15/24); sem stamina nao ataca;
+- reacao de **dor** no rig: careta, buckle, hurt empilhado;
+- callouts **"ugh!" / "AU!" / "CRACK!"**, onda de impacto, camera shake;
+- hit pause e stun **escalam com dano**;
+- inimigo reage visualmente ao knockback (`PlayHitReaction`);
+- `CombatImpactFeel.cs`; tutorial atualizado;
+- `dotnet build` validado.
+
+Validacao:
+
+- aprovada no playtest; combate plastico e dor visivel ok.
+
+## Sprint 23 - Progressao Marcial Por XP (planejada)
 
 Desbloqueio de estilos e deck de golpes por nivel. Ver `docs/COMBAT_DESIGN.md`.
 

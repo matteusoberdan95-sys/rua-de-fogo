@@ -48,15 +48,20 @@ text = "Vila Esperanca - controles basicos
 
 A/D: andar  (A/A ou D/D rapidinho = correr)
 W/S: trocar profundidade (lane)
-J: soco / chute / voadora (combo no chao)
-Espaco + J: voadora no ar
+J: soco / chute / voadora (combo no chao — gasta stamina)
+Espaco + J: voadora no ar (24 stamina)
 L: pistola (municao limitada, causa sangramento)
+E: recarregar pistola
+Q: parry (defletir no timing do golpe inimigo)
+J com inimigo postura quebrada: golpe mortal brutal
+J com arma + inimigo critico: finalizador gore
 K: esquivar
 Espaco: pular
 R: reiniciar trecho
 M: menu (morte ou vitoria)
 
-Combate comeca desarmado (Estilo: Rua). Armas no chao sao temporarias.
+Combate comeca desarmado (Estilo: Rua). Cada golpe gasta stamina — pancada pesada doi e deixa o inimigo reagindo.
+Armas no chao sao temporarias. Postura cheia = vulneravel a golpe mortal apos parry.
 Objetivo: atravesse a fase, ative o checkpoint no altar e sobreviva aos chefes.
 A sessao completa leva cerca de 10 minutos."
 autowrap_mode = 3

@@ -234,8 +234,20 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. iniciar **Sprint 20** — armas improvisadas no chao, finishers gore e reload da pistola (`docs/COMBAT_DESIGN.md`);
-2. depois Sprint 21 — estilos marciais por XP.
+1. iniciar **Sprint 23** — estilos marciais por XP (`docs/COMBAT_DESIGN.md`);
+2. opcional: barra de postura no inimigo, ofegante com stamina baixa, SFX de impacto.
+
+Estado da Sprint 22:
+
+- concluida e validada; combate plastico, dor visivel e stamina por golpe aprovados.
+
+Estado da Sprint 21:
+
+- concluida e validada; fase scroll e parry/postura aprovados.
+
+Estado da Sprint 20:
+
+- concluida e validada; armas, finishers e reload aprovados.
 
 Estado da Sprint 19:
 

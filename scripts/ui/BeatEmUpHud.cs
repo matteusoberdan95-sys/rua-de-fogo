@@ -14,6 +14,7 @@ public partial class BeatEmUpHud : CanvasLayer
     private PanelContainer? _centerOverlay;
     private Label? _overlayTitleLabel;
     private Label? _overlayBodyLabel;
+    private ProgressBar? _postureBar;
     private SideScrollerPlayerController? _player;
     private SideScrollerDirector? _director;
 
@@ -31,6 +32,7 @@ public partial class BeatEmUpHud : CanvasLayer
         _healthBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/HealthBar");
         _staminaBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/StaminaBar");
         _xpBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/XpBar");
+        _postureBar = GetNodeOrNull<ProgressBar>("PlayerPanel/StatsColumn/PostureBar");
         _centerOverlay = GetNodeOrNull<PanelContainer>("CenterOverlay");
         _overlayTitleLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayTitle");
         _overlayBodyLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayBody");
@@ -56,6 +58,11 @@ public partial class BeatEmUpHud : CanvasLayer
         if (_xpBar is not null)
         {
             GameUiTheme.ApplyBarColors(_xpBar, new Color(0.18f, 0.42f, 0.58f));
+        }
+
+        if (_postureBar is not null)
+        {
+            GameUiTheme.ApplyBarColors(_postureBar, new Color(0.78f, 0.58f, 0.14f));
         }
 
         if (_levelLabel is not null)
@@ -96,12 +103,19 @@ public partial class BeatEmUpHud : CanvasLayer
                 _xpBar.Value = _player.Experience;
             }
 
+            if (_postureBar is not null && _player.Posture is not null)
+            {
+                _postureBar.MaxValue = _player.Posture.MaxPosture;
+                _postureBar.Value = _player.Posture.CurrentPosture;
+            }
+
             if (_weaponLabel is not null)
             {
                 string durability = _player.WeaponDurability > 0
                     ? $" ({_player.WeaponDurability})"
                     : string.Empty;
-                _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}";
+                string reload = _player.IsReloading ? "  [REC]" : string.Empty;
+                _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}{reload}";
             }
         }
 

@@ -6,7 +6,8 @@ public partial class Pickup : Area2D
     {
         Heal,
         ImprovisedWeapon,
-        Continue
+        Continue,
+        SidearmAmmo,
     }
 
     [Export]
@@ -16,11 +17,19 @@ public partial class Pickup : Area2D
     public int Amount { get; set; } = 35;
 
     [Export]
-    public int WeaponDurability { get; set; } = 8;
+    public ImprovisedWeaponKind WeaponKind { get; set; } = ImprovisedWeaponKind.Rebar;
+
+    [Export]
+    public int WeaponDurability { get; set; }
 
     public override void _Ready()
     {
         BodyEntered += OnBodyEntered;
+
+        if (Kind == PickupKind.ImprovisedWeapon && WeaponDurability <= 0)
+        {
+            WeaponDurability = ImprovisedWeaponCatalog.GetDefaultDurability(WeaponKind);
+        }
     }
 
     private void OnBodyEntered(Node2D body)
@@ -36,10 +45,13 @@ public partial class Pickup : Area2D
                 player.Heal(Amount);
                 break;
             case PickupKind.ImprovisedWeapon:
-                player.EquipImprovisedWeapon(WeaponDurability);
+                player.EquipImprovisedWeapon(WeaponKind, WeaponDurability);
                 break;
             case PickupKind.Continue:
                 player.AddContinue();
+                break;
+            case PickupKind.SidearmAmmo:
+                player.AddSidearmAmmo(Amount > 0 ? Amount : 3);
                 break;
         }
 

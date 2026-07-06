@@ -3,26 +3,7 @@ namespace SangueNoAsfalto.Core;
 public partial class SideScrollerDirector : Node
 {
     private const string MainMenuScenePath = "res://scenes/ui/MainMenu.tscn";
-
-    private enum Phase
-    {
-        IntroWalk,
-        EncounterOne,
-        EncounterOneB,
-        ApproachCheckpoint,
-        Checkpoint,
-        EncounterTwo,
-        EncounterTwoB,
-        MidBreather,
-        EncounterThree,
-        EncounterThreeB,
-        StreetMiniBoss,
-        RainBuildup,
-        RainMiniBoss,
-        AlphaBuildup,
-        FinalBoss,
-        Victory
-    }
+    private const float SpawnStaggerSec = 0.45f;
 
     [Export]
     public PackedScene? EnemyScene { get; set; }
@@ -46,9 +27,6 @@ public partial class SideScrollerDirector : Node
     public PackedScene? FinalBossScene { get; set; }
 
     [Export]
-    public NodePath SpawnPointsPath { get; set; } = "../SpawnPoints";
-
-    [Export]
     public NodePath PlayerPath { get; set; } = "../SideScrollerPlayer";
 
     [Export]
@@ -58,17 +36,17 @@ public partial class SideScrollerDirector : Node
     public NodePath TimeOfDayControllerPath { get; set; } = "../TimeOfDayController";
 
     [Export]
-    public float TimeBetweenEncounters { get; set; } = 1.5f;
-
-    [Export]
     public Vector2 StartPosition { get; set; } = new(-760f, 405f);
 
     [Export]
-    public Vector2 CheckpointPosition { get; set; } = new(-80f, 405f);
+    public Vector2 CheckpointPosition { get; set; } = new(480f, 405f);
+
+    [Export]
+    public float StageEndX { get; set; } = StageScrollSpawns.StageEndX;
 
     public int WaveNumber { get; private set; }
 
-    public int TotalWaves => 10;
+    public int TotalWaves => _spawnEntries.Count;
 
     public int EnemiesRemaining { get; private set; }
 
@@ -90,26 +68,21 @@ public partial class SideScrollerDirector : Node
 
     public bool AlternateControls => SaveManager.Current.AlternateControls;
 
-    private static Phase _resumePhase = Phase.IntroWalk;
     private static bool _checkpointUnlocked;
-    private readonly PackedScene?[] _emptyComposition = [];
-    private Node2D? _spawnPoints;
-    private Health? _playerHealth;
+    private readonly List<StageScrollSpawns.Entry> _spawnEntries = [];
+    private readonly Queue<(StageScrollSpawns.Entry Entry, float SpawnAt)> _spawnQueue = new();
+    private int _nextEntryIndex;
+    private int _spawnedFightCount;
     private SideScrollerPlayerController? _player;
+    private Health? _playerHealth;
     private WeatherController? _weather;
     private TimeOfDayController? _timeOfDay;
-    private Phase _phase;
-    private float _phaseTimer;
-    private bool _phaseActive;
     private bool _completed;
     private bool _gameOver;
     private bool _f1WasDown;
     private bool _f2WasDown;
     private bool _f4WasDown;
-    private readonly List<PendingSpawn> _pendingSpawns = [];
-    private float _spawnSequenceElapsed;
-
-    private readonly record struct PendingSpawn(PackedScene? Scene, float Delay, int Index);
+    private float _queueClock;
 
     public override void _Ready()
     {
@@ -118,26 +91,19 @@ public partial class SideScrollerDirector : Node
         SaveManager.Load();
         _checkpointUnlocked = SaveManager.Current.CheckpointUnlocked;
         InputBootstrap.ApplyAlternateControls(SaveManager.Current.AlternateControls);
-        _spawnPoints = GetNodeOrNull<Node2D>(SpawnPointsPath);
         _weather = GetNodeOrNull<WeatherController>(WeatherControllerPath);
         _timeOfDay = GetNodeOrNull<TimeOfDayController>(TimeOfDayControllerPath);
+        _spawnEntries.AddRange(StageScrollSpawns.BuildVilaEsperancaRun());
         FindPlayer();
         ApplyRespawnState();
-
-        Phase startPhase = _checkpointUnlocked ? Phase.EncounterTwo : _resumePhase;
-        if (startPhase == Phase.EncounterOne)
-        {
-            startPhase = Phase.IntroWalk;
-        }
-
-        StartPhase(startPhase);
+        ApplyAtmosphereForProgress(0f);
+        ObjectiveText = "Atravesse a Vila Esperanca";
     }
 
     public override void _Process(double delta)
     {
         if ((_gameOver || _completed) && Input.IsKeyPressed(Key.M))
         {
-            _resumePhase = Phase.IntroWalk;
             GetTree().ChangeSceneToFile(MainMenuScenePath);
             return;
         }
@@ -162,357 +128,127 @@ public partial class SideScrollerDirector : Node
             if (_player?.TryUseContinue(respawnPosition) == true)
             {
                 StatusText = "Voce gastou um continue e voltou cambaleando.";
-                _resumePhase = HasCheckpoint ? Phase.EncounterTwo : Phase.EncounterOne;
                 _playerHealth = _player.GetNodeOrNull<Health>("Health");
                 return;
             }
 
             _gameOver = true;
-            _phaseActive = false;
             StatusText = HasCheckpoint
                 ? "Caiu no asfalto. Aperte R para voltar ao checkpoint."
                 : "Caiu no asfalto. Aperte R para voltar ao inicio.";
             return;
         }
 
+        if (_player is null)
+        {
+            return;
+        }
+
+        float playerX = _player.GlobalPosition.X;
+        EnemiesRemaining = CountLivingEnemies();
+        WaveNumber = Mathf.Clamp(_spawnedFightCount, 0, _spawnEntries.Count);
+
+        while (_nextEntryIndex < _spawnEntries.Count && playerX >= _spawnEntries[_nextEntryIndex].TriggerX)
+        {
+            StageScrollSpawns.Entry entry = _spawnEntries[_nextEntryIndex];
+            _nextEntryIndex++;
+            HandleStageEntry(entry);
+        }
+
+        _queueClock += (float)delta;
+        while (_spawnQueue.Count > 0 && _queueClock >= _spawnQueue.Peek().SpawnAt)
+        {
+            SpawnStageEnemy(_spawnQueue.Dequeue().Entry);
+        }
+
+        ApplyAtmosphereForProgress(playerX);
         EnemiesRemaining = CountLivingEnemies();
 
-        if (_pendingSpawns.Count > 0 && _player is not null)
+        if (playerX >= StageEndX && _nextEntryIndex >= _spawnEntries.Count && EnemiesRemaining == 0)
         {
-            _spawnSequenceElapsed += (float)delta;
-            for (int i = _pendingSpawns.Count - 1; i >= 0; i--)
-            {
-                if (_spawnSequenceElapsed >= _pendingSpawns[i].Delay)
-                {
-                    SpawnEnemyAhead(_pendingSpawns[i]);
-                    _pendingSpawns.RemoveAt(i);
-                }
-            }
-
-            EnemiesRemaining = CountLivingEnemies();
-        }
-
-        if (!_phaseActive && _phase == Phase.IntroWalk && _player is not null
-            && _player.GlobalPosition.X > StartPosition.X + 140f)
-        {
-            _phaseTimer = 0f;
-        }
-
-        if (_phaseActive && EnemiesRemaining == 0 && _pendingSpawns.Count == 0)
-        {
-            _phaseActive = false;
-            _phaseTimer = TimeBetweenEncounters;
-            OnPhaseCleared();
-        }
-
-        if (!_phaseActive)
-        {
-            TickPhaseBreak((float)delta);
+            CompleteRun();
         }
     }
 
-    private void TickPhaseBreak(float dt)
+    private void HandleStageEntry(StageScrollSpawns.Entry entry)
     {
-        if (_completed || _gameOver)
+        if (!string.IsNullOrEmpty(entry.Status))
         {
-            return;
+            StatusText = entry.Status;
         }
 
-        _phaseTimer -= dt;
-        if (_phaseTimer > 0f)
+        switch (entry.Kind)
         {
-            return;
-        }
-
-        switch (_phase)
-        {
-            case Phase.IntroWalk:
-                StartPhase(Phase.EncounterOne);
-                break;
-            case Phase.EncounterOne:
-                StartPhase(Phase.EncounterOneB);
-                break;
-            case Phase.EncounterOneB:
-                StartPhase(Phase.ApproachCheckpoint);
-                break;
-            case Phase.ApproachCheckpoint:
-                StartPhase(Phase.Checkpoint);
-                break;
-            case Phase.Checkpoint:
+            case StageScrollSpawns.SpawnKind.StatusOnly:
+                return;
+            case StageScrollSpawns.SpawnKind.Checkpoint:
                 UnlockCheckpoint();
-                StartPhase(Phase.EncounterTwo);
-                break;
-            case Phase.EncounterTwo:
-                StartPhase(Phase.EncounterTwoB);
-                break;
-            case Phase.EncounterTwoB:
-                StartPhase(Phase.MidBreather);
-                break;
-            case Phase.MidBreather:
-                StartPhase(Phase.EncounterThree);
-                break;
-            case Phase.EncounterThree:
-                StartPhase(Phase.EncounterThreeB);
-                break;
-            case Phase.EncounterThreeB:
-                StartPhase(Phase.StreetMiniBoss);
-                break;
-            case Phase.StreetMiniBoss:
-                StartPhase(Phase.RainBuildup);
-                break;
-            case Phase.RainBuildup:
-                StartPhase(Phase.RainMiniBoss);
-                break;
-            case Phase.RainMiniBoss:
-                StartPhase(Phase.AlphaBuildup);
-                break;
-            case Phase.AlphaBuildup:
-                StartPhase(Phase.FinalBoss);
-                break;
-            case Phase.FinalBoss:
-                CompleteRun();
+                return;
+            default:
+                _spawnQueue.Enqueue((entry, _queueClock + SpawnStaggerSec * (_spawnQueue.Count % 2)));
                 break;
         }
     }
 
-    private void StartPhase(Phase phase)
+    private void SpawnStageEnemy(StageScrollSpawns.Entry entry)
     {
-        _phase = phase;
-        EnemiesRemaining = 0;
-        ApplyActAtmosphere(phase);
-
-        switch (phase)
+        PackedScene? scene = ResolveScene(entry.Kind);
+        if (scene is null || _player is null)
         {
-            case Phase.IntroWalk:
-                WaveNumber = 0;
-                ObjectiveText = "Entre na Vila Esperanca";
-                StatusText = "O asfalto esta molhado. Avance pela rua.";
-                BeginIntermission(10f);
-                break;
-            case Phase.EncounterOne:
-                WaveNumber = 1;
-                ObjectiveText = "Limpe a entrada da rua";
-                StatusText = "Primeiro contato. Nao deixe fecharem a lane.";
-                SpawnComposition([EnemyScene, EnemyScene, EnemyScene]);
-                break;
-            case Phase.EncounterOneB:
-                WaveNumber = 2;
-                ObjectiveText = "Segure a entrada";
-                StatusText = "Reforcos chegando pelos fundos.";
-                SpawnComposition([EnemyScene, FastEnemyScene, EnemyScene]);
-                break;
-            case Phase.ApproachCheckpoint:
-                WaveNumber = 2;
-                ObjectiveText = "Alcance o altar improvisado";
-                StatusText = "A rua abriu. Va ate o altar.";
-                BeginIntermission(28f);
-                break;
-            case Phase.Checkpoint:
-                WaveNumber = 2;
-                ObjectiveText = "Ative o checkpoint";
-                StatusText = "Respira. O altar virou ponto seguro.";
-                BeginIntermission(4f);
-                break;
-            case Phase.EncounterTwo:
-                WaveNumber = 3;
-                ObjectiveText = "Segure a rua contra os corredores";
-                StatusText = "Corredores na chuva. Troque de lane rapido.";
-                SpawnComposition([EnemyScene, FastEnemyScene, EnemyScene, InfectedEnemyScene]);
-                break;
-            case Phase.EncounterTwoB:
-                WaveNumber = 4;
-                ObjectiveText = "Quebre a segunda linha";
-                StatusText = "Mais infectados entrando pelo meio da rua.";
-                SpawnComposition([FastEnemyScene, FastEnemyScene, InfectedEnemyScene, EnemyScene, EnemyScene]);
-                break;
-            case Phase.MidBreather:
-                WaveNumber = 4;
-                ObjectiveText = "Recupere folego";
-                StatusText = "Trecho quieto. Use os pickups se precisar.";
-                BeginIntermission(32f);
-                break;
-            case Phase.EncounterThree:
-                WaveNumber = 5;
-                ObjectiveText = "Quebre a linha dos brutos";
-                StatusText = "Brutos abrindo caminho no asfalto.";
-                SpawnComposition([BruteEnemyScene, EnemyScene, EnemyScene, FastEnemyScene]);
-                break;
-            case Phase.EncounterThreeB:
-                WaveNumber = 6;
-                ObjectiveText = "Segure o corredor central";
-                StatusText = "Linha mista. Cuidado com o bruto.";
-                SpawnComposition([BruteEnemyScene, InfectedEnemyScene, EnemyScene, FastEnemyScene, EnemyScene]);
-                break;
-            case Phase.StreetMiniBoss:
-                WaveNumber = 7;
-                ObjectiveText = "Derrube o bruto da rua";
-                StatusText = "O portao range. Algo grande vem.";
-                SpawnBoss(MiniBossScene);
-                break;
-            case Phase.RainBuildup:
-                WaveNumber = 7;
-                ObjectiveText = "Atravesse a chuva";
-                StatusText = "A tempestade engrossou. Prepare-se.";
-                BeginIntermission(24f);
-                break;
-            case Phase.RainMiniBoss:
-                WaveNumber = 8;
-                ObjectiveText = "Derrube o infectado da chuva";
-                StatusText = "Algo verde rasteja no meio da rua.";
-                SpawnBoss(SecondMiniBossScene);
-                break;
-            case Phase.AlphaBuildup:
-                WaveNumber = 8;
-                ObjectiveText = "Chegue ao fim do trecho";
-                StatusText = "A rua inteira parou. O cheiro de ferro veio.";
-                BeginIntermission(26f);
-                break;
-            case Phase.FinalBoss:
-                WaveNumber = 9;
-                ObjectiveText = "Sobreviva ao alfa da rua";
-                StatusText = "O alfa apareceu. Termine a fase.";
-                SpawnBoss(FinalBossScene);
-                break;
-            case Phase.Victory:
-                CompleteRun();
-                break;
+            return;
+        }
+
+        Node2D enemy = scene.Instantiate<Node2D>();
+        float spawnX = _player.GlobalPosition.X + entry.SpawnOffsetX;
+        float spawnY = Mathf.Clamp(entry.LaneY, 268f, 465f);
+        enemy.GlobalPosition = new Vector2(spawnX, spawnY);
+        enemy.Modulate = new Color(1f, 1f, 1f, 0.35f);
+        GetTree().CurrentScene?.AddChild(enemy);
+
+        Tween fade = enemy.CreateTween();
+        fade.TweenProperty(enemy, "modulate:a", 1f, 0.28f);
+
+        if (entry.Kind is not StageScrollSpawns.SpawnKind.StatusOnly
+            and not StageScrollSpawns.SpawnKind.Checkpoint)
+        {
+            _spawnedFightCount++;
         }
     }
 
-    private void BeginIntermission(float duration)
+    private PackedScene? ResolveScene(StageScrollSpawns.SpawnKind kind)
     {
-        _phaseActive = false;
-        _phaseTimer = duration;
+        return kind switch
+        {
+            StageScrollSpawns.SpawnKind.Grunt => EnemyScene,
+            StageScrollSpawns.SpawnKind.Fast => FastEnemyScene ?? EnemyScene,
+            StageScrollSpawns.SpawnKind.Brute => BruteEnemyScene ?? EnemyScene,
+            StageScrollSpawns.SpawnKind.Infected => InfectedEnemyScene ?? EnemyScene,
+            StageScrollSpawns.SpawnKind.MiniBoss => MiniBossScene ?? BruteEnemyScene ?? EnemyScene,
+            StageScrollSpawns.SpawnKind.RainBoss => SecondMiniBossScene ?? InfectedEnemyScene ?? EnemyScene,
+            StageScrollSpawns.SpawnKind.AlphaBoss => FinalBossScene ?? BruteEnemyScene ?? EnemyScene,
+            _ => null,
+        };
     }
 
-    private void ApplyActAtmosphere(Phase phase)
+    private void ApplyAtmosphereForProgress(float playerX)
     {
         if (_weather is not null)
         {
             _weather.AutoCycle = false;
-            _weather.SetState(phase switch
+            _weather.SetState(playerX switch
             {
-                Phase.IntroWalk or Phase.EncounterOne or Phase.EncounterOneB or Phase.ApproachCheckpoint => WeatherController.WeatherState.Drizzle,
-                Phase.EncounterTwo or Phase.EncounterTwoB or Phase.MidBreather => WeatherController.WeatherState.HeavyRain,
-                Phase.EncounterThree or Phase.EncounterThreeB or Phase.StreetMiniBoss => WeatherController.WeatherState.HeavyRain,
-                Phase.RainBuildup or Phase.RainMiniBoss => WeatherController.WeatherState.Thunderstorm,
-                Phase.AlphaBuildup or Phase.FinalBoss => WeatherController.WeatherState.Thunderstorm,
-                _ => WeatherController.WeatherState.Drizzle
+                < 200f => WeatherController.WeatherState.Drizzle,
+                < 2200f => WeatherController.WeatherState.HeavyRain,
+                _ => WeatherController.WeatherState.Thunderstorm,
             });
         }
 
         if (_timeOfDay is not null)
         {
             _timeOfDay.AutoCycle = false;
-            _timeOfDay.SetState(phase switch
-            {
-                Phase.IntroWalk or Phase.EncounterOne or Phase.EncounterOneB => TimeOfDayController.TimeOfDayState.Sunset,
-                Phase.ApproachCheckpoint or Phase.Checkpoint or Phase.EncounterTwo or Phase.EncounterTwoB => TimeOfDayController.TimeOfDayState.Night,
-                Phase.MidBreather or Phase.EncounterThree or Phase.EncounterThreeB => TimeOfDayController.TimeOfDayState.Night,
-                Phase.StreetMiniBoss or Phase.RainBuildup or Phase.RainMiniBoss => TimeOfDayController.TimeOfDayState.Night,
-                Phase.AlphaBuildup or Phase.FinalBoss => TimeOfDayController.TimeOfDayState.Night,
-                _ => TimeOfDayController.TimeOfDayState.Sunset
-            });
-        }
-    }
-
-    private void SpawnComposition(PackedScene?[] scenes)
-    {
-        PackedScene?[] composition = scenes.Length > 0 ? scenes : _emptyComposition;
-        _pendingSpawns.Clear();
-        _spawnSequenceElapsed = 0f;
-        _phaseActive = true;
-        EnemiesRemaining = 0;
-
-        for (int i = 0; i < composition.Length; i++)
-        {
-            _pendingSpawns.Add(new PendingSpawn(composition[i] ?? EnemyScene, i * 0.85f, i));
-        }
-    }
-
-    private void SpawnEnemyAhead(PendingSpawn pending)
-    {
-        if (pending.Scene is null || _player is null)
-        {
-            return;
-        }
-
-        float ahead = pending.Index % 3 switch
-        {
-            0 => 240f,
-            1 => 320f,
-            _ => 190f,
-        };
-
-        float spawnX = _player.GlobalPosition.X + ahead;
-        float laneOffset = (pending.Index % 3 - 1) * 48f;
-        float spawnY = Mathf.Clamp(_player.GlobalPosition.Y + laneOffset, 268f, 465f);
-
-        Node2D enemy = pending.Scene.Instantiate<Node2D>();
-        enemy.GlobalPosition = new Vector2(spawnX, spawnY);
-        GetTree().CurrentScene?.AddChild(enemy);
-    }
-
-    private void SpawnEnemy(int index, PackedScene? scene)
-    {
-        if (scene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
-        {
-            return;
-        }
-
-        Node2D spawnPoint = _spawnPoints.GetChild<Node2D>(index % _spawnPoints.GetChildCount());
-        Node2D enemy = scene.Instantiate<Node2D>();
-        enemy.GlobalPosition = spawnPoint.GlobalPosition + new Vector2(index * 14f, 0f);
-        GetTree().CurrentScene?.AddChild(enemy);
-    }
-
-    private void SpawnBoss(PackedScene? bossScene)
-    {
-        if (bossScene is null || _spawnPoints is null || _spawnPoints.GetChildCount() == 0)
-        {
-            SpawnComposition([EnemyScene]);
-            return;
-        }
-
-        Node2D spawnPoint = _spawnPoints.GetChild<Node2D>(1 % _spawnPoints.GetChildCount());
-        Node2D boss = bossScene.Instantiate<Node2D>();
-        boss.GlobalPosition = spawnPoint.GlobalPosition;
-        GetTree().CurrentScene?.AddChild(boss);
-        EnemiesRemaining = 1;
-        _phaseActive = true;
-    }
-
-    private void OnPhaseCleared()
-    {
-        switch (_phase)
-        {
-            case Phase.EncounterOne:
-                StatusText = "Entrada segura por agora.";
-                break;
-            case Phase.EncounterOneB:
-                StatusText = "Entrada limpa. Siga em frente.";
-                break;
-            case Phase.EncounterTwo:
-                StatusText = "Primeira linha quebrada.";
-                break;
-            case Phase.EncounterTwoB:
-                StatusText = "A rua ficou quieta demais...";
-                break;
-            case Phase.EncounterThree:
-                StatusText = "Os brutos cairam.";
-                break;
-            case Phase.EncounterThreeB:
-                StatusText = "O corredor abriu. Algo grande vem.";
-                break;
-            case Phase.StreetMiniBoss:
-                StatusText = "O bruto caiu.";
-                break;
-            case Phase.RainMiniBoss:
-                StatusText = "O infectado desmanchou no asfalto.";
-                break;
-            case Phase.FinalBoss:
-                StatusText = "O alfa caiu. A fase terminou.";
-                break;
+            _timeOfDay.SetState(playerX < 400f
+                ? TimeOfDayController.TimeOfDayState.Sunset
+                : TimeOfDayController.TimeOfDayState.Night);
         }
     }
 
@@ -520,23 +256,14 @@ public partial class SideScrollerDirector : Node
     {
         HasCheckpoint = true;
         _checkpointUnlocked = true;
-        _resumePhase = Phase.EncounterTwo;
         SaveManager.Current.CheckpointUnlocked = true;
         SaveManager.Save();
-
-        if (_player is not null)
-        {
-            _player.GlobalPosition = CheckpointPosition;
-        }
+        StatusText = "Checkpoint ativo no altar improvisado.";
     }
 
     private void CompleteRun()
     {
-        _phase = Phase.Victory;
         _completed = true;
-        _phaseActive = false;
-        WaveNumber = 10;
-        _resumePhase = Phase.IntroWalk;
         _checkpointUnlocked = false;
         SaveManager.Current.CheckpointUnlocked = false;
         SaveManager.Save();
@@ -546,17 +273,13 @@ public partial class SideScrollerDirector : Node
 
     private void ReloadRun()
     {
-        if (_gameOver && HasCheckpoint)
+        if (!_gameOver && !_completed)
         {
-            _resumePhase = Phase.EncounterTwo;
+            return;
         }
-        else if (_completed)
+
+        if (_gameOver && !HasCheckpoint)
         {
-            _resumePhase = Phase.IntroWalk;
-        }
-        else
-        {
-            _resumePhase = Phase.IntroWalk;
             _checkpointUnlocked = false;
             SaveManager.Current.CheckpointUnlocked = false;
             SaveManager.Save();
@@ -583,7 +306,6 @@ public partial class SideScrollerDirector : Node
         if (ConsumeKeyPress(Key.F4, ref _f4WasDown))
         {
             SaveManager.Reset();
-            _resumePhase = Phase.IntroWalk;
             _checkpointUnlocked = false;
             GetTree().ReloadCurrentScene();
         }
@@ -605,7 +327,19 @@ public partial class SideScrollerDirector : Node
             return;
         }
 
-        _player.GlobalPosition = _resumePhase >= Phase.EncounterTwo ? CheckpointPosition : StartPosition;
+        if (_checkpointUnlocked)
+        {
+            _player.GlobalPosition = CheckpointPosition;
+            float resumeX = CheckpointPosition.X - 40f;
+            while (_nextEntryIndex < _spawnEntries.Count && _spawnEntries[_nextEntryIndex].TriggerX < resumeX)
+            {
+                _nextEntryIndex++;
+            }
+        }
+        else
+        {
+            _player.GlobalPosition = StartPosition;
+        }
     }
 
     private int CountLivingEnemies()

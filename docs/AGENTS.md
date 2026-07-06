@@ -13,9 +13,9 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 20 - Armas Improvisadas E Finishers`.
+Sprint atual: `Sprint 23 - Progressao Marcial Por XP` (planejada).
 
-Direcao de combate: `docs/COMBAT_DESIGN.md` — desarmado e sidearm ok (Sprints 18–19); armas improvisadas e finishers na Sprint 20; estilos marciais por XP na Sprint 21.
+Direcao de combate: `docs/COMBAT_DESIGN.md` — impacto/dor/stamina (S22), scroll/parry (S21), armas/finishers (S20); proximo: estilos marciais por XP.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
 [ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="5_sprite_visual"]
 [ext_resource type="Script" path="res://scripts/combat/BleedEffect.cs" id="6_bleed"]
+[ext_resource type="Script" path="res://scripts/combat/PostureComponent.cs" id="7_posture"]
 
 [ext_resource type="Texture2D" path="res://art/sprites/enemies/grunt_idle_game.png" id="7_idle"]
 
@@ -64,6 +65,9 @@ MaxHealth = 115
 [node name="BleedEffect" type="Node" parent="."]
 script = ExtResource("6_bleed")
 
+[node name="Posture" type="Node" parent="."]
+script = ExtResource("7_posture")
+
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 16
 collision_mask = 8
@@ -79,6 +83,7 @@ monitoring = false
 script = ExtResource("4_hitbox")
 Damage = 16
 KnockbackForce = 230.0
+PostureDamage = 22.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
 position = Vector2(25, 0)

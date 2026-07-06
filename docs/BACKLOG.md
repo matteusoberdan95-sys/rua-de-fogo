@@ -180,12 +180,31 @@
 
 ## Marco 0.17 - Armas Improvisadas E Finishers (Sprint 20)
 
-- [ ] Pickups martelo/faca/vergalhao com durabilidade.
-- [ ] Finalizadores por tipo de arma.
-- [ ] Reload / pickup de municao da pistola.
-- [ ] Validar Sprint 20 no Godot.
+- [x] Pickups vergalhao/martelo/faca com durabilidade.
+- [x] Golpes basicos e animacoes por tipo de arma.
+- [x] Finalizadores em inimigo critico.
+- [x] Reload da pistola (E) e pickup de municao.
+- [x] VFX sangramento (gotas) no BleedEffect.
+- [x] Validar Sprint 20 no Godot.
+- [x] Fechar sprint apos validacao.
 
-## Marco 0.18 - Progressao Marcial (Sprint 21)
+## Marco 0.18 - Fase Scroll E Postura/Parry (Sprint 21)
+
+- [x] Fase longa com spawn por progresso (Final Fight).
+- [x] PostureComponent e parry (Q).
+- [x] Golpe mortal com postura quebrada.
+- [x] Validar Sprint 21 no Godot.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.19 - Combate Plastico E Impacto (Sprint 22)
+
+- [x] Stamina por golpe; windup nos ataques.
+- [x] Reacao de dor explicita no inimigo.
+- [x] Feedback de impacto (callouts, shake, hit pause escalonado).
+- [x] Validar Sprint 22 no Godot.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.20 - Progressao Marcial (Sprint 23)
 
 - [ ] Catalogo de estilos (boxe, Muay Thai, etc.).
 - [ ] Desbloqueio por XP/nivel.

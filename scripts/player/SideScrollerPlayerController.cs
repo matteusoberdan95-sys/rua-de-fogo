@@ -31,7 +31,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     public float AttackDuration { get; set; } = 0.13f;
 
     [Export]
-    public float ComboResetTime { get; set; } = 0.58f;
+    public float ComboResetTime { get; set; } = 0.72f;
 
     [Export]
     public float ShootCooldown { get; set; } = 0.32f;
@@ -46,13 +46,16 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     public float DashStaminaCost { get; set; } = 28f;
 
     [Export]
-    public float StaminaRegenPerSecond { get; set; } = 32f;
+    public float StaminaRegenPerSecond { get; set; } = 24f;
 
     [Export]
-    public float MinX { get; set; } = -1060f;
+    public float AttackStaminaMin { get; set; } = 8f;
 
     [Export]
-    public float MaxX { get; set; } = 1060f;
+    public float MinX { get; set; } = -900f;
+
+    [Export]
+    public float MaxX { get; set; } = 3350f;
 
     [Export]
     public float MinLaneY { get; set; } = 260f;
@@ -71,7 +74,17 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public string CombatStyleName => "Rua";
 
-    public string WeaponName => _hasImprovisedWeapon ? "Vergalhao" : "Punhos";
+    public string WeaponName => ImprovisedWeaponCatalog.GetDisplayName(_weaponKind);
+
+    public ImprovisedWeaponKind EquippedWeaponKind => _weaponKind;
+
+    public bool HasImprovisedWeapon => _weaponKind != ImprovisedWeaponKind.None && _weaponDurability > 0;
+
+    public bool IsParrying => _parryTimeRemaining > 0f;
+
+    public bool IsReloading => _reloadTimeRemaining > 0f;
+
+    public PostureComponent? Posture { get; private set; }
 
     public int SidearmAmmo => _sidearmAmmo;
 
@@ -110,6 +123,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private readonly KeyPressLatch _dashLatch = new(Key.K);
     private readonly KeyPressLatch _jumpLatch = new(Key.Space);
     private readonly KeyPressLatch _shootLatch = new(Key.L);
+    private readonly KeyPressLatch _parryLatch = new(Key.Q);
+    private readonly KeyPressLatch _reloadLatch = new(Key.E);
     private CharacterSpriteVisual? _spriteVisual;
     private Hitbox? _attackArea;
     private CollisionShape2D? _attackCollision;
@@ -120,8 +135,11 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private float _shootCooldownRemaining;
     private float _hitStunRemaining;
     private float _jumpTimeRemaining;
-    private bool _hasImprovisedWeapon;
+    private ImprovisedWeaponKind _weaponKind;
     private int _weaponDurability;
+    private float _reloadTimeRemaining;
+    private float _parryTimeRemaining;
+    private bool _isFinisherAttack;
     private int _continues;
     private int _comboIndex;
     private float _comboChainRemaining;
@@ -152,12 +170,15 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         SetAttackCollision(false);
 
         _health = GetNodeOrNull<Health>("Health");
+        Posture = GetNodeOrNull<PostureComponent>("Posture");
         if (_health is not null)
         {
             _health.Died += OnDied;
             _health.Changed += OnPlayerHealthChanged;
             OnPlayerHealthChanged(_health.CurrentHealth, _health.MaxHealth);
         }
+
+        SyncWeaponVisual();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -178,6 +199,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         TickShoot(dt);
         TickJump(dt);
         TickRun(dt, input);
+        TickReload(dt);
+        TickParry(dt);
         RegenerateStamina(dt);
         UpdateAttackArc();
         UpdateFacingVisual();
@@ -219,6 +242,16 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (Input.IsActionJustPressed("shoot") || _shootLatch.ConsumeJustPressed())
         {
             Shoot();
+        }
+
+        if (Input.IsActionJustPressed("reload") || _reloadLatch.ConsumeJustPressed())
+        {
+            TryStartReload();
+        }
+
+        if (Input.IsActionJustPressed("parry") || _parryLatch.ConsumeJustPressed())
+        {
+            StartParry();
         }
     }
 
@@ -285,6 +318,13 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (_attackTimeRemaining <= 0f)
         {
             SetAttackCollision(false);
+            _isFinisherAttack = false;
+            if (_attackArea is not null)
+            {
+                _attackArea.IsFinisherHit = false;
+                _attackArea.IsPostureKill = false;
+                _attackArea.ApplyBleedOnHit = false;
+            }
         }
     }
 
@@ -372,7 +412,13 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             return;
         }
 
-        CurrentStamina = Mathf.Min(CurrentStamina + StaminaRegenPerSecond * dt, MaxStamina);
+        float regen = StaminaRegenPerSecond;
+        if (_attackTimeRemaining > 0f)
+        {
+            regen *= 0.45f;
+        }
+
+        CurrentStamina = Mathf.Min(CurrentStamina + regen * dt, MaxStamina);
     }
 
     private bool TickHitStun(float dt)
@@ -394,12 +440,45 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void StartAttack()
     {
-        if (_attackTimeRemaining > 0f)
+        if (_attackTimeRemaining > 0f || _reloadTimeRemaining > 0f)
         {
             return;
         }
 
         bool airKick = _jumpTimeRemaining > 0f;
+        if (!airKick && FindPostureKillTarget() is Node2D postureTarget)
+        {
+            StartPostureKill(postureTarget);
+            return;
+        }
+
+        if (!airKick && HasImprovisedWeapon && FindFinisherTarget() is Node2D finisherTarget)
+        {
+            StartFinisher(finisherTarget);
+            return;
+        }
+
+        if (HasImprovisedWeapon && !airKick)
+        {
+            StartWeaponAttack();
+            return;
+        }
+
+        float staminaCost = CombatImpactFeel.StaminaCostForCombo(
+            airKick ? 2 : _comboResetRemaining > 0f ? (_comboIndex + 1) % 3 : 0,
+            _isRunning);
+        if (airKick)
+        {
+            staminaCost = 24f;
+        }
+
+        if (CurrentStamina < staminaCost)
+        {
+            return;
+        }
+
+        CurrentStamina -= staminaCost;
+
         if (airKick)
         {
             _comboIndex = 2;
@@ -414,12 +493,13 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         _comboResetRemaining = ComboResetTime;
+        _isFinisherAttack = false;
 
         _attackTimeRemaining = _comboIndex switch
         {
-            2 => airKick ? 0.24f : 0.22f,
-            1 => _isRunning ? 0.13f : 0.17f,
-            _ => _isRunning ? 0.11f : 0.12f,
+            2 => airKick ? 0.34f : 0.3f,
+            1 => _isRunning ? 0.18f : 0.28f,
+            _ => _isRunning ? 0.16f : 0.22f,
         };
 
         if (_attackArea is not null)
@@ -432,18 +512,236 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             };
 
             _attackArea.KnockbackForce = _comboIndex == 2 ? 520f : 350f;
-            if (_hasImprovisedWeapon)
-            {
-                _attackArea.Damage += _comboIndex == 2 ? 18 : 10;
-                _attackArea.KnockbackForce += 130f;
-            }
+            _attackArea.ApplyBleedOnHit = false;
+            _attackArea.IsFinisherHit = false;
+            _attackArea.PostureDamage = 14f + _comboIndex * 4f;
         }
 
         SetAttackCollision(true);
         _spriteVisual?.SetAttackCombo(_comboIndex);
         UpdateAttackArc();
         SpawnStrikeEffect(_comboIndex);
+    }
+
+    private void StartWeaponAttack()
+    {
+        float staminaCost = _weaponKind == ImprovisedWeaponKind.Hammer ? 20f : 14f;
+        if (CurrentStamina < staminaCost)
+        {
+            return;
+        }
+
+        CurrentStamina -= staminaCost;
+        _comboIndex = 0;
+        _comboResetRemaining = ComboResetTime;
+        _isFinisherAttack = false;
+        _attackTimeRemaining = _weaponKind == ImprovisedWeaponKind.Hammer ? 0.28f : 0.24f;
+
+        if (_attackArea is not null)
+        {
+            int bonus = ImprovisedWeaponCatalog.GetBasicDamageBonus(_weaponKind);
+            _attackArea.Damage = 28 + bonus;
+            _attackArea.KnockbackForce = 380f + ImprovisedWeaponCatalog.GetKnockbackBonus(_weaponKind);
+            _attackArea.ApplyBleedOnHit = ImprovisedWeaponCatalog.AppliesBleed(_weaponKind);
+            _attackArea.BleedDuration = ImprovisedWeaponCatalog.BleedDuration;
+            _attackArea.BleedDamagePerSecond = ImprovisedWeaponCatalog.BleedDamagePerSecond;
+            _attackArea.IsFinisherHit = false;
+        }
+
+        SetAttackCollision(true);
+        _spriteVisual?.PlayWeaponAttack(_weaponKind);
+        UpdateWeaponAttackArc();
         ConsumeWeaponDurability();
+    }
+
+    private void StartFinisher(Node2D target)
+    {
+        if (Mathf.Sign(target.GlobalPosition.X - GlobalPosition.X) != 0)
+        {
+            FacingSign = target.GlobalPosition.X >= GlobalPosition.X ? 1 : -1;
+            UpdateFacingVisual();
+        }
+
+        _isFinisherAttack = true;
+        _attackTimeRemaining = 0.58f;
+        _comboIndex = 2;
+
+        if (_attackArea is not null)
+        {
+            _attackArea.Damage = ImprovisedWeaponCatalog.GetFinisherDamage(_weaponKind);
+            _attackArea.KnockbackForce = 720f;
+            _attackArea.ApplyBleedOnHit = ImprovisedWeaponCatalog.AppliesBleed(_weaponKind);
+            _attackArea.BleedDuration = ImprovisedWeaponCatalog.BleedDuration * 1.4f;
+            _attackArea.BleedDamagePerSecond = ImprovisedWeaponCatalog.BleedDamagePerSecond * 1.35f;
+            _attackArea.IsFinisherHit = true;
+            _attackArea.HitStunDuration = 0.32f;
+        }
+
+        SetAttackCollision(true);
+        _spriteVisual?.PlayFinisherAttack(_weaponKind);
+        UpdateFinisherAttackArc(target);
+
+        _weaponDurability = Mathf.Max(_weaponDurability - 2, 0);
+        if (_weaponDurability <= 0)
+        {
+            ClearWeapon();
+        }
+        else
+        {
+            SavePlayerState();
+        }
+    }
+
+    private Node2D? FindFinisherTarget()
+    {
+        const float rangeX = 82f;
+        const float rangeY = 52f;
+        Node2D? bestTarget = null;
+        float bestDistance = float.MaxValue;
+
+        foreach (Node node in GetTree().GetNodesInGroup("side_enemy"))
+        {
+            if (node is not Node2D enemy)
+            {
+                continue;
+            }
+
+            Health? health = enemy.GetNodeOrNull<Health>("Health");
+            if (health is null || health.CurrentHealth <= 0)
+            {
+                continue;
+            }
+
+            if (EnemyDamageState.FromHealth(health.CurrentHealth, health.MaxHealth) != EnemyDamageVisualTier.Critical)
+            {
+                continue;
+            }
+
+            Vector2 delta = enemy.GlobalPosition - GlobalPosition;
+            if (Mathf.Abs(delta.X) > rangeX || Mathf.Abs(delta.Y) > rangeY)
+            {
+                continue;
+            }
+
+            float distance = delta.LengthSquared();
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestTarget = enemy;
+            }
+        }
+
+        return bestTarget;
+    }
+
+    public bool TryParry(Hitbox enemyHitbox)
+    {
+        if (_parryTimeRemaining <= 0f || enemyHitbox.Source is not Node2D enemySource)
+        {
+            return false;
+        }
+
+        _parryTimeRemaining = 0f;
+        PostureComponent? enemyPosture = enemySource.GetNodeOrNull<PostureComponent>("Posture");
+        enemyPosture?.AddPosture(Mathf.Max(enemyHitbox.PostureDamage, 28f) * 1.65f);
+
+        if (enemySource is SideScrollerEnemyController enemyController)
+        {
+            enemyController.OnParried(this);
+        }
+
+        CombatFeedback.PlayParry(this, enemySource);
+        _spriteVisual?.PlayParry();
+        return true;
+    }
+
+    private Node2D? FindPostureKillTarget()
+    {
+        const float rangeX = 88f;
+        const float rangeY = 54f;
+        Node2D? bestTarget = null;
+        float bestDistance = float.MaxValue;
+
+        foreach (Node node in GetTree().GetNodesInGroup("side_enemy"))
+        {
+            if (node is not Node2D enemy)
+            {
+                continue;
+            }
+
+            PostureComponent? posture = enemy.GetNodeOrNull<PostureComponent>("Posture");
+            if (posture is null || !posture.IsBroken)
+            {
+                continue;
+            }
+
+            Health? health = enemy.GetNodeOrNull<Health>("Health");
+            if (health is null || health.CurrentHealth <= 0)
+            {
+                continue;
+            }
+
+            Vector2 delta = enemy.GlobalPosition - GlobalPosition;
+            if (Mathf.Abs(delta.X) > rangeX || Mathf.Abs(delta.Y) > rangeY)
+            {
+                continue;
+            }
+
+            float distance = delta.LengthSquared();
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestTarget = enemy;
+            }
+        }
+
+        return bestTarget;
+    }
+
+    private void StartPostureKill(Node2D target)
+    {
+        if (Mathf.Sign(target.GlobalPosition.X - GlobalPosition.X) != 0)
+        {
+            FacingSign = target.GlobalPosition.X >= GlobalPosition.X ? 1 : -1;
+            UpdateFacingVisual();
+        }
+
+        _isFinisherAttack = true;
+        _attackTimeRemaining = 0.52f;
+        _comboIndex = 2;
+
+        if (_attackArea is not null)
+        {
+            _attackArea.Damage = 999;
+            _attackArea.KnockbackForce = 840f;
+            _attackArea.ApplyBleedOnHit = false;
+            _attackArea.IsFinisherHit = true;
+            _attackArea.IsPostureKill = true;
+            _attackArea.HitStunDuration = 0.36f;
+        }
+
+        SetAttackCollision(true);
+        _spriteVisual?.PlayPostureKill();
+        UpdateFinisherAttackArc(target);
+    }
+
+    private void StartParry()
+    {
+        if (_attackTimeRemaining > 0f || _reloadTimeRemaining > 0f || _hitStunRemaining > 0f)
+        {
+            return;
+        }
+
+        _parryTimeRemaining = 0.26f;
+        _spriteVisual?.PlayParryWindup();
+    }
+
+    private void TickParry(float dt)
+    {
+        if (_parryTimeRemaining > 0f)
+        {
+            _parryTimeRemaining = Mathf.Max(_parryTimeRemaining - dt, 0f);
+        }
     }
 
     private void StartDash(Vector2 input)
@@ -472,7 +770,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void Shoot()
     {
-        if (ProjectileScene is null || _shootCooldownRemaining > 0f || CurrentStamina < ShootStaminaCost)
+        if (ProjectileScene is null || _shootCooldownRemaining > 0f || _reloadTimeRemaining > 0f || CurrentStamina < ShootStaminaCost)
         {
             return;
         }
@@ -532,6 +830,39 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _isRunning = _runTimeRemaining > 0f && Mathf.Abs(input.X) > 0.01f && _hitStunRemaining <= 0f;
     }
 
+    private void TickReload(float dt)
+    {
+        if (_reloadTimeRemaining <= 0f)
+        {
+            return;
+        }
+
+        _reloadTimeRemaining -= dt;
+        Velocity = Velocity.MoveToward(Vector2.Zero, 900f * dt);
+        if (_reloadTimeRemaining <= 0f)
+        {
+            _sidearmAmmo = SidearmMaxAmmoDefault;
+            _spriteVisual?.EndReload();
+        }
+    }
+
+    private void TryStartReload()
+    {
+        if (_reloadTimeRemaining > 0f || _sidearmAmmo >= SidearmMaxAmmoDefault || _attackTimeRemaining > 0f)
+        {
+            return;
+        }
+
+        _reloadTimeRemaining = 1.25f;
+        _dashTimeRemaining = 0f;
+        _spriteVisual?.PlayReload();
+    }
+
+    public void AddSidearmAmmo(int amount)
+    {
+        _sidearmAmmo = Mathf.Clamp(_sidearmAmmo + amount, 0, SidearmMaxAmmoDefault);
+    }
+
     private void OnPlayerHealthChanged(int current, int maximum)
     {
         _spriteVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
@@ -550,6 +881,34 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             1 => new Vector2(FacingSign * 40f, 10f),
             _ => new Vector2(FacingSign * 38f, -8f),
         };
+        _attackArea.Rotation = FacingSign > 0 ? 0f : Mathf.Pi;
+    }
+
+    private void UpdateWeaponAttackArc()
+    {
+        if (_attackArea is null)
+        {
+            return;
+        }
+
+        _attackArea.Position = _weaponKind switch
+        {
+            ImprovisedWeaponKind.Hammer => new Vector2(FacingSign * 34f, -28f),
+            ImprovisedWeaponKind.Knife => new Vector2(FacingSign * 42f, -10f),
+            _ => new Vector2(FacingSign * 46f, -12f),
+        };
+        _attackArea.Rotation = FacingSign > 0 ? 0f : Mathf.Pi;
+    }
+
+    private void UpdateFinisherAttackArc(Node2D target)
+    {
+        if (_attackArea is null)
+        {
+            return;
+        }
+
+        Vector2 delta = target.GlobalPosition - GlobalPosition;
+        _attackArea.Position = new Vector2(Mathf.Sign(delta.X == 0f ? FacingSign : delta.X) * 44f, -14f);
         _attackArea.Rotation = FacingSign > 0 ? 0f : Mathf.Pi;
     }
 
@@ -640,11 +999,25 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _health?.Heal(amount);
     }
 
-    public void EquipImprovisedWeapon(int durability)
+    public void EquipImprovisedWeapon(ImprovisedWeaponKind kind, int durability)
     {
-        _hasImprovisedWeapon = true;
-        _weaponDurability = Mathf.Max(durability, 1);
+        _weaponKind = kind;
+        _weaponDurability = durability > 0 ? durability : ImprovisedWeaponCatalog.GetDefaultDurability(kind);
+        SyncWeaponVisual();
         SavePlayerState();
+    }
+
+    private void ClearWeapon()
+    {
+        _weaponKind = ImprovisedWeaponKind.None;
+        _weaponDurability = 0;
+        SyncWeaponVisual();
+        SavePlayerState();
+    }
+
+    private void SyncWeaponVisual()
+    {
+        _spriteVisual?.SetEquippedWeapon(_weaponKind);
     }
 
     public void AddContinue()
@@ -677,7 +1050,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public void SavePlayerState()
     {
-        SaveManager.Current.HasImprovisedWeapon = _hasImprovisedWeapon;
+        SaveManager.Current.HasImprovisedWeapon = HasImprovisedWeapon;
+        SaveManager.Current.WeaponKind = (int)_weaponKind;
         SaveManager.Current.WeaponDurability = _weaponDurability;
         SaveManager.Current.Continues = _continues;
         SaveManager.Save();
@@ -719,20 +1093,32 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             _dashTimeRemaining > 0f,
             _hitStunRemaining > 0f,
             false,
-            _isRunning);
+            _isRunning,
+            _isFinisherAttack,
+            _reloadTimeRemaining > 0f,
+            _parryTimeRemaining > 0f);
     }
 
     private void ApplySavedState()
     {
         SaveManager.Load();
-        _hasImprovisedWeapon = SaveManager.Current.HasImprovisedWeapon && SaveManager.Current.WeaponDurability > 0;
-        _weaponDurability = _hasImprovisedWeapon ? SaveManager.Current.WeaponDurability : 0;
+        if (SaveManager.Current.HasImprovisedWeapon && SaveManager.Current.WeaponDurability > 0)
+        {
+            _weaponKind = (ImprovisedWeaponKind)Mathf.Clamp(SaveManager.Current.WeaponKind, 1, 3);
+            _weaponDurability = SaveManager.Current.WeaponDurability;
+        }
+        else
+        {
+            _weaponKind = ImprovisedWeaponKind.None;
+            _weaponDurability = 0;
+        }
+
         _continues = Mathf.Clamp(SaveManager.Current.Continues, 0, 1);
     }
 
     private void ConsumeWeaponDurability()
     {
-        if (!_hasImprovisedWeapon)
+        if (!HasImprovisedWeapon)
         {
             return;
         }
@@ -740,8 +1126,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _weaponDurability--;
         if (_weaponDurability <= 0)
         {
-            _hasImprovisedWeapon = false;
-            _weaponDurability = 0;
+            ClearWeapon();
+            return;
         }
 
         SavePlayerState();

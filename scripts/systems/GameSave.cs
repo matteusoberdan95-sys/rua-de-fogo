@@ -6,6 +6,8 @@ public sealed class GameSave
 
     public bool HasImprovisedWeapon { get; set; }
 
+    public int WeaponKind { get; set; }
+
     public int WeaponDurability { get; set; }
 
     public int Continues { get; set; }
