@@ -58,9 +58,11 @@ public partial class LayeredStreetPrototype : Node2D
         AddNearStreet(nearRoot);
 
         AddExtendedStreetSegments();
+        AddStageOneProductionDress();
         AddImmersionAlongRoute();
         AddDestructibles();
         AddStageExitGate();
+        AddForegroundAtmosphere();
         AddVignette();
     }
 
@@ -368,6 +370,208 @@ public partial class LayeredStreetPrototype : Node2D
         AddPoliceSilhouette(nearRoot, 890f, 488f);
         AddLabel(midRoot, "ZoneLabelA", "BARRACO DO MARTINS", new Vector2(1080f, 148f), 16, new Color(0.88f, 0.62f, 0.22f), 9);
         AddLabel(midRoot, "ZoneLabelB", "FIM DA VILA", new Vector2(2480f, 148f), 16, new Color(0.75f, 0.58f, 0.22f), 9);
+    }
+
+    private void AddStageOneProductionDress()
+    {
+        Node2D? midRoot = GetNodeOrNull<Node2D>("MidStreet/MidRoot");
+        Node2D? nearRoot = GetNodeOrNull<Node2D>("NearStreet/NearRoot");
+        if (midRoot is null || nearRoot is null)
+        {
+            return;
+        }
+
+        AddSidewalkTiles(midRoot, -1080f, 320f, 4550f);
+        AddAsphaltTextureRun(nearRoot, -1080f, 430f, 4550f);
+
+        AddStorefront(midRoot, -920f, 145f, "BAR DO ZE", new Color(0.12f, 0.07f, 0.045f), true);
+        AddStorefront(midRoot, -120f, 155f, "MERCADINHO", new Color(0.085f, 0.10f, 0.08f), false);
+        AddStorefront(midRoot, 1540f, 155f, "OFICINA", new Color(0.10f, 0.088f, 0.075f), false);
+        AddStorefront(midRoot, 2220f, 158f, "ACAI E LANCHES", new Color(0.075f, 0.07f, 0.09f), true);
+
+        AddWallGraffiti(midRoot, -550f, 210f, "A RUA NAO ESQUECE", new Color(0.52f, 0.04f, 0.035f, 0.80f));
+        AddWallGraffiti(midRoot, 520f, 208f, "JUSTICA PRA TODOS", new Color(0.62f, 0.10f, 0.05f, 0.78f));
+        AddWallGraffiti(midRoot, 1880f, 208f, "NINGUEM SOME", new Color(0.70f, 0.58f, 0.22f, 0.70f));
+        AddWallGraffiti(midRoot, 2580f, 210f, "SAIDA?", new Color(0.56f, 0.05f, 0.06f, 0.80f));
+
+        AddDumpster(nearRoot, -690f, 500f);
+        AddDumpster(nearRoot, 1710f, 506f);
+        AddElectricalBox(midRoot, 1350f, 248f);
+        AddElectricalBox(midRoot, 2660f, 250f);
+        AddHangingClothes(midRoot, 950f, 150f);
+        AddHangingClothes(midRoot, 2380f, 142f);
+        AddCableBundle(midRoot, 280f, 112f);
+        AddCableBundle(midRoot, 1820f, 118f);
+
+        AddRoadPaint(nearRoot, -840f, 585f, "PARE");
+        AddRoadPaint(nearRoot, 1420f, 584f, "VILA");
+        AddRoadPaint(nearRoot, 2860f, 584f, "SAIDA");
+
+        AddPothole(nearRoot, -180f, 622f, 1.0f);
+        AddPothole(nearRoot, 1180f, 618f, 0.8f);
+        AddPothole(nearRoot, 2440f, 626f, 1.1f);
+
+        for (int i = 0; i < 28; i++)
+        {
+            float x = -980f + i * 165f;
+            float y = 492f + (i % 5) * 34f;
+            AddLoosePaper(nearRoot, x, y, i);
+            if (i % 3 == 0)
+            {
+                AddBottleShard(nearRoot, x + 74f, y + 24f, i);
+            }
+        }
+    }
+
+    private void AddSidewalkTiles(Node2D root, float startX, float y, float width)
+    {
+        int count = Mathf.CeilToInt(width / 86f);
+        for (int i = 0; i < count; i++)
+        {
+            float x = startX + i * 86f;
+            Color tile = i % 2 == 0
+                ? new Color(0.19f, 0.185f, 0.165f, 0.95f)
+                : new Color(0.15f, 0.152f, 0.14f, 0.95f);
+            AddRect(root, $"SidewalkTile{i}", new Vector2(x, y), new Vector2(84f, 28f), tile, 5);
+            AddRect(root, $"SidewalkCrack{i}", new Vector2(x + 8f + (i % 4) * 7f, y + 10f), new Vector2(42f, 2f), new Color(0.035f, 0.038f, 0.036f, 0.72f), 6);
+        }
+    }
+
+    private void AddAsphaltTextureRun(Node2D root, float startX, float y, float width)
+    {
+        int count = Mathf.CeilToInt(width / 130f);
+        for (int i = 0; i < count; i++)
+        {
+            float x = startX + i * 130f;
+            AddPoly(root, $"AsphaltPatch{i}", new Color(0.065f, 0.07f, 0.067f, 0.28f), [
+                new Vector2(x, y + (i % 4) * 18f),
+                new Vector2(x + 80f, y - 6f + (i % 3) * 15f),
+                new Vector2(x + 126f, y + 8f + (i % 5) * 10f),
+                new Vector2(x + 92f, y + 24f + (i % 4) * 12f),
+                new Vector2(x + 10f, y + 20f + (i % 2) * 9f)
+            ], 1);
+            AddRect(root, $"AsphaltThinCrack{i}", new Vector2(x + 22f, y + 50f + (i % 5) * 12f), new Vector2(92f, 2f), new Color(0.005f, 0.006f, 0.006f, 0.65f), 2);
+        }
+    }
+
+    private void AddStorefront(Node2D root, float x, float y, string title, Color wall, bool neon)
+    {
+        AddRect(root, $"StoreWall{title}", new Vector2(x, y), new Vector2(360f, 168f), wall, 4);
+        AddRect(root, $"StoreShutter{title}", new Vector2(x + 90f, y + 62f), new Vector2(190f, 106f), new Color(0.085f, 0.087f, 0.08f), 6);
+        for (int i = 0; i < 6; i++)
+        {
+            AddRect(root, $"StoreShutterLine{title}{i}", new Vector2(x + 90f, y + 72f + i * 16f), new Vector2(190f, 3f), new Color(0.34f, 0.31f, 0.22f, 0.35f), 7);
+        }
+
+        AddPoly(root, $"StoreAwning{title}", new Color(0.48f, 0.04f, 0.035f, 0.95f), [
+            new Vector2(x - 14f, y + 38f), new Vector2(x + 376f, y + 38f), new Vector2(x + 348f, y + 70f), new Vector2(x + 8f, y + 68f)
+        ], 8);
+        Label label = AddLabel(root, $"StoreLabel{title}", title, new Vector2(x + 42f, y + 42f), 20, new Color(0.92f, 0.70f, 0.25f), 9);
+        if (neon)
+        {
+            _neonItems.Add(label);
+            AddRect(root, $"NeonBleed{title}", new Vector2(x + 32f, y + 76f), new Vector2(230f, 28f), new Color(0.9f, 0.34f, 0.10f, 0.12f), 8);
+        }
+    }
+
+    private void AddWallGraffiti(Node2D root, float x, float y, string text, Color color)
+    {
+        AddPoly(root, $"GraffitiSplash{x}", color, [
+            new Vector2(x, y + 12f), new Vector2(x + 74f, y - 8f), new Vector2(x + 150f, y + 12f), new Vector2(x + 218f, y - 4f),
+            new Vector2(x + 260f, y + 18f), new Vector2(x + 190f, y + 34f), new Vector2(x + 120f, y + 24f), new Vector2(x + 42f, y + 38f)
+        ], 7);
+        AddLabel(root, $"GraffitiText{x}", text, new Vector2(x + 18f, y - 2f), 15, new Color(0.86f, 0.74f, 0.48f, 0.88f), 8);
+    }
+
+    private void AddDumpster(Node2D root, float x, float y)
+    {
+        AddPoly(root, $"Dumpster{x}", new Color(0.075f, 0.14f, 0.12f), [
+            new Vector2(x, y), new Vector2(x + 112f, y - 8f), new Vector2(x + 126f, y + 42f), new Vector2(x + 16f, y + 54f)
+        ], 8);
+        AddRect(root, $"DumpsterLid{x}", new Vector2(x + 6f, y - 14f), new Vector2(118f, 12f), new Color(0.05f, 0.09f, 0.08f), 9);
+        AddRect(root, $"DumpsterRust{x}", new Vector2(x + 26f, y + 18f), new Vector2(34f, 8f), new Color(0.45f, 0.15f, 0.05f, 0.62f), 10);
+    }
+
+    private void AddElectricalBox(Node2D root, float x, float y)
+    {
+        AddRect(root, $"ElectricBox{x}", new Vector2(x, y), new Vector2(54f, 70f), new Color(0.18f, 0.18f, 0.15f), 8);
+        AddPoly(root, $"ElectricWarn{x}", new Color(0.82f, 0.58f, 0.13f, 0.95f), [
+            new Vector2(x + 27f, y + 12f), new Vector2(x + 40f, y + 40f), new Vector2(x + 14f, y + 40f)
+        ], 9);
+        AddRect(root, $"ElectricSpark{x}", new Vector2(x + 48f, y + 10f), new Vector2(42f, 3f), new Color(0.52f, 0.72f, 1f, 0.45f), 10);
+    }
+
+    private void AddHangingClothes(Node2D root, float x, float y)
+    {
+        AddWire(root, $"ClothesLine{x}", x - 120f, y, x + 140f, y + 8f, 0.012f, 9);
+        Color[] colors = [
+            new Color(0.50f, 0.04f, 0.04f, 0.90f),
+            new Color(0.72f, 0.66f, 0.48f, 0.88f),
+            new Color(0.08f, 0.12f, 0.13f, 0.90f),
+            new Color(0.23f, 0.31f, 0.18f, 0.86f)
+        ];
+        for (int i = 0; i < 4; i++)
+        {
+            Node2D cloth = AddNode(root, $"HangingCloth{x}_{i}", new Vector2(x - 78f + i * 52f, y + 10f), 10);
+            AddPoly(cloth, "Cloth", colors[i], [
+                new Vector2(-16f, 0f), new Vector2(18f, 2f), new Vector2(14f, 48f), new Vector2(-18f, 42f)
+            ], 0);
+            _windItems.Add(cloth);
+        }
+    }
+
+    private void AddCableBundle(Node2D root, float x, float y)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            AddWire(root, $"CableBundle{x}_{i}", x - 150f, y + i * 10f, x + 240f, y + 28f + i * 6f, 0.010f, 10);
+        }
+    }
+
+    private void AddRoadPaint(Node2D root, float x, float y, string text)
+    {
+        Label label = AddLabel(root, $"RoadPaint{text}{x}", text, new Vector2(x, y), 18, new Color(0.72f, 0.68f, 0.52f, 0.22f), 4);
+        label.Rotation = -0.04f;
+        label.Scale = new Vector2(1.4f, 0.72f);
+    }
+
+    private void AddPothole(Node2D root, float x, float y, float scale)
+    {
+        AddPoly(root, $"Pothole{x}", new Color(0.005f, 0.007f, 0.007f, 0.90f), [
+            new Vector2(x, y), new Vector2(x + 56f * scale, y - 16f * scale), new Vector2(x + 128f * scale, y - 6f * scale),
+            new Vector2(x + 152f * scale, y + 18f * scale), new Vector2(x + 96f * scale, y + 34f * scale), new Vector2(x + 20f * scale, y + 28f * scale)
+        ], 5);
+        AddPoly(root, $"PotholeWet{x}", new Color(0.36f, 0.46f, 0.50f, 0.18f), [
+            new Vector2(x + 18f * scale, y + 6f * scale), new Vector2(x + 86f * scale, y - 6f * scale),
+            new Vector2(x + 124f * scale, y + 10f * scale), new Vector2(x + 72f * scale, y + 22f * scale)
+        ], 6);
+    }
+
+    private void AddLoosePaper(Node2D root, float x, float y, int seed)
+    {
+        Node2D paper = AddNode(root, $"LoosePaper{seed}", new Vector2(x, y), 9);
+        paper.Rotation = (seed % 7 - 3) * 0.12f;
+        AddPoly(paper, "Paper", new Color(0.56f, 0.52f, 0.40f, 0.58f), [
+            new Vector2(-12f, -7f), new Vector2(14f, -5f), new Vector2(10f, 10f), new Vector2(-10f, 8f)
+        ], 0);
+        _windItems.Add(paper);
+    }
+
+    private void AddBottleShard(Node2D root, float x, float y, int seed)
+    {
+        AddPoly(root, $"BottleShard{seed}", new Color(0.44f, 0.62f, 0.36f, 0.42f), [
+            new Vector2(x, y), new Vector2(x + 18f, y - 6f), new Vector2(x + 30f, y + 6f), new Vector2(x + 10f, y + 12f)
+        ], 9);
+    }
+
+    private void AddForegroundAtmosphere()
+    {
+        Node2D fg = AddLayer("ForegroundAtmosphere", Vector2.Zero, 90);
+        for (int i = 0; i < 16; i++)
+        {
+            float x = -980f + i * 300f;
+            AddRect(fg, $"RainSplash{i}", new Vector2(x, 646f + (i % 3) * 18f), new Vector2(42f, 2f), new Color(0.62f, 0.78f, 0.85f, 0.16f), 0);
+        }
     }
 
     private void AddRoadsideAltar(Node2D root, float x, float y)

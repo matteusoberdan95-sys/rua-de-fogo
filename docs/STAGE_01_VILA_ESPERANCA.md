@@ -34,6 +34,14 @@ Regra: cenario em **camadas nativas Godot** (poligonos/nodes), nunca bitmap cola
 
 ## Props por trecho (referencia)
 
+## Sprint 29 - Passada Visual Implementada
+
+- Lojas/comercios fechados extras: `BAR DO ZE`, `MERCADINHO`, `OFICINA`, `ACAI E LANCHES`.
+- Rua com mais leitura de fase: calcada em placas, remendos de asfalto, buracos, marcas pintadas e pocas.
+- Sujeira urbana: lixeira, sacos de lixo, papeis soltos, cacos de garrafa, sangue e marcas no chao.
+- Identidade brasileira: pichacoes originais, varal, fios baixos, caixas eletricas e postes.
+- Tudo segue em layers/nodes editaveis dentro de `LayeredStreetPrototype`, pronto para virar sprites/tiles finais depois.
+
 - Entrada: caixote, saco lixo, grade oxidada
 - Central: garrafa boteco, placa VENDE-SE, mesa boteco
 - Viela: placa rua, pneu, caixa de luz quebrada

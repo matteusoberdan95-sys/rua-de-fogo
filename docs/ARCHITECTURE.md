@@ -226,6 +226,19 @@ Regra tecnica:
 - combos devem ser legiveis no corpo antes de depender de VFX externos;
 - telegraph inimigo deve ser corporal (windup visivel) antes de ligar hitbox.
 
+## Sprint 29 - Polimento Visual Da Fase 1
+
+Arquivo principal:
+
+- `scripts/world/LayeredStreetPrototype.cs`: agora concentra a primeira passada de producao visual da Vila Esperanca.
+
+Responsabilidade:
+
+- montar a rua em partes editaveis: lojas, muros, pichacoes, calcada, asfalto, lixo, fios, varal, poças e atmosfera;
+- manter as referencias fora do runtime como guia visual;
+- permitir troca futura por sprites, tiles ou cenas dedicadas sem mudar combate, spawns e camera;
+- evitar que a fase volte a depender de uma imagem chapada.
+
 ## Combate — direcao Sprint 18+
 
 Ver `docs/COMBAT_DESIGN.md`:

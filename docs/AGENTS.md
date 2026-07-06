@@ -13,9 +13,11 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 28 - Defesa, Parry e Postura` (implementada — aguardando validacao).
+Sprint atual: `Sprint 29 - Polimento Visual Da Fase 1` (implementada — aguardando validacao no Godot).
 
-Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro. Proximo: polimento Fase 1 (`docs/STAGE_01_VILA_ESPERANCA.md`).
+Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro.
+
+Direcao visual atual: `docs/STAGE_01_VILA_ESPERANCA.md` — transformar a fase 1 em rua viva, com asfalto, lojas, lixo, fios, pichacoes, poças, sangue e leitura de suburbio brasileiro.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 
@@ -100,6 +102,7 @@ Foco atual:
 - preparar build Windows;
 - cuidar de Git e versoes;
 - manter docs/README/HANDOFF atualizados antes de trocar de maquina.
+- garantir que cada sprint visual termine com docs atualizados, build validado e push.
 
 Proximas entregas:
 
@@ -119,6 +122,7 @@ Foco atual:
 - transformar referencias em conceitos originais;
 - definir protagonista, inimigos e mundo;
 - impedir que mockups de referencia sejam tratados como arte final.
+- cobrar que a Vila Esperanca conte historia visual, nao seja so fundo escuro.
 
 Proximas entregas:
 
@@ -172,6 +176,7 @@ Foco atual:
 - manter `docs/WEATHER_TIME_SYSTEM.md` como fonte do sistema;
 - garantir que a rua viva tenha luzes, chuva e fundo em camadas;
 - pensar clima como gameplay e narrativa, nao so decoracao.
+- apoiar a Sprint 29 com varal, fios, chuva no chao, luz/neon e sujeira animavel.
 
 Proximas entregas:
 

@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 28 — Defesa, Parry e Postura` (implementada — aguardando validacao no Godot).
+**Sprint atual:** `Sprint 29 — Polimento Visual da Fase 1` (implementada — aguardando validacao no Godot).
 
-**Proxima:** Sprint 29 — polimento da Fase 1 Vila Esperanca (ver `docs/STAGE_01_VILA_ESPERANCA.md`).
+**Proxima:** validar a Sprint 29 no Godot e decidir se a Sprint 30 foca em HUD/camera ou sprites finais.
 
 ### O que ja funciona
 
@@ -52,7 +52,8 @@ dotnet build SangueNoAsfalto.csproj
 - **Postura / parry estilo Sekiro:** segurar Q bloqueia; toque Q no telegraph = parry + contra brutal.
 - **Defesa com peso:** bloqueio empurra o jogador, postura quebra em ~3 hits fortes, camera shake no impacto.
 - **Props quebraveis** (`BreakableStageProp`): caixote, cerca, lixo, placa.
-- **Clima e horario** dinamicos, chuva, parallax pintado, HUD arcade.
+- **Clima e horario** dinamicos, chuva, rua em camadas, HUD arcade.
+- **Sprint 29:** primeira passada de producao visual na Vila Esperanca: lojas, lixeira, fios, roupas no varal, caixa eletrica, pichacoes, asfalto remendado, buracos, lixo, cacos, marcas de rua e atmosfera no trecho inteiro.
 
 ### Regra visual
 

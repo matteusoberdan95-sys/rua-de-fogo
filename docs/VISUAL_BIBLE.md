@@ -85,6 +85,10 @@ Direcao de producao:
 - o chao precisa contar historia com poças, sangue, remendos, marcas de pneu e sujeira;
 - cada boss/fase deve mudar objetos, luz, clima e leitura da rua.
 
+### Nota Sprint 29
+
+A Vila Esperanca ativa ganhou lojas, pichacoes, fios, varal, lixeiras, buracos, pocas, cacos, papeis e marcas de rua em nodes separados. Ainda nao e arte final; e a ponte correta para depois substituir cada parte por sprite/tile desenhado sem perder composicao, clima e gameplay.
+
 ## Clima E Tempo
 
 O ciclo de horario e clima e um pilar visual do jogo.

@@ -4,11 +4,11 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 27 - Combate Arcade e Defesa` (implementada — aguardando validacao).
+Sprint atual: `Sprint 29 - Polimento Visual Da Fase 1` (implementada — aguardando validacao no Godot).
 
-Ultima sprint concluida: `Sprint 22 - Combate Plastico E Impacto` (validada no Godot).
+Ultima sprint concluida: `Sprint 23 - Progressao Marcial Por XP` (validada no Godot).
 
-Referencia: `docs/COMBAT_DESIGN.md`
+Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`
 
 Direcao oficial atual:
 
@@ -1046,9 +1046,33 @@ Validacao:
 - toque rapido Q no `! PARRY !` ou no impacto: parry + contra;
 - inimigos nao ficam batendo indefinidamente sem consequencia.
 
-## Sprint 29 - (planejada)
+## Sprint 29 - Polimento Visual Da Fase 1 (implementada)
 
-- polimento da Fase 1 Vila Esperanca (`docs/STAGE_01_VILA_ESPERANCA.md`);
-- validar Sprints 24–28 no Godot e fechar marcos pendentes;
-- manter `dotnet build SangueNoAsfalto.csproj` sem erros;
-- atualizar docs ao final de cada sprint.
+Status: implementada (aguardando validacao no Godot).
+
+Objetivo: comecar a tirar a Vila Esperanca da aparencia de prototipo vazio e aproximar a fase 1 das referencias: rua suburbana brasileira, asfalto molhado, comercio fechado, lixo, fios, pichacao, perigo e historia visual.
+
+Decisao:
+
+- nao criar mais um sistema de combate agora;
+- nao usar as imagens de referencia como fundo chapado;
+- reforcar o cenario ativo em `LayeredStreetPrototype`, com nodes/layers separados que depois podem virar sprites/tiles finais;
+- manter o jogo jogavel e compilar antes de qualquer refinamento maior.
+
+Entregas implementadas:
+
+- `LayeredStreetPrototype` recebeu uma passada de producao visual para o trecho inteiro da fase;
+- adicionados detalhes de calcada em placas, rachaduras, remendos de asfalto e marcas de rua;
+- adicionados comercios/lojas extras: `BAR DO ZE`, `MERCADINHO`, `OFICINA`, `ACAI E LANCHES`;
+- adicionados pichacoes originais, lixeiras, caixa eletrica, varal, cabos, cacos de garrafa, papeis soltos, buracos e pocas;
+- adicionada atmosfera de primeiro plano com respingos/chuva no chao;
+- elementos foram mantidos como partes separadas para animacao leve e futura substituicao por arte final;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validacao pendente:
+
+- abrir no Godot e testar `F5`;
+- andar a fase inteira e confirmar se nao existem trechos vazios;
+- avaliar se a rua ainda esta escura demais ou poligonal demais;
+- conferir se os detalhes nao atrapalham leitura de inimigos, pickups e hitboxes;
+- decidir Sprint 30: HUD/camera/legibilidade ou sprite sheet final do Caua/inimigos.

@@ -253,3 +253,14 @@
 - [x] Postura quebra em ~3 hits; regen pausada na guarda.
 - [ ] Validar Sprint 28 no Godot.
 - [ ] Fechar sprint apos validacao.
+
+## Marco 0.26 - Polimento Visual Fase 1 (Sprint 29)
+
+- [x] Reforcar Vila Esperanca sem usar imagem de referencia como fundo chapado.
+- [x] Adicionar lojas/comercios fechados ao longo da fase.
+- [x] Adicionar asfalto remendado, calcada, buracos, poças e marcas de rua.
+- [x] Adicionar lixo, lixeira, cacos, papeis soltos e sujeira urbana.
+- [x] Adicionar fios, varal, caixa eletrica, pichacoes e atmosfera de chuva.
+- [x] Validar `dotnet build SangueNoAsfalto.csproj`.
+- [ ] Validar Sprint 29 no Godot com `F5`.
+- [ ] Fechar sprint apos validacao visual.

@@ -194,3 +194,12 @@ Cada camada deve poder:
 - ter leitura separada de colisao.
 
 Regra: uma imagem grande pode existir como referencia ou mockup, mas a cena ativa deve preferir nodes, tiles, sprites recortados limpos ou layers exportadas separadamente.
+
+## Sprint 29 - Ponte Para Arte Final Da Fase 1
+
+`LayeredStreetPrototype` agora funciona como blocagem visual rica da Vila Esperanca: lojas, pichacoes, fios, varal, lixo, buracos, poças e marcas de rua. Cada elemento deve ser tratado como alvo futuro de arte final:
+
+- trocar `ColorRect`/`Polygon2D` por sprite/tile limpo quando houver asset;
+- manter escala, posicao e camada se o gameplay estiver bom;
+- nao substituir a rua por uma unica imagem pintada;
+- validar primeiro no Godot se a leitura melhorou antes de desenhar asset definitivo.

@@ -238,11 +238,24 @@ Estado da Sprint 13:
 - build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos;
 - aguardando validacao no Godot (sprites, parallax, HUD vs refs).
 
+Nota historica:
+
+- as Sprints 24 a 28 adicionaram golpes por estilo, rig em camadas, props quebraveis, defesa, parry e postura;
+- a Sprint 29 agora e o foco visual atual da fase 1.
+
+Estado da Sprint 29:
+
+- implementada, aguardando validacao no Godot;
+- `scripts/world/LayeredStreetPrototype.cs` recebeu passada visual de fase 1;
+- adicionados comercios, pichacoes, calcada, asfalto remendado, lixeiras, caixa eletrica, varal, cabos, cacos, papeis, buracos, pocas e marcas de rua;
+- objetivo: transformar as referencias em camadas editaveis, nao em fundo chapado;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
 Proximo passo recomendado:
 
-1. validar **Sprints 24–28** no Godot (F5): golpes por estilo, rig em camadas, props quebraveis, defesa/parry/postura;
-2. fechar marcos pendentes em `docs/BACKLOG.md` apos playtest;
-3. iniciar **Sprint 29** — polimento Fase 1 (`docs/STAGE_01_VILA_ESPERANCA.md`).
+1. validar **Sprint 29** no Godot (F5): andar a fase inteira e conferir se a Vila Esperanca deixou de parecer vazia/blocada;
+2. validar se os detalhes novos nao atrapalham leitura de combate, inimigos, pickups e hitboxes;
+3. decidir Sprint 30: HUD/camera/legibilidade ou sprite sheet final do Caua/inimigos.
 
 Estado da Sprint 28:
 
