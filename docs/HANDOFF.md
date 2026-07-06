@@ -266,9 +266,16 @@ Estado da Sprint 30:
 
 Proximo passo recomendado:
 
-1. iniciar **Sprint 32** — cenario Fase 1 com assets finais (`docs/STAGE_01_VILA_ESPERANCA.md`);
-2. manter `CombatPacing` como baseline de ritmo de combate;
-3. `dotnet build`, docs, commit e push ao fechar cada sprint.
+1. **validar Sprint 32 no Godot (F5)** — landmarks, postes, chao e leitura lateral;
+2. iniciar **Sprint 33** — clima e rua viva como gameplay;
+3. manter `CombatPacing` e camera/HUD da Sprint 30 como baseline.
+
+Estado da Sprint 32:
+
+- implementada em 06/07/2026;
+- `StageAssetLibrary`, `StageActLandmarks`, postes com pool de luz, meio-fio/faixa central;
+- `docs/STAGE_ASSET_PIPELINE.md` e `art/stage/vila-esperanca/` criados;
+- `dotnet build` validado; aguardando playtest F5.
 
 Estado da Sprint 31:
 
@@ -276,7 +283,7 @@ Estado da Sprint 31:
 
 Roadmap planejado:
 
-- Sprint 32: cenario da Fase 1 com assets finais;
+- Sprint 32: cenario da Fase 1 com assets finais (implementada — validar F5);
 - Sprint 33: clima e rua viva como gameplay;
 - Sprint 34: demo vertical slice e QC.
 
@@ -368,8 +375,8 @@ Estado da Sprint 17:
 
 Proximo passo recomendado atual:
 
-1. validar Sprint 31 no Godot (F5);
-2. iniciar Sprint 32 — cenario com assets finais;
+1. validar Sprint 32 no Godot (F5) — percorrer fase e confirmar landmarks/postes/chao;
+2. iniciar Sprint 33 — clima e rua viva como gameplay;
 3. manter Sprint 30 como baseline de camera/HUD/chuva.
 
 ## Regra Obrigatoria De Sprint

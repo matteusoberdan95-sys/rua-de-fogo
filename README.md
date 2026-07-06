@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 32 - Cenario Fase 1 Com Assets Finais` (planejada).
+**Sprint atual:** `Sprint 32 - Cenario Fase 1 Com Assets Finais` (implementada — validar F5).
 
-**Ultima concluida:** Sprint 31 — personagens expressivos, `CombatPacing` e combate validado no Godot.
+**Ultima concluida:** Sprint 31 — personagens expressivos e combate validado.
 
 ### O que ja funciona
 
@@ -57,6 +57,7 @@ dotnet build SangueNoAsfalto.csproj
 - **Correcao visual Sprint 29:** camadas antigas `Road`/`LaneBand`/`NightVignette` foram escondidas e a rua nova teve `ZIndex` corrigido para aparecer no gameplay.
 - **Sprint 30 concluida:** HUD compacto, camera mais aberta, chuva/vinheta menos invasivas e contorno sutil de leitura nos personagens, validada no Godot.
 - **Sprint 31 concluida:** personagens expressivos, telegraph/morte legiveis, `CombatPacing` (combate mais lento e com peso), validada no Godot.
+- **Sprint 32 implementada:** `StageAssetLibrary`, landmarks por ato, postes com pool de luz, chao legivel e pipeline `docs/STAGE_ASSET_PIPELINE.md` — aguardando validacao F5.
 
 ### Regra visual
 
@@ -73,6 +74,7 @@ Toda sprint so e concluida apos: `dotnet build` sem erros, validacao F5 no Godot
 | `docs/SPRINTS.md` | Planejamento e sprint atual |
 | `docs/HANDOFF.md` | Continuar em outro PC / Codex / CLI |
 | `docs/STAGE_01_VILA_ESPERANCA.md` | Plano da Fase 1 |
+| `docs/STAGE_ASSET_PIPELINE.md` | Pipeline Krita → Godot para cenario |
 | `docs/COMBAT_DESIGN.md` | Combate, armas, progressao marcial |
 | `docs/VISUAL_BIBLE.md` | Direcao visual |
 | `docs/ARCHITECTURE.md` | Arquitetura de codigo |

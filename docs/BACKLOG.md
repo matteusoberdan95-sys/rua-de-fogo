@@ -288,11 +288,14 @@
 
 ## Marco 0.29 - Cenario Fase 1 Com Assets Finais (Sprint 32)
 
-- [ ] Escolher primeiros assets finais da Vila Esperanca.
-- [ ] Refinar boteco, mercadinho, poste, lixo, cerca, placas e pocas.
-- [ ] Criar landmarks por trecho da fase.
-- [ ] Melhorar asfalto, calcada e profundidade lateral.
-- [ ] Validar leitura com camera da Sprint 30.
+- [x] `StageAssetLibrary` + `StageActLandmarks` + `StageAssetContext`.
+- [x] Refinar boteco, mercadinho, poste (amarelo + pool), lixo, cerca, placas e pocas.
+- [x] Landmarks por trecho da fase (5 atos).
+- [x] Meio-fio, faixa central, calcada tileada e marcas de pneu.
+- [x] `docs/STAGE_ASSET_PIPELINE.md` + pasta `art/stage/vila-esperanca/`.
+- [x] Validar `dotnet build SangueNoAsfalto.csproj`.
+- [ ] Validar Sprint 32 no Godot com F5.
+- [ ] Fechar sprint apos validacao.
 
 ## Marco 0.30 - Clima E Rua Viva Como Gameplay (Sprint 33)
 

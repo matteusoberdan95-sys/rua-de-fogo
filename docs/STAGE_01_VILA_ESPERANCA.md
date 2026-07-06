@@ -42,6 +42,13 @@ Regra: cenario em **camadas nativas Godot** (poligonos/nodes), nunca bitmap cola
 - Identidade brasileira: pichacoes originais, varal, fios baixos, caixas eletricas e postes.
 - Tudo segue em layers/nodes editaveis dentro de `LayeredStreetPrototype`, pronto para virar sprites/tiles finais depois.
 
+## Sprint 32 - Landmarks e Pipeline de Assets
+
+- **`StageAssetLibrary`** — boteco do Ze, mercadinho, poste amarelo + pool de luz, lixo, cerca, pocas.
+- **`StageActLandmarks`** — 5 atos com composicao unica (entrada, Martins, central, viela, portao).
+- Chao: meio-fio, faixa central tracejada, marcas de pneu, calcada tileada.
+- Pipeline documentado em `docs/STAGE_ASSET_PIPELINE.md`; pasta `art/stage/vila-esperanca/`.
+
 - Entrada: caixote, saco lixo, grade oxidada
 - Central: garrafa boteco, placa VENDE-SE, mesa boteco
 - Viela: placa rua, pneu, caixa de luz quebrada
