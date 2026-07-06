@@ -224,6 +224,7 @@ public partial class BeatEmUpHud : CanvasLayer
 
         if (_director is not null)
         {
+            ApplyScreenshotVisibility();
             if (_debugLabel is not null)
             {
                 _debugLabel.Visible = _director.ShowDebugHud && !ScreenshotMode.IsActive;
@@ -231,6 +232,33 @@ public partial class BeatEmUpHud : CanvasLayer
             }
 
             UpdateCenterOverlay();
+        }
+    }
+
+    private void ApplyScreenshotVisibility()
+    {
+        bool hide = ScreenshotMode.IsActive;
+        if (_playerPanel is not null)
+        {
+            _playerPanel.Visible = !hide;
+        }
+
+        if (_abilitiesPanel is not null)
+        {
+            _abilitiesPanel.Visible = !hide;
+        }
+
+        if (hide)
+        {
+            if (_parryHint is not null)
+            {
+                _parryHint.Visible = false;
+            }
+
+            if (_styleToast is not null)
+            {
+                _styleToast.Visible = false;
+            }
         }
     }
 
@@ -375,8 +403,8 @@ public partial class BeatEmUpHud : CanvasLayer
 
         if (_director.IsCompleted)
         {
-            _overlayTitleLabel.Text = "Fim da demo";
-            _overlayBodyLabel.Text = "Voce limpou este trecho da Vila Esperanca.\nR: jogar de novo\nM: voltar ao menu";
+            _overlayTitleLabel.Text = "Vertical slice concluida";
+            _overlayBodyLabel.Text = "Voce limpou a Vila Esperanca desta demo.\nR: jogar de novo\nM: voltar ao menu\nF9: captura sem HUD";
             return;
         }
 

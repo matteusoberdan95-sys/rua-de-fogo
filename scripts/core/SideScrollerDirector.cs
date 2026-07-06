@@ -3,7 +3,8 @@ namespace SangueNoAsfalto.Core;
 public partial class SideScrollerDirector : Node
 {
     private const string MainMenuScenePath = "res://scenes/ui/MainMenu.tscn";
-    private const float SpawnStaggerSec = 0.45f;
+    private const float SpawnStaggerSec = 0.52f;
+    private const int CheckpointHealAmount = 18;
 
     [Export]
     public PackedScene? EnemyScene { get; set; }
@@ -331,7 +332,12 @@ public partial class SideScrollerDirector : Node
         _checkpointUnlocked = true;
         SaveManager.Current.CheckpointUnlocked = true;
         SaveManager.Save();
-        StatusText = "Checkpoint ativo no altar improvisado.";
+        if (_playerHealth is not null && _playerHealth.CurrentHealth > 0)
+        {
+            _playerHealth.Heal(CheckpointHealAmount);
+        }
+
+        StatusText = "Checkpoint ativo — altar improvisado (+vida).";
     }
 
     private void CompleteRun()
@@ -340,8 +346,8 @@ public partial class SideScrollerDirector : Node
         _checkpointUnlocked = false;
         SaveManager.Current.CheckpointUnlocked = false;
         SaveManager.Save();
-        ObjectiveText = "Fase concluida";
-        StatusText = "Vila Esperanca: trecho limpo. Aperte R para jogar de novo.";
+        ObjectiveText = "Vertical slice concluida";
+        StatusText = "Vila Esperanca limpa. R: jogar de novo | M: menu | F9: screenshot";
     }
 
     private void ReloadRun()

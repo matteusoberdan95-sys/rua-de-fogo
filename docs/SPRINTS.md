@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 34 - Demo Vertical Slice E QC` (planejada).
+Sprint atual: `Sprint 34 - Demo Vertical Slice E QC` (implementada / aguardando validacao no Godot).
 
 Ultima sprint concluida: `Sprint 33 - Clima E Rua Viva Como Gameplay` (validada no Godot).
 
@@ -1186,18 +1186,25 @@ Validacao:
 - lama, raio em poca, vento na viela e apagao nos chefes aprovados;
 - clima por ato reforca ritmo da fase sem quebrar leitura de combate.
 
-## Sprint 34 - Demo Vertical Slice E QC (planejada)
+## Sprint 34 - Demo Vertical Slice E QC (implementada)
 
-Status: planejada.
+Status: implementada / aguardando validacao no Godot.
 
 Objetivo: consolidar uma demo vertical slice curta, estavel e compartilhavel, com checklist de qualidade para testar fora da maquina de desenvolvimento.
 
-Entregas planejadas:
+Entregas implementadas:
 
-- checklist de bugs/feel/legibilidade;
-- revisao de balanceamento da fase inteira;
-- ajustes de menu/tutorial/morte/vitoria;
-- screenshots internas com `F9`;
-- preparar build local quando a qualidade visual estiver aceitavel.
+- **`docs/VERTICAL_SLICE_QC.md`** — checklist completo (fluxo, combate, cenario, clima, build);
+- **`docs/QC_DEMO_CHECKLIST.md`** atualizado para vertical slice v1.1;
+- **`DemoInfo`** → `Vertical Slice v1.1 - Vila Esperanca`;
+- tutorial, morte/vitoria e checkpoint (+18 HP) polidos;
+- balanceamento: respiro pos mini-chefe, spawn stagger 0,52s;
+- **`F9`** oculta HUD inteiro para screenshots;
+- **`scripts/package-vertical-slice.ps1`** + `build/demo/README.txt` atualizado;
+- `dotnet build` validado.
 
+Validacao pendente:
+
+- F5 sessao completa + smoke test do checklist;
+- export Windows opcional (`build-demo.ps1` ou Godot Export).
 

@@ -40,7 +40,7 @@ public partial class ScreenshotModeHelper : Node
 
         _hintLabel.Visible = ScreenshotMode.IsActive;
         _hintLabel.Text = ScreenshotMode.IsActive
-            ? "Modo screenshot ON  |  F9 desliga"
+            ? "Modo screenshot ON — HUD oculto  |  F9 desliga"
             : string.Empty;
     }
 

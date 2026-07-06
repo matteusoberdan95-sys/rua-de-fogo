@@ -60,7 +60,6 @@ public static class StageScrollSpawns
             new(2220f, SpawnKind.Infected, 405f),
             new(2360f, SpawnKind.Grunt, 418f),
             new(2500f, SpawnKind.MiniBoss, 405f, Status: "O portao range. Algo grande vem."),
-            new(2640f, SpawnKind.Grunt, 438f),
             new(2780f, SpawnKind.Infected, 405f),
             new(2900f, SpawnKind.Fast, 392f, Status: "A tempestade engrossou."),
             new(3020f, SpawnKind.RainBoss, 405f, Status: "Infectado da chuva."),

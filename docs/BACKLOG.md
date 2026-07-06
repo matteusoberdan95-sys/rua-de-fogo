@@ -311,9 +311,11 @@
 
 ## Marco 0.31 - Demo Vertical Slice E QC (Sprint 34)
 
-- [ ] Checklist de bugs, feel e legibilidade.
-- [ ] Revisar balanceamento da fase inteira.
-- [ ] Ajustar menu/tutorial/morte/vitoria.
-- [ ] Capturar screenshots internas com F9.
-- [ ] Preparar build local quando visual estiver aceitavel.
-
+- [x] `docs/VERTICAL_SLICE_QC.md` + QC demo atualizado.
+- [x] Vertical slice v1.1 (tutorial, morte/vitoria, checkpoint +HP).
+- [x] Balanceamento leve e F9 ocultando HUD.
+- [x] `scripts/package-vertical-slice.ps1` + README testers.
+- [x] Validar `dotnet build`.
+- [ ] Validar Sprint 34 no Godot (F5 + checklist).
+- [ ] Export Windows opcional.
+- [ ] Fechar sprint apos validacao.

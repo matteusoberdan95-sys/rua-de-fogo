@@ -1,44 +1,37 @@
-# Checklist QC - Demo Windows
+# Checklist QC - Vertical Slice Windows
 
-Use este checklist antes de enviar build para testers ou subir material Steam.
+Use antes de enviar build para testers. Detalhes em `docs/VERTICAL_SLICE_QC.md`.
 
 ## Build
 
 - [ ] `dotnet build SangueNoAsfalto.csproj` com 0 erros
-- [ ] Export Windows concluido (`build/windows/SangueNoAsfalto.exe`)
-- [ ] Executavel abre sem depender do editor
-- [ ] Versao exibida no menu: `Demo v1.0`
+- [ ] Export Windows (`build/windows/SangueNoAsfalto.exe`) ou `scripts/build-demo.ps1`
+- [ ] Executavel abre sem editor
+- [ ] Menu mostra `Vertical Slice v1.1 - Vila Esperanca`
 
-## Fluxo principal
+## Fluxo
 
-- [ ] Menu inicial abre com `F5`/executavel
-- [ ] `Enter` ou botao iniciam a demo
-- [ ] Tutorial aparece sem pausar o jogo
-- [ ] Checkpoint persiste apos fechar e reabrir
-- [ ] `R` reinicia corretamente apos morte
-- [ ] `M` volta ao menu nos estados finais
-- [ ] Vitoria da demo aparece ao derrotar o chefe alpha
+- [ ] Menu → tutorial → fase lateral
+- [ ] Checkpoint persiste (save local)
+- [ ] `R` reinicia apos morte (checkpoint ou inicio)
+- [ ] `M` volta ao menu (morte/vitoria)
+- [ ] Vitoria ao derrotar chefes e avancar ao portao SAIDA
 
-## Combate e sistemas
+## Combate
 
-- [ ] Movimento A/D + W/S
-- [ ] Ataque, tiro, esquiva e pulo
-- [ ] Combo callout aparece com sequencia longa
-- [ ] Barra de furia sobe ao acertar inimigos
-- [ ] Pickups de cura, arma e continue funcionam
-- [ ] Continue revive uma vez
-- [ ] `F2` alterna controles no menu e no jogo
-- [ ] `F4` limpa save
+- [ ] A/D + W/S, corrida, dash, pulo
+- [ ] Combo 4 golpes, block (Q), parry (toque Q)
+- [ ] Pistola + recarga, postura, estilos por XP
+- [ ] Pickups cura/arma/continue
+- [ ] `F2` controles alternativos | `F4` limpar save
 
-## Visual e performance
+## Cenario e clima
 
-- [ ] Chuva e relampago aparecem
-- [ ] Boteco, ponto final e props da Vila Esperanca visiveis
-- [ ] Sem slow motion preso apos combates
+- [ ] Landmarks por ato, chuva/temporal, pocas lama/eletrica
 - [ ] Sem crash ao morrer, vencer ou voltar ao menu
+- [ ] `F9` modo screenshot (HUD oculto)
 
-## Pacote para testers
+## Pacote
 
-- [ ] `build/demo/README.txt` incluido no zip
-- [ ] Controles documentados
-- [ ] Feedback channel definido (Discord, formulario, e-mail)
+- [ ] `build/demo/README.txt` no zip
+- [ ] Canal de feedback definido

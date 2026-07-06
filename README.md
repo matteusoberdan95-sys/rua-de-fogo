@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 34 - Demo Vertical Slice E QC` (planejada).
+**Sprint atual:** `Sprint 34 - Demo Vertical Slice E QC` (implementada — validar F5 + checklist).
 
-**Ultima concluida:** Sprint 33 — clima e rua viva como gameplay validados no Godot.
+**Ultima concluida:** Sprint 33 — clima e rua viva como gameplay.
 
 ### O que ja funciona
 
@@ -58,7 +58,8 @@ dotnet build SangueNoAsfalto.csproj
 - **Sprint 30 concluida:** HUD compacto, camera mais aberta, chuva/vinheta menos invasivas e contorno sutil de leitura nos personagens, validada no Godot.
 - **Sprint 31 concluida:** personagens expressivos, telegraph/morte legiveis, `CombatPacing` (combate mais lento e com peso), validada no Godot.
 - **Sprint 32 concluida:** `StageAssetLibrary`, landmarks por ato e pipeline de assets, validada no Godot.
-- **Sprint 33 concluida:** clima por ato, pocas lama/eletrica, vento, apagao e trovao nos chefes, validada no Godot.
+- **Sprint 33 concluida:** clima por ato, pocas, vento, apagao nos chefes, validada no Godot.
+- **Sprint 34 implementada:** vertical slice v1.1, QC checklist, tutorial/HUD/screenshot, pacote testers — aguardando validacao.
 
 ### Regra visual
 
@@ -76,6 +77,7 @@ Toda sprint so e concluida apos: `dotnet build` sem erros, validacao F5 no Godot
 | `docs/HANDOFF.md` | Continuar em outro PC / Codex / CLI |
 | `docs/STAGE_01_VILA_ESPERANCA.md` | Plano da Fase 1 |
 | `docs/STAGE_ASSET_PIPELINE.md` | Pipeline Krita → Godot para cenario |
+| `docs/VERTICAL_SLICE_QC.md` | Checklist QC da vertical slice |
 | `docs/COMBAT_DESIGN.md` | Combate, armas, progressao marcial |
 | `docs/VISUAL_BIBLE.md` | Direcao visual |
 | `docs/ARCHITECTURE.md` | Arquitetura de codigo |
