@@ -27,7 +27,9 @@ public static class StageScrollSpawns
         bool EnterFromLeft = false,
         string Status = "");
 
-    public const float StageEndX = 3180f;
+    public const float StageEndX = 3240f;
+
+    public const float StageExitX = 3120f;
 
     public static IReadOnlyList<Entry> BuildVilaEsperancaRun()
     {
@@ -63,6 +65,7 @@ public static class StageScrollSpawns
             new(2900f, SpawnKind.Fast, 392f, Status: "A tempestade engrossou."),
             new(3020f, SpawnKind.RainBoss, 405f, Status: "Infectado da chuva."),
             new(3120f, SpawnKind.AlphaBoss, 405f, Status: "O alfa da rua apareceu."),
+            new(StageExitX, SpawnKind.StatusOnly, Status: "Portao da saida — limpe a area."),
             new(StageEndX, SpawnKind.StatusOnly, Status: "Fim da Vila Esperanca."),
         ];
     }

@@ -57,7 +57,43 @@ public partial class LayeredStreetPrototype : Node2D
         Node2D nearRoot = AddNode(near, "NearRoot", Vector2.Zero, 0);
         AddNearStreet(nearRoot);
 
+        AddExtendedStreetSegments();
+        AddStageExitGate();
         AddVignette();
+    }
+
+    private void AddExtendedStreetSegments()
+    {
+        Node2D? nearRoot = GetNodeOrNull<Node2D>("NearStreet/NearRoot");
+        Node2D? midRoot = GetNodeOrNull<Node2D>("MidStreet/MidRoot");
+        if (nearRoot is null || midRoot is null)
+        {
+            return;
+        }
+
+        float[] segmentStarts = [1560f, 2160f, 2760f];
+        foreach (float start in segmentStarts)
+        {
+            AddRect(midRoot, $"ExtWall{start}", new Vector2(start - 120f, 170f), new Vector2(620f, 150f), new Color(0.08f, 0.085f, 0.08f), 0);
+            AddRect(midRoot, $"ExtWalk{start}", new Vector2(start - 120f, 318f), new Vector2(620f, 54f), new Color(0.18f, 0.18f, 0.16f), 3);
+            AddRect(nearRoot, $"ExtAsphalt{start}", new Vector2(start - 120f, 385f), new Vector2(620f, 115f), new Color(0.038f, 0.047f, 0.048f), 0);
+            AddRect(nearRoot, $"ExtLane{start}", new Vector2(start - 120f, 500f), new Vector2(620f, 220f), new Color(0.024f, 0.028f, 0.03f), 0);
+            AddStreetPole(midRoot, start + 40f, 126f, start % 320f < 160f);
+            AddPuddle(nearRoot, start + 80f, 470f, 180f, 24f, new Color(0.42f, 0.55f, 0.60f, 0.18f));
+            AddTrash(nearRoot, start + 220f, 520f);
+        }
+    }
+
+    private void AddStageExitGate()
+    {
+        Node2D root = AddNode(this, "StageExitGate", new Vector2(3090f, 0f), 15);
+        AddRect(root, "ExitArch", new Vector2(-70f, 120f), new Vector2(140f, 210f), new Color(0.12f, 0.11f, 0.09f), 0);
+        AddRect(root, "ExitGlow", new Vector2(-52f, 138f), new Vector2(104f, 170f), new Color(0.22f, 0.62f, 0.38f, 0.35f), 1);
+        Label exit = AddLabel(root, "ExitLabel", "SAIDA", new Vector2(-34f, 152f), 20, new Color(0.92f, 0.88f, 0.55f), 2);
+        _neonItems.Add(exit);
+        AddPoly(root, "ExitArrow", new Color(0.95f, 0.78f, 0.22f, 0.85f), [
+            new Vector2(0f, 250f), new Vector2(18f, 280f), new Vector2(-18f, 280f)
+        ], 3);
     }
 
     private void AddSky()
@@ -65,45 +101,47 @@ public partial class LayeredStreetPrototype : Node2D
         ColorRect sky = new()
         {
             Name = "SkyWash",
-            OffsetLeft = -1600f,
+            OffsetLeft = -1100f,
             OffsetTop = -40f,
-            OffsetRight = 1600f,
+            OffsetRight = 3900f,
             OffsetBottom = 720f,
             Color = new Color(0.018f, 0.023f, 0.03f)
         };
         AddChild(sky);
 
         AddPoly(this, "DistantGlow", new Color(0.65f, 0.23f, 0.12f, 0.12f), [
-            new Vector2(-1600f, 120f), new Vector2(1600f, 88f), new Vector2(1600f, 250f), new Vector2(-1600f, 280f)
+            new Vector2(-1100f, 120f), new Vector2(3900f, 88f), new Vector2(3900f, 250f), new Vector2(-1100f, 280f)
         ], 0);
     }
 
     private void AddFarFavela(Node2D root)
     {
         AddPoly(root, "HillMass", new Color(0.025f, 0.03f, 0.034f), [
-            new Vector2(-1500f, 255f), new Vector2(-1220f, 175f), new Vector2(-980f, 235f), new Vector2(-760f, 160f),
-            new Vector2(-420f, 230f), new Vector2(-120f, 150f), new Vector2(180f, 220f), new Vector2(520f, 140f),
-            new Vector2(900f, 230f), new Vector2(1280f, 155f), new Vector2(1500f, 210f), new Vector2(1500f, 330f), new Vector2(-1500f, 330f)
+            new Vector2(-1100f, 255f), new Vector2(-820f, 175f), new Vector2(-580f, 235f), new Vector2(-360f, 160f),
+            new Vector2(-20f, 230f), new Vector2(320f, 150f), new Vector2(680f, 220f), new Vector2(1040f, 140f),
+            new Vector2(1400f, 210f), new Vector2(1760f, 155f), new Vector2(2120f, 225f), new Vector2(2480f, 150f),
+            new Vector2(2840f, 210f), new Vector2(3200f, 160f), new Vector2(3560f, 230f), new Vector2(3900f, 190f),
+            new Vector2(3900f, 330f), new Vector2(-1100f, 330f)
         ], 0);
 
-        for (int i = 0; i < 18; i++)
+        for (int i = 0; i < 32; i++)
         {
-            float x = -1180f + i * 145f;
+            float x = -980f + i * 145f;
             float y = 142f + (i % 4) * 18f;
             float h = 78f + (i % 3) * 22f;
             AddRect(root, $"FarHouse{i}", new Vector2(x, y), new Vector2(92f, h), new Color(0.045f, 0.05f, 0.055f), 1);
             AddWindowCluster(root, x + 12f, y + 12f, i);
         }
 
-        AddWire(root, "FarWireA", -1500f, 150f, 1500f, 112f, 0.018f, 4);
-        AddWire(root, "FarWireB", -1500f, 188f, 1500f, 174f, 0.014f, 4);
+        AddWire(root, "FarWireA", -1100f, 150f, 3900f, 112f, 0.018f, 4);
+        AddWire(root, "FarWireB", -1100f, 188f, 3900f, 174f, 0.014f, 4);
     }
 
     private void AddMidStreet(Node2D root)
     {
-        AddRect(root, "WallBase", new Vector2(-1500f, 170f), new Vector2(3000f, 150f), new Color(0.08f, 0.085f, 0.08f), 0);
-        AddRect(root, "SidewalkBack", new Vector2(-1500f, 318f), new Vector2(3000f, 54f), new Color(0.18f, 0.18f, 0.16f), 3);
-        AddRect(root, "SidewalkFront", new Vector2(-1500f, 366f), new Vector2(3000f, 20f), new Color(0.10f, 0.105f, 0.10f), 4);
+        AddRect(root, "WallBase", new Vector2(-1100f, 170f), new Vector2(5000f, 150f), new Color(0.08f, 0.085f, 0.08f), 0);
+        AddRect(root, "SidewalkBack", new Vector2(-1100f, 318f), new Vector2(5000f, 54f), new Color(0.18f, 0.18f, 0.16f), 3);
+        AddRect(root, "SidewalkFront", new Vector2(-1100f, 366f), new Vector2(5000f, 20f), new Color(0.10f, 0.105f, 0.10f), 4);
 
         AddBoteco(root, -1120f, 122f);
         AddFence(root, -450f, 178f, 850f);
@@ -112,18 +150,18 @@ public partial class LayeredStreetPrototype : Node2D
         AddStreetPole(root, -730f, 120f, true);
         AddStreetPole(root, 360f, 126f, false);
         AddStreetPole(root, 1110f, 116f, true);
-        AddWire(root, "MidWireA", -1400f, 100f, 1400f, 88f, 0.028f, 8);
-        AddWire(root, "MidWireB", -1400f, 134f, 1400f, 151f, 0.024f, 8);
+        AddWire(root, "MidWireA", -1000f, 100f, 3800f, 88f, 0.028f, 8);
+        AddWire(root, "MidWireB", -1000f, 134f, 3800f, 151f, 0.024f, 8);
     }
 
     private void AddNearStreet(Node2D root)
     {
-        AddRect(root, "WetAsphaltBack", new Vector2(-1500f, 385f), new Vector2(3000f, 115f), new Color(0.038f, 0.047f, 0.048f), 0);
-        AddRect(root, "WetAsphaltFront", new Vector2(-1500f, 500f), new Vector2(3000f, 220f), new Color(0.024f, 0.028f, 0.03f), 0);
+        AddRect(root, "WetAsphaltBack", new Vector2(-1100f, 385f), new Vector2(5000f, 115f), new Color(0.038f, 0.047f, 0.048f), 0);
+        AddRect(root, "WetAsphaltFront", new Vector2(-1100f, 500f), new Vector2(5000f, 220f), new Color(0.024f, 0.028f, 0.03f), 0);
 
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 22; i++)
         {
-            float x = -1320f + i * 240f;
+            float x = -1020f + i * 240f;
             AddPoly(root, $"LaneScratch{i}", new Color(0.54f, 0.45f, 0.27f, 0.20f), [
                 new Vector2(x, 574f), new Vector2(x + 145f, 570f), new Vector2(x + 155f, 578f), new Vector2(x + 12f, 584f)
             ], 2);
@@ -318,9 +356,9 @@ public partial class LayeredStreetPrototype : Node2D
         ColorRect vignette = new()
         {
             Name = "Vignette",
-            OffsetLeft = -1600f,
+            OffsetLeft = -1100f,
             OffsetTop = 0f,
-            OffsetRight = 1600f,
+            OffsetRight = 3900f,
             OffsetBottom = 720f,
             MouseFilter = Control.MouseFilterEnum.Ignore,
             Color = new Color(0f, 0f, 0f, 0.20f),

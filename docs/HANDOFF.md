@@ -234,8 +234,12 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. iniciar **Sprint 23** — estilos marciais por XP (`docs/COMBAT_DESIGN.md`);
-2. opcional: barra de postura no inimigo, ofegante com stamina baixa, SFX de impacto.
+1. iniciar **Sprint 24** — deck marcial e golpes visiveis por estilo (`MoveCatalog`);
+2. Sprint 25 candidata: clima afeta combate + boss com assinatura climatica (Shenlong).
+
+Estado da Sprint 23:
+
+- concluida, validada, commitada; estilos por XP, parry legivel, fim da fase com portao SAIDA aprovados.
 
 Estado da Sprint 22:
 

@@ -44,6 +44,9 @@ public partial class SideScrollerDirector : Node
     [Export]
     public float StageEndX { get; set; } = StageScrollSpawns.StageEndX;
 
+    [Export]
+    public float StageExitX { get; set; } = StageScrollSpawns.StageExitX;
+
     public int WaveNumber { get; private set; }
 
     public int TotalWaves => _spawnEntries.Count;
@@ -83,6 +86,8 @@ public partial class SideScrollerDirector : Node
     private bool _f2WasDown;
     private bool _f4WasDown;
     private float _queueClock;
+    private bool _finalWaveSpawned;
+    private bool _runCompletePending;
 
     public override void _Ready()
     {
@@ -164,10 +169,62 @@ public partial class SideScrollerDirector : Node
         ApplyAtmosphereForProgress(playerX);
         EnemiesRemaining = CountLivingEnemies();
 
-        if (playerX >= StageEndX && _nextEntryIndex >= _spawnEntries.Count && EnemiesRemaining == 0)
+        if (_runCompletePending)
         {
-            CompleteRun();
+            if (playerX >= StageExitX || EnemiesRemaining == 0)
+            {
+                CompleteRun();
+            }
+            else
+            {
+                ObjectiveText = "Avance ate o portao de saida";
+            }
+
+            return;
         }
+
+        if (_nextEntryIndex >= _spawnEntries.Count
+            && EnemiesRemaining == 0
+            && _finalWaveSpawned)
+        {
+            if (playerX >= StageExitX)
+            {
+                CompleteRun();
+            }
+            else
+            {
+                _runCompletePending = true;
+                ObjectiveText = "Chefe derrotado — siga ate o portao";
+                StatusText = "A saida da Vila Esperanca esta a frente.";
+            }
+        }
+    }
+
+    private float ComputeSpawnX(StageScrollSpawns.Entry entry)
+    {
+        if (_player is null)
+        {
+            return entry.TriggerX + 480f;
+        }
+
+        const float minSpawnX = -880f;
+        const float maxSpawnX = 3280f;
+        const float fightLead = 460f;
+
+        float playerX = _player.GlobalPosition.X;
+        float anchoredAhead = entry.TriggerX + fightLead;
+        float anchoredBehind = entry.TriggerX - fightLead;
+
+        float spawnX = entry.EnterFromLeft
+            ? Mathf.Min(playerX - 240f, anchoredBehind)
+            : Mathf.Max(playerX + 260f, anchoredAhead);
+
+        if (entry.TriggerX >= 2000f)
+        {
+            spawnX = entry.EnterFromLeft ? anchoredBehind : anchoredAhead;
+        }
+
+        return Mathf.Clamp(spawnX, minSpawnX, maxSpawnX);
     }
 
     private void HandleStageEntry(StageScrollSpawns.Entry entry)
@@ -199,7 +256,7 @@ public partial class SideScrollerDirector : Node
         }
 
         Node2D enemy = scene.Instantiate<Node2D>();
-        float spawnX = _player.GlobalPosition.X + entry.SpawnOffsetX;
+        float spawnX = ComputeSpawnX(entry);
         float spawnY = Mathf.Clamp(entry.LaneY, 268f, 465f);
         enemy.GlobalPosition = new Vector2(spawnX, spawnY);
         enemy.Modulate = new Color(1f, 1f, 1f, 0.35f);
@@ -212,6 +269,10 @@ public partial class SideScrollerDirector : Node
             and not StageScrollSpawns.SpawnKind.Checkpoint)
         {
             _spawnedFightCount++;
+            if (entry.Kind is StageScrollSpawns.SpawnKind.RainBoss or StageScrollSpawns.SpawnKind.AlphaBoss)
+            {
+                _finalWaveSpawned = true;
+            }
         }
     }
 

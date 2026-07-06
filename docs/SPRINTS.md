@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 23 - Progressao Marcial Por XP` (planejada).
+Sprint atual: `Sprint 24 - Deck Marcial e Golpes Por Estilo` (planejada).
 
 Ultima sprint concluida: `Sprint 22 - Combate Plastico E Impacto` (validada no Godot).
 
@@ -917,9 +917,60 @@ Validacao:
 
 - aprovada no playtest; combate plastico e dor visivel ok.
 
-## Sprint 23 - Progressao Marcial Por XP (planejada)
+## Sprint 23 - Progressao Marcial Por XP (concluida)
 
-Desbloqueio de estilos e deck de golpes por nivel. Ver `docs/COMBAT_DESIGN.md`.
+Status: concluida (validada no Godot).
+
+Objetivo: estilos marciais desbloqueados por nivel de XP, com bonus de combo e feedback no HUD.
+
+Entregas implementadas:
+
+- `CombatStyleCatalog.cs` — Rua, Boxe, Muay Thai, Karate, Capoeira, Jiu-Jitsu;
+- estilo ativo por nivel; multiplicadores de dano/stamina por combo;
+- HUD mostra estilo atual + proximo desbloqueio; toast ao subir de nivel;
+- tutorial atualizado (XP abre estilos);
+- refinamentos: barra postura inimigo, Cauã ofegante, SFX osso+carne;
+- parry legivel (`! PARRY !`, pose Matrix, contra brutal com gore);
+- inimigo nao gruda no jogador; fase completa ate portao SAIDA (chefes finais + conclusao).
+
+Validacao:
+
+- aprovada no playtest; progressao marcial, parry, fim da fase e portao ok.
+
+## Sprint 24 - Deck Marcial e Golpes Por Estilo (planejada)
+
+Status: planejada.
+
+### Consenso dos agents (pos-S23)
+
+| Agente | Papel | Por que agora |
+|--------|-------|---------------|
+| **Goku** | Gameplay | Sprint 23 so multiplica dano — falta o jogador **sentir** Boxe vs Muay Thai |
+| **Trunks** | UI | HUD precisa listar tecnicas do deck ativo, nao so o nome do estilo |
+| **Gohan** | Design | Identidade marcial vem dos golpes, nao de numeros invisiveis |
+| **Piccolo** | Arquitetura | `MoveCatalog` desacopla animacao/dano do controller |
+| **Freeza** | Balance | Cada estilo com trade-offs claros antes de escalar dificuldade |
+| **Shenlong** | Clima | **Sprint 25** — chuva/lama afetando combate e boss com assinatura climatica |
+
+**Nao agora:** sprites Krita finais (paralelo), trilha completa (Marco 0.8), segunda fase — dependem de combate por estilo estar legivel.
+
+Objetivo: transformar desbloqueio de XP em **deck de golpes jogavel** — cada estilo muda animacao, timing e leitura do combo J/J/J.
+
+Entregas planejadas:
+
+- `MoveCatalog.cs` + ids de golpe por estilo (`JabCross`, `Teep`, `MeiaLua`, etc.);
+- `SideScrollerPlayerController` resolve combo via catalogo ativo (nao hardcoded 24/30/50);
+- `CharacterSpriteVisual` — pelo menos **Boxe** (Nv3) e **Muay Thai** (Nv5) com animacoes distintas no rig;
+- golpe **correndo exclusivo** por estilo (Capoeira meia-lua ou Boxe hook corrida como MVP);
+- HUD: painel compacto `Tecnicas: jab · cross · hook` conforme estilo;
+- tutorial: "XP muda seus golpes, nao so o dano";
+- `dotnet build` + validacao F5.
+
+Criterios de pronto:
+
+- subir para Nv3 e ver combo diferente de Rua;
+- corrida + J com estilo desbloqueado executa golpe exclusivo;
+- HUD lista tecnicas corretas ao trocar de nivel/estilo.
 
 ## Backlog Tecnico Permanente
 

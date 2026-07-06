@@ -90,9 +90,7 @@ Toda sprint so pode ser marcada como concluida depois de build C# sem erros, val
 
 ## Proximo passo recomendado
 
-Iniciar **Sprint 23** — estilos marciais por XP (Boxe, Muay Thai, etc.) conforme `docs/COMBAT_DESIGN.md`.
-
-Proximas melhorias opcionais: barra de postura no inimigo, ofegante do Caua com stamina baixa, SFX de impacto.
+**Sprint 24** — deck marcial: golpes e animacoes distintas por estilo (Boxe, Muay Thai, etc.), nao so multiplicadores de dano. Ver `docs/SPRINTS.md`.
 
 ## Documentos importantes
 

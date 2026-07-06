@@ -24,6 +24,8 @@ public partial class Hitbox : Area2D
 
     public bool IsPostureKill { get; set; }
 
+    public bool IsParryRiposte { get; set; }
+
     public Node? Source { get; set; }
 }
 

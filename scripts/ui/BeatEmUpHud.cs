@@ -1,5 +1,8 @@
 namespace SangueNoAsfalto.Ui;
 
+using SangueNoAsfalto.Combat;
+using SangueNoAsfalto.Enemies;
+
 public partial class BeatEmUpHud : CanvasLayer
 {
     private Label? _levelLabel;
@@ -8,6 +11,8 @@ public partial class BeatEmUpHud : CanvasLayer
     private Label? _xpLabel;
     private Label? _weaponLabel;
     private Label? _debugLabel;
+    private Label? _styleToast;
+    private Label? _parryHint;
     private ProgressBar? _healthBar;
     private ProgressBar? _staminaBar;
     private ProgressBar? _xpBar;
@@ -17,6 +22,7 @@ public partial class BeatEmUpHud : CanvasLayer
     private ProgressBar? _postureBar;
     private SideScrollerPlayerController? _player;
     private SideScrollerDirector? _director;
+    private float _styleToastRemaining;
 
     public override void _Ready()
     {
@@ -38,6 +44,44 @@ public partial class BeatEmUpHud : CanvasLayer
         _overlayBodyLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayBody");
         _player = GetTree().GetFirstNodeInGroup("side_player") as SideScrollerPlayerController;
         _director = GetTree().GetFirstNodeInGroup("side_director") as SideScrollerDirector;
+
+        _styleToast = new Label
+        {
+            Name = "StyleUnlockToast",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Visible = false,
+            ZIndex = 40,
+        };
+        _styleToast.AddThemeFontSizeOverride("font_size", 22);
+        _styleToast.AddThemeColorOverride("font_color", new Color(0.98f, 0.88f, 0.52f));
+        _styleToast.SetAnchorsPreset(Control.LayoutPreset.CenterTop);
+        _styleToast.OffsetTop = 72f;
+        _styleToast.OffsetBottom = 108f;
+        _styleToast.OffsetLeft = -220f;
+        _styleToast.OffsetRight = 220f;
+        AddChild(_styleToast);
+
+        _parryHint = new Label
+        {
+            Name = "ParryHint",
+            Text = "Q — DEFLETIR AGORA!",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Visible = false,
+            ZIndex = 41,
+        };
+        _parryHint.AddThemeFontSizeOverride("font_size", 24);
+        _parryHint.AddThemeColorOverride("font_color", new Color(1f, 0.82f, 0.28f));
+        _parryHint.SetAnchorsPreset(Control.LayoutPreset.CenterTop);
+        _parryHint.OffsetTop = 108f;
+        _parryHint.OffsetBottom = 144f;
+        _parryHint.OffsetLeft = -180f;
+        _parryHint.OffsetRight = 180f;
+        AddChild(_parryHint);
+
+        if (_player is not null)
+        {
+            _player.StyleUnlocked += OnStyleUnlocked;
+        }
 
         if (_player?.GetNodeOrNull<Health>("Health") is Health health)
         {
@@ -74,6 +118,17 @@ public partial class BeatEmUpHud : CanvasLayer
 
     public override void _Process(double delta)
     {
+        float dt = (float)delta;
+        if (_styleToastRemaining > 0f)
+        {
+            _styleToastRemaining = Mathf.Max(_styleToastRemaining - dt, 0f);
+            if (_styleToast is not null)
+            {
+                _styleToast.Visible = _styleToastRemaining > 0f;
+                _styleToast.Modulate = new Color(1f, 1f, 1f, Mathf.Clamp(_styleToastRemaining / 0.35f, 0f, 1f));
+            }
+        }
+
         if (_player is not null)
         {
             if (_levelLabel is not null)
@@ -115,8 +170,12 @@ public partial class BeatEmUpHud : CanvasLayer
                     ? $" ({_player.WeaponDurability})"
                     : string.Empty;
                 string reload = _player.IsReloading ? "  [REC]" : string.Empty;
-                _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}{reload}";
+                string nextStyle = _player.NextStyleUnlock is StyleUnlockInfo next
+                    ? $"  |  Prox: {next.DisplayName} (Nv {next.Level})"
+                    : string.Empty;
+                _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}{nextStyle}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}{reload}";
             }
+            UpdateParryHint();
         }
 
         if (_director is not null)
@@ -129,6 +188,50 @@ public partial class BeatEmUpHud : CanvasLayer
 
             UpdateCenterOverlay();
         }
+    }
+
+    private void UpdateParryHint()
+    {
+        if (_parryHint is null || _player is null)
+        {
+            return;
+        }
+
+        bool show = false;
+        foreach (Node node in GetTree().GetNodesInGroup("side_enemy"))
+        {
+            if (node is not SideScrollerEnemyController enemy || !enemy.IsTelegraphing || enemy.TelegraphUrgency < 0.45f)
+            {
+                continue;
+            }
+
+            Vector2 delta = enemy.GlobalPosition - _player.GlobalPosition;
+            if (Mathf.Abs(delta.X) <= 92f && Mathf.Abs(delta.Y) <= 58f)
+            {
+                show = true;
+                break;
+            }
+        }
+
+        _parryHint.Visible = show && !ScreenshotMode.IsActive;
+        if (show)
+        {
+            float pulse = 0.75f + Mathf.Sin(Time.GetTicksMsec() * 0.016f) * 0.25f;
+            _parryHint.Modulate = new Color(1f, 1f, 1f, pulse);
+        }
+    }
+
+    private void OnStyleUnlocked(StyleUnlockInfo info)
+    {
+        if (_styleToast is null)
+        {
+            return;
+        }
+
+        _styleToast.Text = $"Estilo desbloqueado: {info.DisplayName} — {info.Tagline}";
+        _styleToast.Visible = true;
+        _styleToast.Modulate = Colors.White;
+        _styleToastRemaining = 3.2f;
     }
 
     private void OnHealthChanged(int current, int maximum)

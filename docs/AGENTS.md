@@ -13,9 +13,9 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 23 - Progressao Marcial Por XP` (planejada).
+Sprint atual: `Sprint 24 - Deck Marcial e Golpes Por Estilo` (planejada).
 
-Direcao de combate: `docs/COMBAT_DESIGN.md` — impacto/dor/stamina (S22), scroll/parry (S21), armas/finishers (S20); proximo: estilos marciais por XP.
+Direcao de combate: `docs/COMBAT_DESIGN.md` — S23 entregou catalogo/XP; S24 entrega **golpes visiveis por estilo** (`MoveCatalog`); depois clima como gameplay (Shenlong) e boss com assinatura climatica.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 

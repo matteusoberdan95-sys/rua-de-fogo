@@ -1,5 +1,7 @@
 namespace SangueNoAsfalto.Enemies;
 
+using SangueNoAsfalto.Ui;
+
 public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnockbackReceiver
 {
     [Export]
@@ -15,16 +17,19 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     public float AttackRangeX { get; set; } = 58f;
 
     [Export]
+    public float MinStandOffX { get; set; } = 46f;
+
+    [Export]
     public float AttackRangeY { get; set; } = 34f;
 
     [Export]
     public float AttackCooldown { get; set; } = 1.15f;
 
     [Export]
-    public float TelegraphDuration { get; set; } = 0.24f;
+    public float TelegraphDuration { get; set; } = 0.62f;
 
     [Export]
-    public float AttackDuration { get; set; } = 0.14f;
+    public float AttackDuration { get; set; } = 0.2f;
 
     [Export]
     public float MinLaneY { get; set; } = 260f;
@@ -44,10 +49,18 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private CharacterSpriteVisual? _spriteVisual;
     private Health? _health;
     private PostureComponent? _posture;
+    private ParryTelegraphMarker? _parryMarker;
 
     public PostureComponent? Posture => _posture;
 
     public bool IsPostureBroken => _posture?.IsBroken == true;
+
+    public bool IsTelegraphing => _telegraphRemaining > 0f;
+
+    public float TelegraphUrgency =>
+        _telegraphRemaining > 0f && TelegraphDuration > 0f
+            ? 1f - (_telegraphRemaining / TelegraphDuration)
+            : 0f;
 
     public override void _Ready()
     {
@@ -78,6 +91,22 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         if (_posture is not null)
         {
             _posture.PostureBroken += OnPostureBroken;
+            if (GetNodeOrNull<EnemyPostureBar>("PostureBar") is null)
+            {
+                EnemyPostureBar bar = new() { Name = "PostureBar" };
+                AddChild(bar);
+            }
+        }
+
+        _parryMarker = GetNodeOrNull<ParryTelegraphMarker>("ParryMarker");
+        if (_parryMarker is null)
+        {
+            _parryMarker = new ParryTelegraphMarker
+            {
+                Name = "ParryMarker",
+                Position = new Vector2(0f, -108f),
+            };
+            AddChild(_parryMarker);
         }
     }
 
@@ -126,16 +155,28 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         UpdateAttackArc();
         UpdateFacingVisual();
 
-        bool alignedForHit = Mathf.Abs(deltaToTarget.X) <= AttackRangeX && Mathf.Abs(deltaToTarget.Y) <= AttackRangeY;
-        if (alignedForHit)
+        float absX = Mathf.Abs(deltaToTarget.X);
+        float absY = Mathf.Abs(deltaToTarget.Y);
+        bool tooClose = absX < MinStandOffX;
+        bool inAttackBand = absX >= MinStandOffX && absX <= AttackRangeX && absY <= AttackRangeY;
+
+        if (tooClose && _attackTimeRemaining <= 0f)
+        {
+            float retreatX = -Mathf.Sign(deltaToTarget.X) * MoveSpeed * 1.2f;
+            float laneY = absY > AttackRangeY * 0.55f ? Mathf.Sign(deltaToTarget.Y) * LaneSpeed * 0.45f : 0f;
+            Velocity = _telegraphRemaining > 0f
+                ? new Vector2(retreatX * 0.55f, laneY)
+                : new Vector2(retreatX, laneY);
+        }
+        else if (inAttackBand)
         {
             Velocity = Vector2.Zero;
             TryAttack();
         }
         else if (_telegraphRemaining <= 0f && _attackTimeRemaining <= 0f)
         {
-            float x = Mathf.Abs(deltaToTarget.X) > AttackRangeX * 0.75f ? Mathf.Sign(deltaToTarget.X) : 0f;
-            float y = Mathf.Abs(deltaToTarget.Y) > AttackRangeY * 0.65f ? Mathf.Sign(deltaToTarget.Y) : 0f;
+            float x = absX > MinStandOffX ? Mathf.Sign(deltaToTarget.X) : 0f;
+            float y = absY > AttackRangeY * 0.65f ? Mathf.Sign(deltaToTarget.Y) : 0f;
             Velocity = new Vector2(x * MoveSpeed, y * LaneSpeed);
         }
 
@@ -155,6 +196,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         _telegraphRemaining = TelegraphDuration;
         int telegraphCombo = (_attackPatternIndex + 1) % 3 == 2 ? 1 : 0;
         _spriteVisual?.SetAttackCombo(telegraphCombo);
+        _parryMarker?.SetActive(true);
     }
 
     private void TickTelegraph(float dt)
@@ -168,6 +210,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
         if (_telegraphRemaining <= 0f)
         {
+            _parryMarker?.SetActive(false);
             _attackTimeRemaining = AttackDuration;
             _attackPatternIndex = (_attackPatternIndex + 1) % 3;
             int combo = _attackPatternIndex == 2 ? 1 : 0;
@@ -236,6 +279,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     {
         _telegraphRemaining = 0f;
         _attackTimeRemaining = 0f;
+        _parryMarker?.SetActive(false);
         _hitStunRemaining = Mathf.Max(_hitStunRemaining, duration);
         Velocity = impulse;
         Modulate = Colors.White.Lerp(new Color(1f, 0.62f, 0.58f), 0.35f);
@@ -271,15 +315,18 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     {
         _telegraphRemaining = 0f;
         _attackTimeRemaining = 0f;
-        _hitStunRemaining = Mathf.Max(_hitStunRemaining, 0.35f);
+        _parryMarker?.SetActive(false);
+        _hitStunRemaining = Mathf.Max(_hitStunRemaining, 0.55f);
         SetAttackCollision(false);
-        Velocity = (GlobalPosition - player.GlobalPosition).Normalized() * 180f;
+        Velocity = (GlobalPosition - player.GlobalPosition).Normalized() * 240f;
+        Modulate = new Color(0.75f, 0.88f, 1f, 1f);
     }
 
     private void OnPostureBroken()
     {
         _telegraphRemaining = 0f;
         _attackTimeRemaining = 0f;
+        _parryMarker?.SetActive(false);
         _hitStunRemaining = 0f;
         SetAttackCollision(false);
         Velocity = Vector2.Zero;

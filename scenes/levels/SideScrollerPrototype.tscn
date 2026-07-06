@@ -23,10 +23,10 @@
 [ext_resource type="PackedScene" path="res://scenes/pickups/AmmoPickup.tscn" id="13_ammpickup"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_north"]
-size = Vector2(2400, 34)
+size = Vector2(5000, 34)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_south"]
-size = Vector2(2400, 34)
+size = Vector2(5000, 34)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_west"]
 size = Vector2(34, 420)
@@ -465,7 +465,7 @@ polygon = PackedVector2Array(-1280, 0, 1280, 0, 1280, 720, -1280, 720)
 [node name="WorldBounds" type="Node2D" parent="."]
 
 [node name="North" type="StaticBody2D" parent="WorldBounds"]
-position = Vector2(0, 240)
+position = Vector2(1250, 240)
 collision_layer = 1
 collision_mask = 0
 
@@ -473,7 +473,7 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_north")
 
 [node name="South" type="StaticBody2D" parent="WorldBounds"]
-position = Vector2(0, 500)
+position = Vector2(1250, 500)
 collision_layer = 1
 collision_mask = 0
 

@@ -1,3 +1,5 @@
+using SangueNoAsfalto.Combat;
+
 namespace SangueNoAsfalto.Player;
 
 public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnockbackReceiver
@@ -72,7 +74,15 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public int FacingSign { get; private set; } = 1;
 
-    public string CombatStyleName => "Rua";
+    public string CombatStyleName => CombatStyleCatalog.GetDisplayName(ActiveCombatStyle);
+
+    public CombatStyleKind ActiveCombatStyle => CombatStyleCatalog.GetActiveStyle(Level);
+
+    public StyleUnlockInfo? NextStyleUnlock => CombatStyleCatalog.GetNextUnlock(Level);
+
+    public bool IsExhausted => CurrentStamina <= MaxStamina * 0.28f;
+
+    public event Action<StyleUnlockInfo>? StyleUnlocked;
 
     public string WeaponName => ImprovisedWeaponCatalog.GetDisplayName(_weaponKind);
 
@@ -139,6 +149,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private int _weaponDurability;
     private float _reloadTimeRemaining;
     private float _parryTimeRemaining;
+    private float _parryRiposteDelay;
+    private float _combatLockRemaining;
+    private Node2D? _parryRiposteTarget;
     private bool _isFinisherAttack;
     private int _continues;
     private int _comboIndex;
@@ -201,6 +214,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         TickRun(dt, input);
         TickReload(dt);
         TickParry(dt);
+        TickParryRiposte(dt);
+        TickCombatLock(dt);
         RegenerateStamina(dt);
         UpdateAttackArc();
         UpdateFacingVisual();
@@ -210,6 +225,14 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
         if (TickHitStun(dt))
         {
+            MoveAndSlide();
+            ClampToPlayableArea();
+            return;
+        }
+
+        if (_combatLockRemaining > 0f)
+        {
+            Velocity = Velocity.MoveToward(Vector2.Zero, 2400f * dt);
             MoveAndSlide();
             ClampToPlayableArea();
             return;
@@ -323,6 +346,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             {
                 _attackArea.IsFinisherHit = false;
                 _attackArea.IsPostureKill = false;
+                _attackArea.IsParryRiposte = false;
                 _attackArea.ApplyBleedOnHit = false;
             }
         }
@@ -386,6 +410,10 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             Experience -= ExperienceToNext;
             Level++;
             ExperienceToNext = MathF.Round(ExperienceToNext * 1.18f);
+            if (CombatStyleCatalog.GetUnlockAtLevel(Level) is StyleUnlockInfo unlock && unlock.Level > 1)
+            {
+                StyleUnlocked?.Invoke(unlock);
+            }
         }
     }
 
@@ -467,9 +495,10 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         float staminaCost = CombatImpactFeel.StaminaCostForCombo(
             airKick ? 2 : _comboResetRemaining > 0f ? (_comboIndex + 1) % 3 : 0,
             _isRunning);
+        staminaCost *= CombatStyleCatalog.GetStaminaCostMultiplier(ActiveCombatStyle);
         if (airKick)
         {
-            staminaCost = 24f;
+            staminaCost = 24f * CombatStyleCatalog.GetStaminaCostMultiplier(ActiveCombatStyle);
         }
 
         if (CurrentStamina < staminaCost)
@@ -504,12 +533,14 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
         if (_attackArea is not null)
         {
-            _attackArea.Damage = _comboIndex switch
+            int baseDamage = _comboIndex switch
             {
                 1 => 30,
                 2 => 50,
                 _ => 24,
             };
+            float styleMult = CombatStyleCatalog.GetDamageMultiplier(ActiveCombatStyle, _comboIndex);
+            _attackArea.Damage = Mathf.RoundToInt(baseDamage * styleMult);
 
             _attackArea.KnockbackForce = _comboIndex == 2 ? 520f : 350f;
             _attackArea.ApplyBleedOnHit = false;
@@ -641,18 +672,54 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             return false;
         }
 
+        ResolveParrySuccess(enemySource);
+        return true;
+    }
+
+    private void CheckTelegraphParry()
+    {
+        if (_parryTimeRemaining <= 0f || _combatLockRemaining > 0f)
+        {
+            return;
+        }
+
+        const float rangeX = 86f;
+        const float rangeY = 56f;
+
+        foreach (Node node in GetTree().GetNodesInGroup("side_enemy"))
+        {
+            if (node is not SideScrollerEnemyController enemy || !enemy.IsTelegraphing || enemy.TelegraphUrgency < 0.52f)
+            {
+                continue;
+            }
+
+            Vector2 delta = enemy.GlobalPosition - GlobalPosition;
+            if (Mathf.Abs(delta.X) > rangeX || Mathf.Abs(delta.Y) > rangeY)
+            {
+                continue;
+            }
+
+            ResolveParrySuccess(enemy);
+            return;
+        }
+    }
+
+    private void ResolveParrySuccess(Node2D enemySource)
+    {
         _parryTimeRemaining = 0f;
         PostureComponent? enemyPosture = enemySource.GetNodeOrNull<PostureComponent>("Posture");
-        enemyPosture?.AddPosture(Mathf.Max(enemyHitbox.PostureDamage, 28f) * 1.65f);
+        enemyPosture?.BreakPosture();
 
         if (enemySource is SideScrollerEnemyController enemyController)
         {
             enemyController.OnParried(this);
         }
 
+        _parryRiposteTarget = enemySource;
+        _parryRiposteDelay = 0.2f;
+        _combatLockRemaining = 0.82f;
         CombatFeedback.PlayParry(this, enemySource);
-        _spriteVisual?.PlayParry();
-        return true;
+        _spriteVisual?.PlayParrySuccessMatrix();
     }
 
     private Node2D? FindPostureKillTarget()
@@ -727,12 +794,12 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void StartParry()
     {
-        if (_attackTimeRemaining > 0f || _reloadTimeRemaining > 0f || _hitStunRemaining > 0f)
+        if (_attackTimeRemaining > 0f || _reloadTimeRemaining > 0f || _hitStunRemaining > 0f || _combatLockRemaining > 0f)
         {
             return;
         }
 
-        _parryTimeRemaining = 0.26f;
+        _parryTimeRemaining = 0.36f;
         _spriteVisual?.PlayParryWindup();
     }
 
@@ -741,7 +808,67 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (_parryTimeRemaining > 0f)
         {
             _parryTimeRemaining = Mathf.Max(_parryTimeRemaining - dt, 0f);
+            CheckTelegraphParry();
         }
+    }
+
+    private void TickParryRiposte(float dt)
+    {
+        if (_parryRiposteDelay <= 0f)
+        {
+            return;
+        }
+
+        _parryRiposteDelay -= dt;
+        if (_parryRiposteDelay > 0f)
+        {
+            return;
+        }
+
+        if (_parryRiposteTarget is Node2D target && GodotObject.IsInstanceValid(target))
+        {
+            ExecuteParryRiposte(target);
+        }
+
+        _parryRiposteTarget = null;
+    }
+
+    private void TickCombatLock(float dt)
+    {
+        if (_combatLockRemaining <= 0f)
+        {
+            return;
+        }
+
+        _combatLockRemaining = Mathf.Max(_combatLockRemaining - dt, 0f);
+    }
+
+    private void ExecuteParryRiposte(Node2D target)
+    {
+        if (Mathf.Sign(target.GlobalPosition.X - GlobalPosition.X) != 0)
+        {
+            FacingSign = target.GlobalPosition.X >= GlobalPosition.X ? 1 : -1;
+            UpdateFacingVisual();
+        }
+
+        _isFinisherAttack = true;
+        _attackTimeRemaining = 0.5f;
+        _comboIndex = 2;
+
+        if (_attackArea is not null)
+        {
+            _attackArea.Damage = 999;
+            _attackArea.KnockbackForce = 960f;
+            _attackArea.ApplyBleedOnHit = false;
+            _attackArea.IsFinisherHit = true;
+            _attackArea.IsPostureKill = false;
+            _attackArea.IsParryRiposte = true;
+            _attackArea.HitStunDuration = 0.42f;
+        }
+
+        SetAttackCollision(true);
+        _spriteVisual?.PlayParryRiposte();
+        UpdateFinisherAttackArc(target);
     }
 
     private void StartDash(Vector2 input)
@@ -1096,7 +1223,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             _isRunning,
             _isFinisherAttack,
             _reloadTimeRemaining > 0f,
-            _parryTimeRemaining > 0f);
+            _parryTimeRemaining > 0f,
+            IsExhausted);
     }
 
     private void ApplySavedState()

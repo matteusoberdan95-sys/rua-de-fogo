@@ -58,12 +58,14 @@ public partial class CharacterSpriteVisual : Node2D
     private int _attackComboIndex;
     private bool _impactSpawned;
     private bool _isRunning;
+    private bool _isExhausted;
     private float _shootAnimTime;
     private Node2D? _sidearm;
     private Node2D? _improvisedWeapon;
     private ImprovisedWeaponKind _equippedWeaponKind;
     private bool _finisherAttack;
     private float _reloadAnimTime;
+    private float _stateLockRemaining;
     private EnemyDamageVisualTier _damageTier = EnemyDamageVisualTier.Intact;
     private int _facingSign = 1;
 
@@ -192,9 +194,11 @@ public partial class CharacterSpriteVisual : Node2D
         bool isRunning = false,
         bool isFinisherAttack = false,
         bool isReloading = false,
-        bool isParrying = false)
+        bool isParrying = false,
+        bool isExhausted = false)
     {
         _isRunning = isRunning;
+        _isExhausted = isExhausted;
         _finisherAttack = isFinisherAttack;
         if (_shootAnimTime > 0f)
         {
@@ -207,8 +211,8 @@ public partial class CharacterSpriteVisual : Node2D
 
         if (UseLayeredPrototype)
         {
-            float bobSpeed = isRunning ? 0.028f : 0.018f;
-            float bobAmount = isRunning ? 2.4f : 1.8f;
+            float bobSpeed = _isRunning ? 0.028f : _isExhausted ? 0.032f : 0.018f;
+            float bobAmount = _isRunning ? 2.4f : _isExhausted ? 3.4f : 1.8f;
             if (_damageTier == EnemyDamageVisualTier.Critical)
             {
                 bobAmount = 2.6f;
@@ -229,7 +233,14 @@ public partial class CharacterSpriteVisual : Node2D
                 _reloadAnimTime = Mathf.Max(_reloadAnimTime - (float)GetProcessDeltaTime(), 0f);
             }
 
+            if (_stateLockRemaining > 0f)
+            {
+                _stateLockRemaining = Mathf.Max(_stateLockRemaining - (float)GetProcessDeltaTime(), 0f);
+                return;
+            }
+
             string nextState = isHurt || _hurtTime > 0f ? "hurt"
+                : _layeredState == "parry_success" ? "parry_success"
                 : isParrying || _layeredState == "parry" ? "parry"
                 : isReloading || _reloadAnimTime > 0f ? "reload"
                 : isTelegraphing ? "telegraph"
@@ -400,6 +411,20 @@ public partial class CharacterSpriteVisual : Node2D
     {
         _flashTime = 0.14f;
         SetLayeredState("parry");
+    }
+
+    public void PlayParrySuccessMatrix()
+    {
+        _flashTime = 0.22f;
+        SetLayeredState("parry_success");
+        _stateLockRemaining = 0.22f;
+    }
+
+    public void PlayParryRiposte()
+    {
+        _finisherAttack = true;
+        SetLayeredState("finisher");
+        _stateLockRemaining = 0.48f;
     }
 
     public void PlayPostureKill()
@@ -701,9 +726,19 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateLayeredPrototype()
     {
-        float idle = Mathf.Sin(_stateTime * 4.2f);
-        float heartbeat = Mathf.Max(0f, Mathf.Sin(_stateTime * 8.5f));
-        float walkSpeed = _damageTier == EnemyDamageVisualTier.Critical && !_isRunning ? 8.2f : _isRunning ? 14.5f : 10.5f;
+        float idle = _isExhausted
+            ? Mathf.Sin(_stateTime * 7.6f) * 1.35f
+            : Mathf.Sin(_stateTime * 4.2f);
+        float heartbeat = _isExhausted
+            ? Mathf.Max(0f, Mathf.Sin(_stateTime * 11.5f))
+            : Mathf.Max(0f, Mathf.Sin(_stateTime * 8.5f));
+        float walkSpeed = _damageTier == EnemyDamageVisualTier.Critical && !_isRunning
+            ? 8.2f
+            : _isExhausted && !_isRunning
+                ? 7.4f
+                : _isRunning
+                    ? 14.5f
+                    : 10.5f;
         float walk = Mathf.Sin(_stateTime * walkSpeed);
         float walkOpposite = Mathf.Cos(_stateTime * walkSpeed);
         float limpFactor = _damageTier == EnemyDamageVisualTier.Critical ? 0.55f : 1f;
@@ -718,7 +753,8 @@ public partial class CharacterSpriteVisual : Node2D
 
         if (_shirtPulse is not null)
         {
-            _shirtPulse.Modulate = Colors.White.Lerp(new Color(1f, 0.72f, 0.62f), heartbeat * 0.16f);
+            float pulse = _isExhausted ? heartbeat * 0.28f : heartbeat * 0.16f;
+            _shirtPulse.Modulate = Colors.White.Lerp(new Color(1f, 0.72f, 0.62f), pulse);
         }
 
         if (_head is not null)
@@ -774,6 +810,9 @@ public partial class CharacterSpriteVisual : Node2D
             case "parry":
                 AnimateParry();
                 break;
+            case "parry_success":
+                AnimateParrySuccessMatrix();
+                break;
             case "dash":
                 AnimateDash();
                 break;
@@ -811,14 +850,30 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateIdle(float idle)
     {
+        if (_torso is not null && _isExhausted)
+        {
+            _torso.Position += new Vector2(0f, idle * 2.4f);
+            _torso.Rotation = idle * 0.04f;
+        }
+
+        if (_head is not null && _isExhausted)
+        {
+            _head.Position += new Vector2(0f, idle * 1.4f);
+            _head.Rotation += idle * 0.05f;
+        }
+
         if (_frontArm is not null)
         {
-            _frontArm.Rotation += idle * 0.035f;
+            _frontArm.Rotation += idle * (_isExhausted ? 0.055f : 0.035f);
+            if (_isExhausted)
+            {
+                _frontArm.Position += new Vector2(0f, idle * 0.8f);
+            }
         }
 
         if (_backArm is not null)
         {
-            _backArm.Rotation -= idle * 0.025f;
+            _backArm.Rotation -= idle * (_isExhausted ? 0.04f : 0.025f);
         }
     }
 
@@ -826,8 +881,9 @@ public partial class CharacterSpriteVisual : Node2D
     {
         if (_torso is not null)
         {
-            _torso.Position += new Vector2(0f, Mathf.Abs(walk) * 2.2f * limpFactor * (_isRunning ? 1.25f : 1f));
-            _torso.Rotation = walk * (_isRunning ? 0.04f : 0.025f);
+            float runBoost = _isRunning ? 1.25f : _isExhausted ? 0.72f : 1f;
+            _torso.Position += new Vector2(0f, Mathf.Abs(walk) * 2.2f * limpFactor * runBoost);
+            _torso.Rotation = walk * (_isRunning ? 0.04f : _isExhausted ? 0.018f : 0.025f);
             if (_isRunning)
             {
                 _torso.Position += new Vector2(4f, 0f);
@@ -1026,7 +1082,7 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateParry()
     {
-        float t = Mathf.Clamp(_stateTime / 0.26f, 0f, 1f);
+        float t = Mathf.Clamp(_stateTime / 0.36f, 0f, 1f);
         float guard = Mathf.Sin(t * Mathf.Pi);
 
         if (_torso is not null)
@@ -1043,6 +1099,48 @@ public partial class CharacterSpriteVisual : Node2D
         if (_backArm is not null)
         {
             _backArm.Rotation = -0.75f - guard * 0.2f;
+        }
+    }
+
+    private void AnimateParrySuccessMatrix()
+    {
+        float t = Mathf.Clamp(_stateTime / 0.22f, 0f, 1f);
+        float dodge = Mathf.Sin(t * Mathf.Pi);
+        float leanSign = _facingSign;
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -0.42f * dodge * leanSign;
+            _torso.Position += new Vector2(-10f * dodge * leanSign, -5f * dodge);
+            _torso.Modulate = Colors.White.Lerp(new Color(0.55f, 0.82f, 1f), dodge * 0.55f);
+        }
+
+        if (_head is not null)
+        {
+            _head.Rotation = -0.32f * dodge * leanSign;
+            _head.Position += new Vector2(-8f * dodge * leanSign, -8f * dodge);
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = 0.22f * dodge;
+            _frontLeg.Position += new Vector2(-3f * dodge * leanSign, 2f * dodge);
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = -0.18f * dodge;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -1.05f * dodge;
+            _frontArm.Position = new Vector2(6f - 4f * dodge * leanSign, -54f - 6f * dodge);
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.95f * dodge;
         }
     }
 
@@ -1379,30 +1477,32 @@ public partial class CharacterSpriteVisual : Node2D
     private void AnimateTelegraph()
     {
         float pulse = 0.5f + Mathf.Sin(_stateTime * 28f) * 0.5f;
+        float warn = 0.35f + Mathf.Sin(_stateTime * 18f) * 0.35f;
         bool headbutt = LayeredPreset == LayeredPrototypePreset.QuebraOsso && _attackComboIndex == 1;
 
         if (_torso is not null)
         {
-            _torso.Rotation = (-0.12f - (headbutt ? 0.08f : 0f)) * pulse;
-            _torso.Position += new Vector2(-4f * pulse, headbutt ? 2f * pulse : 0f);
-            _torso.Modulate = Colors.White.Lerp(new Color(1f, 0.42f, 0.28f), pulse * 0.35f);
+            _torso.Rotation = (-0.18f - (headbutt ? 0.1f : 0f)) * pulse;
+            _torso.Position += new Vector2(-8f * pulse, headbutt ? 3f * pulse : 0f);
+            _torso.Modulate = Colors.White.Lerp(new Color(1f, 0.22f, 0.12f), warn * 0.65f);
+            _torso.Scale = new Vector2(1f + warn * 0.04f, 1f + warn * 0.06f);
         }
 
         if (_head is not null)
         {
-            _head.Position += new Vector2((headbutt ? 3f : -2f) * pulse, headbutt ? -3f * pulse : 0f);
-            _head.Rotation = headbutt ? pulse * 0.18f : 0f;
+            _head.Position += new Vector2((headbutt ? 5f : -4f) * pulse, headbutt ? -4f * pulse : -1f * warn);
+            _head.Rotation = headbutt ? pulse * 0.22f : -warn * 0.08f;
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = headbutt ? 0.25f : -0.85f * pulse;
-            _frontArm.Position = new Vector2(15f - 6f * pulse, -58f);
+            _frontArm.Rotation = headbutt ? 0.35f : -1.05f * pulse;
+            _frontArm.Position = new Vector2(18f - 10f * pulse, -58f - 2f * warn);
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = 0.08f * pulse;
+            _frontLeg.Rotation = 0.14f * pulse;
         }
     }
 

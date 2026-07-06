@@ -84,7 +84,7 @@ Regras de design:
 - HUD mostra estilo equipado / barra de tecnicas.
 - Tutorial explica que XP abre golpes, nao so HP.
 
-Implementacao tecnica futura: `MoveCatalog`, `UnlockedMoveIds`, combo resolver que monta sequencia a partir do deck ativo.
+Implementacao tecnica: Sprint 23 = `CombatStyleCatalog` (multiplicadores); Sprint 24 = `MoveCatalog`, `UnlockedMoveIds`, combo resolver que monta sequencia a partir do deck ativo.
 
 ## Dano Cumulativo No Inimigo
 

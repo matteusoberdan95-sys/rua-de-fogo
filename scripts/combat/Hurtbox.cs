@@ -118,6 +118,12 @@ public partial class Hurtbox : Area2D
 
         if (hitbox.IsFinisherHit && hitbox.Source is SideScrollerPlayerController finisherPlayer)
         {
+            if (hitbox.IsParryRiposte)
+            {
+                CombatFeedback.PlayParryCounterKill(target, source);
+                return;
+            }
+
             if (hitbox.IsPostureKill)
             {
                 CombatFeedback.PlayPostureKill(target, source);

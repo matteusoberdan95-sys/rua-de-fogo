@@ -131,8 +131,98 @@ public static class CombatFeedback
     public static void PlayParry(Node2D defender, Node2D attacker)
     {
         Vector2 direction = defender.GlobalPosition.DirectionTo(attacker.GlobalPosition);
-        SpawnImpactSpark(defender, direction, 36);
-        HitPause(defender.GetTree());
+        SpawnMatrixFlash(defender);
+        SpawnImpactSpark(defender, direction, 52);
+        HitPause(defender.GetTree(), 2.1f);
+        ShakeCamera(defender, 1.6f);
+    }
+
+    public static void PlayParryCounterKill(Node2D target, Node2D source)
+    {
+        Vector2 impactDirection = source.GlobalPosition.DirectionTo(target.GlobalPosition);
+        if (impactDirection.LengthSquared() < 0.01f)
+        {
+            impactDirection = Vector2.Right;
+        }
+
+        SpawnFinisherBurst(target, impactDirection, ImprovisedWeaponKind.Hammer);
+        SpawnViscera(target, impactDirection, 14);
+        SpawnBlood(target, impactDirection, 120);
+        SpawnGroundBlood(target.GetParent(), target.GlobalPosition, impactDirection, 120);
+        SpawnGroundBlood(target.GetParent(), target.GlobalPosition + new Vector2(impactDirection.Y * 18f, 8f), impactDirection, 90);
+        FinisherHitPause(target.GetTree());
+        ZoomFinisherCamera(source);
+        PlayImpactSound(target.GetParent(), 95);
+    }
+
+    private static void SpawnMatrixFlash(Node2D defender)
+    {
+        Node? parent = defender.GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        ColorRect flash = new()
+        {
+            Color = new Color(0.35f, 0.72f, 1f, 0.22f),
+            Size = new Vector2(220f, 140f),
+            Position = defender.Position + new Vector2(-110f, -120f),
+            ZIndex = 25,
+        };
+        parent.AddChild(flash);
+
+        Tween tween = flash.CreateTween();
+        tween.TweenProperty(flash, "modulate:a", 0f, 0.18f);
+        tween.TweenCallback(Callable.From(flash.QueueFree));
+    }
+
+    private static void SpawnViscera(Node2D target, Vector2 direction, int count)
+    {
+        Node? parent = target.GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        Color[] colors =
+        [
+            new(0.78f, 0.1f, 0.08f, 0.95f),
+            new(0.58f, 0.62f, 0.16f, 0.92f),
+            new(0.92f, 0.42f, 0.28f, 0.9f),
+            new(0.42f, 0.08f, 0.06f, 0.94f),
+        ];
+
+        for (int i = 0; i < count; i++)
+        {
+            float size = 0.75f + (i % 4) * 0.22f;
+            Polygon2D chunk = new()
+            {
+                Color = colors[i % colors.Length],
+                Polygon =
+                [
+                    new Vector2(-8f * size, -4f * size),
+                    new Vector2(9f * size, -5f * size),
+                    new Vector2(11f * size, 3f * size),
+                    new Vector2(2f * size, 8f * size),
+                    new Vector2(-7f * size, 5f * size),
+                ],
+                ZIndex = 13,
+            };
+
+            parent.AddChild(chunk);
+            float side = (i - count * 0.5f) * 7f;
+            chunk.GlobalPosition = target.GlobalPosition + new Vector2(direction.X * (8f + i * 2f) + side, -24f - (i % 3) * 6f);
+            chunk.Rotation = direction.Angle() + side * 0.04f;
+
+            Vector2 fly = direction.Rotated((float)GD.RandRange(-0.55, 0.55)) * (120f + i * 14f);
+            Tween tween = chunk.CreateTween();
+            tween.TweenProperty(chunk, "position", chunk.Position + new Vector2(fly.X * 0.08f, fly.Y * 0.06f - 8f), 0.12f);
+            tween.TweenProperty(chunk, "position", chunk.Position + new Vector2(fly.X * 0.22f, 36f + i * 5f), 0.34f);
+            tween.Parallel().TweenProperty(chunk, "rotation", chunk.Rotation + (float)GD.RandRange(-2.4, 2.4), 0.34f);
+            tween.Parallel().TweenProperty(chunk, "modulate:a", 0f, 0.48f);
+            tween.TweenCallback(Callable.From(chunk.QueueFree));
+        }
     }
 
     public static void PlayPostureKill(Node2D target, Node2D source)
@@ -274,23 +364,42 @@ public static class CombatFeedback
             return;
         }
 
+        PlayImpactLayer(parent, damage, ImpactLayer.Bone);
+        PlayImpactLayer(parent, damage, ImpactLayer.Flesh);
+    }
+
+    private enum ImpactLayer
+    {
+        Bone,
+        Flesh,
+    }
+
+    private static async void PlayImpactLayer(Node parent, int damage, ImpactLayer layer)
+    {
         const int mixRate = 22050;
-        const float duration = 0.11f;
+        float duration = layer == ImpactLayer.Bone ? 0.09f : 0.07f;
         int frameCount = Mathf.RoundToInt(mixRate * duration);
-        float frequency = damage >= 45 ? 92f : damage >= 28 ? 118f : 148f;
-        float volume = damage >= 38 ? -6f : -9f;
+
+        float boneFreq = damage >= 45 ? 78f : damage >= 28 ? 96f : 118f;
+        float fleshFreq = damage >= 38 ? 142f : 188f;
+        float frequency = layer == ImpactLayer.Bone ? boneFreq : fleshFreq;
+        float volume = layer == ImpactLayer.Bone
+            ? (damage >= 38 ? -7f : -10f)
+            : (damage >= 28 ? -11f : -14f);
+        float noiseMix = layer == ImpactLayer.Bone ? 0.62f : 0.48f;
+        float bodyMix = layer == ImpactLayer.Bone ? 0.38f : 0.22f;
 
         AudioStreamGenerator stream = new()
         {
             MixRate = mixRate,
-            BufferLength = duration
+            BufferLength = duration + 0.02f,
         };
 
         AudioStreamPlayer player = new()
         {
             Stream = stream,
             VolumeDb = volume,
-            PitchScale = damage >= 45 ? 0.78f : damage >= 28 ? 0.88f : 0.96f
+            PitchScale = layer == ImpactLayer.Bone ? 0.82f : 1.05f,
         };
 
         parent.AddChild(player);
@@ -302,9 +411,13 @@ public static class CombatFeedback
             {
                 float t = i / (float)mixRate;
                 float envelope = 1f - i / (float)frameCount;
+                envelope *= envelope;
                 float noise = GD.Randf() * 2f - 1f;
                 float body = Mathf.Sin(Mathf.Tau * frequency * t);
-                float sample = (body * 0.45f + noise * 0.55f) * envelope * 0.38f;
+                float crack = layer == ImpactLayer.Bone && i < frameCount * 0.15f
+                    ? GD.Randf() * 0.55f
+                    : 0f;
+                float sample = (body * bodyMix + noise * noiseMix + crack) * envelope * 0.42f;
                 playback.PushFrame(new Vector2(sample, sample));
             }
         }

@@ -206,6 +206,17 @@
 
 ## Marco 0.20 - Progressao Marcial (Sprint 23)
 
-- [ ] Catalogo de estilos (boxe, Muay Thai, etc.).
-- [ ] Desbloqueio por XP/nivel.
-- [ ] HUD de tecnicas.
+- [x] Catalogo de estilos (boxe, Muay Thai, etc.).
+- [x] Desbloqueio por XP/nivel.
+- [x] HUD de tecnicas (estilo + proximo desbloqueio + toast).
+- [x] Validar Sprint 23 no Godot.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.21 - Golpes Por Estilo (Sprint 24)
+
+- [ ] `MoveCatalog` e resolver de combo por estilo ativo.
+- [ ] Animacoes/golpes distintos para pelo menos Boxe e Muay Thai.
+- [ ] Golpe exclusivo correndo por estilo (ex.: Capoeira meia-lua).
+- [ ] HUD lista tecnicas do estilo equipado.
+- [ ] Validar Sprint 24 no Godot.
+- [ ] Fechar sprint apos validacao.
