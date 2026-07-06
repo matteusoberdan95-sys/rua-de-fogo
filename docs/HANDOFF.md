@@ -266,9 +266,15 @@ Estado da Sprint 30:
 
 Proximo passo recomendado:
 
-1. iniciar **Sprint 33** — clima e rua viva como gameplay;
-2. manter `CombatPacing` e camera/HUD da Sprint 30 como baseline;
-3. substituir props procedurais por sprites conforme `docs/STAGE_ASSET_PIPELINE.md`.
+1. **validar Sprint 33 no Godot (F5)** — lama, raio em poca, vento, apagao nos chefes;
+2. iniciar **Sprint 34** — demo vertical slice e QC;
+3. manter baseline camera/HUD/combate das sprints 30–31.
+
+Estado da Sprint 33:
+
+- implementada; build OK;
+- `StageClimateDirector`, hazards, vento, trovao e clima por ato;
+- aguardando playtest F5.
 
 Estado da Sprint 32:
 
@@ -282,7 +288,7 @@ Estado da Sprint 31:
 Roadmap planejado:
 
 - Sprint 32: cenario da Fase 1 com assets finais (concluida);
-- Sprint 33: clima e rua viva como gameplay;
+- Sprint 33: clima e rua viva como gameplay (implementada — validar F5);
 - Sprint 34: demo vertical slice e QC.
 
 Estado da Sprint 28:

@@ -54,6 +54,13 @@ Regra: cenario em **camadas nativas Godot** (poligonos/nodes), nunca bitmap cola
 - Viela: placa rua, pneu, caixa de luz quebrada
 - Boss: altar maior, portao SAIDA, graffiti boss
 
+## Sprint 33 - Clima como Gameplay
+
+- **`StageClimateDirector`** — garoa → chuva → temporal por ato; neblina no portao.
+- **Pocas:** lama reduz velocidade; agua eletrica + raio = dano (evitar na tempestade).
+- **Vento** empurra papeis/roupas; **apagao** nos chefes Rain Boss e Alpha.
+- **SFX** procedural de trovao e chuva (`WeatherAmbience`).
+
 ## Audio / clima
 
 - Chuva + neon pulsando no boteco

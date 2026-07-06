@@ -1,5 +1,6 @@
 using SangueNoAsfalto.Combat;
 using SangueNoAsfalto.Core;
+using SangueNoAsfalto.World;
 
 namespace SangueNoAsfalto.Player;
 
@@ -277,7 +278,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         else if (_dashTimeRemaining <= 0f)
         {
             float moveSpeed = _isRunning ? RunSpeed : HorizontalSpeed;
-            Velocity = new Vector2(input.X * moveSpeed, input.Y * LaneSpeed);
+            float climateMul = ResolveClimateSpeedMultiplier();
+            Velocity = new Vector2(input.X * moveSpeed * climateMul, input.Y * LaneSpeed * climateMul);
         }
 
         MoveAndSlide();
@@ -1435,6 +1437,20 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         SaveManager.Current.WeaponDurability = _weaponDurability;
         SaveManager.Current.Continues = _continues;
         SaveManager.Save();
+    }
+
+    private float ResolveClimateSpeedMultiplier()
+    {
+        float multiplier = 1f;
+        foreach (Node node in GetTree().GetNodesInGroup("weather_hazards"))
+        {
+            if (node is WeatherHazardZone zone)
+            {
+                multiplier = Mathf.Min(multiplier, zone.GetSpeedMultiplierFor(this));
+            }
+        }
+
+        return multiplier;
     }
 
     private void ClampToPlayableArea()

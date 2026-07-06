@@ -10,6 +10,9 @@ public partial class WeatherController : Node
         Thunderstorm
     }
 
+    [Signal]
+    public delegate void LightningStruckEventHandler();
+
     [Export]
     public WeatherState InitialState { get; set; } = WeatherState.Drizzle;
 
@@ -33,6 +36,8 @@ public partial class WeatherController : Node
 
     public WeatherState CurrentState { get; private set; }
 
+    public float WindStrength { get; private set; } = 0.4f;
+
     private Node2D? _rainLayer;
     private Polygon2D? _fogLayer;
     private Polygon2D? _lightningFlash;
@@ -40,6 +45,8 @@ public partial class WeatherController : Node
     private readonly System.Collections.Generic.List<Line2D> _rainStreaks = [];
     private float _stateTimer;
     private float _lightningTimer;
+    private float _lightningMin = 3.5f;
+    private float _lightningMax = 7.5f;
 
     public override void _Ready()
     {
@@ -73,6 +80,23 @@ public partial class WeatherController : Node
 
         _stateTimer = 0f;
         SetState(NextState(CurrentState));
+    }
+
+    public void SetWindStrength(float strength)
+    {
+        WindStrength = Mathf.Clamp(strength, 0f, 1.2f);
+    }
+
+    public void SetLightningInterval(float minSeconds, float maxSeconds)
+    {
+        _lightningMin = Mathf.Max(0.8f, minSeconds);
+        _lightningMax = Mathf.Max(_lightningMin + 0.2f, maxSeconds);
+        QueueNextLightning();
+    }
+
+    public void ResetLightningInterval()
+    {
+        SetLightningInterval(3.5f, 7.5f);
     }
 
     public void SetState(WeatherState state, bool instant = false)
@@ -113,7 +137,9 @@ public partial class WeatherController : Node
             return;
         }
 
-        float speed = CurrentState == WeatherState.HeavyRain || CurrentState == WeatherState.Thunderstorm ? 560f : 300f;
+        float speed = CurrentState == WeatherState.HeavyRain || CurrentState == WeatherState.Thunderstorm
+            ? 560f + WindStrength * 80f
+            : 300f + WindStrength * 40f;
         foreach (Line2D streak in _rainStreaks)
         {
             streak.Position += new Vector2(-speed * 0.42f, speed) * dt;
@@ -174,14 +200,16 @@ public partial class WeatherController : Node
         }
 
         QueueNextLightning();
-        _lightningFlash.Color = new Color(0.75f, 0.86f, 1f, 0.38f);
+        _lightningFlash.Color = new Color(0.75f, 0.86f, 1f, 0.38f + WindStrength * 0.12f);
         Tween tween = CreateTween();
         tween.TweenProperty(_lightningFlash, "color:a", 0f, 0.18f);
+        EmitSignal(SignalName.LightningStruck);
+        WeatherAmbience.PlayThunder(this);
     }
 
     private void QueueNextLightning()
     {
-        _lightningTimer = (float)GD.RandRange(3.5, 7.5);
+        _lightningTimer = (float)GD.RandRange(_lightningMin, _lightningMax);
     }
 
     private static WeatherState NextState(WeatherState state)

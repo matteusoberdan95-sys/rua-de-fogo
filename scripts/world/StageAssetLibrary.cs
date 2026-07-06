@@ -269,6 +269,7 @@ public static class StageAssetLibrary
             new Vector2(-12f, -7f), new Vector2(14f, -5f), new Vector2(10f, 10f), new Vector2(-10f, 8f)
         ], 0);
         ctx.WindItems.Add(paper);
+        paper.AddToGroup("wind_prop");
     }
 
     private static Node2D AddNode(Node parent, string name, Vector2 position, int z)

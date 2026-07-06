@@ -294,15 +294,20 @@
 - [x] Meio-fio, faixa central, calcada tileada e marcas de pneu.
 - [x] `docs/STAGE_ASSET_PIPELINE.md` + pasta `art/stage/vila-esperanca/`.
 - [x] Validar `dotnet build SangueNoAsfalto.csproj`.
+- [x] `StageAssetLibrary` + landmarks + pipeline documentado.
 - [x] Validar Sprint 32 no Godot com F5.
 - [x] Fechar sprint apos validacao.
 
 ## Marco 0.30 - Clima E Rua Viva Como Gameplay (Sprint 33)
 
-- [ ] Revisar estados de clima/horario por ato.
-- [ ] Criar eventos simples de relampago, apagao, poca ou vento.
-- [ ] Definir clima-assinatura de mini-chefes/bosses.
-- [ ] Manter clima dramatico sem esconder combate.
+- [x] `StageClimateProfile` + `StageClimateDirector` por ato da fase.
+- [x] Pocas de lama (slow) e eletricas (dano no raio).
+- [x] Vento empurra props (`wind_prop`); apagao nos chefes Rain/Alpha.
+- [x] SFX placeholder trovao/chuva (`WeatherAmbience`).
+- [x] Assinatura climatica mini-chefe e chefes finais.
+- [x] Validar `dotnet build SangueNoAsfalto.csproj`.
+- [ ] Validar Sprint 33 no Godot com F5.
+- [ ] Fechar sprint apos validacao.
 
 ## Marco 0.31 - Demo Vertical Slice E QC (Sprint 34)
 

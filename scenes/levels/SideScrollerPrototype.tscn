@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world/VilaEsperancaParallax.tscn" id="1_parallax"]
 [ext_resource type="PackedScene" path="res://scenes/actors/SideScrollerPlayer.tscn" id="1_player"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/ui/ScreenshotModeHelper.cs" id="5_screenshot"]
 [ext_resource type="Script" path="res://scripts/world/TimeOfDayController.cs" id="6_time"]
 [ext_resource type="Script" path="res://scripts/world/WeatherController.cs" id="7_weather"]
+[ext_resource type="Script" path="res://scripts/world/StageClimateDirector.cs" id="7_climate"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/HealthPickup.tscn" id="8_healthpickup"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/WeaponPickup.tscn" id="9_weaponpickup"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/ContinuePickup.tscn" id="10_continuepickup"]
@@ -61,6 +62,9 @@ script = ExtResource("7_weather")
 InitialState = 1
 AutoCycle = false
 SecondsPerState = 22.0
+
+[node name="StageClimateDirector" type="Node" parent="."]
+script = ExtResource("7_climate")
 
 [node name="Sky" type="Polygon2D" parent="."]
 visible = false

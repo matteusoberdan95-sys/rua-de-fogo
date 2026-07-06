@@ -395,6 +395,7 @@ public partial class LayeredStreetPrototype : Node2D
                 new Vector2(-16f, 0f), new Vector2(18f, 2f), new Vector2(14f, 48f), new Vector2(-18f, 42f)
             ], 0);
             _ctx.WindItems.Add(cloth);
+            cloth.AddToGroup("wind_prop");
         }
     }
 
@@ -433,6 +434,7 @@ public partial class LayeredStreetPrototype : Node2D
             new Vector2(-12f, -7f), new Vector2(14f, -5f), new Vector2(10f, 10f), new Vector2(-10f, 8f)
         ], 0);
         _ctx.WindItems.Add(paper);
+        paper.AddToGroup("wind_prop");
     }
 
     private void AddBottleShard(Node2D root, float x, float y, int seed)

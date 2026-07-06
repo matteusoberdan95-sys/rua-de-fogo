@@ -59,6 +59,14 @@ public partial class SideScrollerDirector : Node
 
     public string StatusText { get; private set; } = "A rua acordou errada";
 
+    public void SetClimateHint(string text)
+    {
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            StatusText = text;
+        }
+    }
+
     public string ObjectiveText { get; private set; } = "Atravesse a Vila Esperanca";
 
     public bool HasCheckpoint { get; private set; }
@@ -80,6 +88,7 @@ public partial class SideScrollerDirector : Node
     private Health? _playerHealth;
     private WeatherController? _weather;
     private TimeOfDayController? _timeOfDay;
+    private StageClimateDirector? _climate;
     private bool _completed;
     private bool _gameOver;
     private bool _f1WasDown;
@@ -98,10 +107,21 @@ public partial class SideScrollerDirector : Node
         InputBootstrap.ApplyAlternateControls(SaveManager.Current.AlternateControls);
         _weather = GetNodeOrNull<WeatherController>(WeatherControllerPath);
         _timeOfDay = GetNodeOrNull<TimeOfDayController>(TimeOfDayControllerPath);
+        _climate = GetNodeOrNull<StageClimateDirector>("../StageClimateDirector");
+        _climate ??= GetTree().GetFirstNodeInGroup("climate_director") as StageClimateDirector;
         _spawnEntries.AddRange(StageScrollSpawns.BuildVilaEsperancaRun());
         FindPlayer();
         ApplyRespawnState();
-        ApplyAtmosphereForProgress(0f);
+        if (_weather is not null)
+        {
+            _weather.AutoCycle = false;
+        }
+
+        if (_timeOfDay is not null)
+        {
+            _timeOfDay.AutoCycle = false;
+        }
+
         ObjectiveText = "Atravesse a Vila Esperanca";
     }
 
@@ -166,7 +186,7 @@ public partial class SideScrollerDirector : Node
             SpawnStageEnemy(_spawnQueue.Dequeue().Entry);
         }
 
-        ApplyAtmosphereForProgress(playerX);
+        ApplyClimateProgress(playerX);
         EnemiesRemaining = CountLivingEnemies();
 
         if (_runCompletePending)
@@ -265,6 +285,14 @@ public partial class SideScrollerDirector : Node
         Tween fade = enemy.CreateTween();
         fade.TweenProperty(enemy, "modulate:a", 1f, 0.28f);
 
+        if (entry.Kind is StageScrollSpawns.SpawnKind.MiniBoss
+            or StageScrollSpawns.SpawnKind.RainBoss
+            or StageScrollSpawns.SpawnKind.AlphaBoss)
+        {
+            enemy.SetMeta("stage_boss_kind", (int)entry.Kind);
+            _climate?.NotifyBossSpawned(entry.Kind);
+        }
+
         if (entry.Kind is not StageScrollSpawns.SpawnKind.StatusOnly
             and not StageScrollSpawns.SpawnKind.Checkpoint)
         {
@@ -291,26 +319,10 @@ public partial class SideScrollerDirector : Node
         };
     }
 
-    private void ApplyAtmosphereForProgress(float playerX)
+    private void ApplyClimateProgress(float playerX)
     {
-        if (_weather is not null)
-        {
-            _weather.AutoCycle = false;
-            _weather.SetState(playerX switch
-            {
-                < 200f => WeatherController.WeatherState.Drizzle,
-                < 2200f => WeatherController.WeatherState.HeavyRain,
-                _ => WeatherController.WeatherState.Thunderstorm,
-            });
-        }
-
-        if (_timeOfDay is not null)
-        {
-            _timeOfDay.AutoCycle = false;
-            _timeOfDay.SetState(playerX < 400f
-                ? TimeOfDayController.TimeOfDayState.Sunset
-                : TimeOfDayController.TimeOfDayState.Night);
-        }
+        // Clima/horario por ato: StageClimateDirector (Sprint 33).
+        _ = playerX;
     }
 
     private void UnlockCheckpoint()
