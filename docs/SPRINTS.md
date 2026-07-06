@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 32 - Cenario Fase 1 Com Assets Finais` (implementada / aguardando validacao no Godot).
+Sprint atual: `Sprint 33 - Clima E Rua Viva Como Gameplay` (planejada).
 
-Ultima sprint concluida: `Sprint 31 - Personagens E Inimigos Expressivos` (validada no Godot).
+Ultima sprint concluida: `Sprint 32 - Cenario Fase 1 Com Assets Finais` (validada no Godot).
 
 Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/STAGE_ASSET_PIPELINE.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
@@ -1143,9 +1143,9 @@ Validacao:
 - telegraph legivel, morte visivel, combate mais lento e com peso;
 - inimigos distinguiveis; Caua com leitura de lutador aprovada.
 
-## Sprint 32 - Cenario Fase 1 Com Assets Finais (implementada)
+## Sprint 32 - Cenario Fase 1 Com Assets Finais (concluida)
 
-Status: implementada / aguardando validacao no Godot.
+Status: concluida e validada no Godot (06/07/2026).
 
 Objetivo: transformar a Vila Esperanca de cenario bom de prototipo para cenario com cara de fase real: lojas, postes, lixo, pocas, muros, placas, barracos e profundidade visual.
 
@@ -1159,10 +1159,11 @@ Entregas implementadas:
 - **`art/stage/vila-esperanca/`** + `tools/setup-stage-art-folders.ps1`;
 - `dotnet build` validado com 0 erros e 0 avisos.
 
-Validacao pendente:
+Validacao:
 
-- F5 no Godot: percorrer fase inteira e confirmar landmarks, postes, chao e leitura lateral;
-- comparar com ref `02-stage-vila-esperanca-side-scroller.png`.
+- validada no Godot pelo usuario em 06/07/2026;
+- landmarks por ato, postes com pool de luz, chao legivel e leitura lateral aprovados;
+- pipeline `docs/STAGE_ASSET_PIPELINE.md` pronto para substituicao gradual por sprites Krita.
 
 ## Sprint 33 - Clima E Rua Viva Como Gameplay (planejada)
 

@@ -294,8 +294,8 @@
 - [x] Meio-fio, faixa central, calcada tileada e marcas de pneu.
 - [x] `docs/STAGE_ASSET_PIPELINE.md` + pasta `art/stage/vila-esperanca/`.
 - [x] Validar `dotnet build SangueNoAsfalto.csproj`.
-- [ ] Validar Sprint 32 no Godot com F5.
-- [ ] Fechar sprint apos validacao.
+- [x] Validar Sprint 32 no Godot com F5.
+- [x] Fechar sprint apos validacao.
 
 ## Marco 0.30 - Clima E Rua Viva Como Gameplay (Sprint 33)
 

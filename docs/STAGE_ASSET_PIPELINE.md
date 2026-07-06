@@ -68,4 +68,4 @@ Cria estrutura em `art/stage/vila-esperanca/` (props, tiles, landmarks).
 - [x] Chao com guia, meio-fio e faixa central
 - [x] Postes com cor oficial e pool de luz
 - [x] Pipeline documentado para export Krita → Godot
-- [ ] Validacao F5 no Godot (aguardando playtest)
+- [x] Validacao F5 no Godot (06/07/2026)

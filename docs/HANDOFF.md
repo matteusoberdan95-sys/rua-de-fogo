@@ -266,16 +266,14 @@ Estado da Sprint 30:
 
 Proximo passo recomendado:
 
-1. **validar Sprint 32 no Godot (F5)** — landmarks, postes, chao e leitura lateral;
-2. iniciar **Sprint 33** — clima e rua viva como gameplay;
-3. manter `CombatPacing` e camera/HUD da Sprint 30 como baseline.
+1. iniciar **Sprint 33** — clima e rua viva como gameplay;
+2. manter `CombatPacing` e camera/HUD da Sprint 30 como baseline;
+3. substituir props procedurais por sprites conforme `docs/STAGE_ASSET_PIPELINE.md`.
 
 Estado da Sprint 32:
 
-- implementada em 06/07/2026;
-- `StageAssetLibrary`, `StageActLandmarks`, postes com pool de luz, meio-fio/faixa central;
-- `docs/STAGE_ASSET_PIPELINE.md` e `art/stage/vila-esperanca/` criados;
-- `dotnet build` validado; aguardando playtest F5.
+- concluida e validada no Godot em 06/07/2026;
+- landmarks, postes, chao e leitura lateral aprovados.
 
 Estado da Sprint 31:
 
@@ -283,7 +281,7 @@ Estado da Sprint 31:
 
 Roadmap planejado:
 
-- Sprint 32: cenario da Fase 1 com assets finais (implementada — validar F5);
+- Sprint 32: cenario da Fase 1 com assets finais (concluida);
 - Sprint 33: clima e rua viva como gameplay;
 - Sprint 34: demo vertical slice e QC.
 
@@ -375,9 +373,9 @@ Estado da Sprint 17:
 
 Proximo passo recomendado atual:
 
-1. validar Sprint 32 no Godot (F5) — percorrer fase e confirmar landmarks/postes/chao;
-2. iniciar Sprint 33 — clima e rua viva como gameplay;
-3. manter Sprint 30 como baseline de camera/HUD/chuva.
+1. iniciar Sprint 33 — clima e rua viva como gameplay;
+2. manter Sprint 30 como baseline de camera/HUD/chuva;
+3. exportar primeiros props Krita usando `docs/STAGE_ASSET_PIPELINE.md`.
 
 ## Regra Obrigatoria De Sprint
 
