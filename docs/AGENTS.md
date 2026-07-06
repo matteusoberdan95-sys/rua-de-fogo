@@ -13,17 +13,17 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 32 - Cenario Fase 1 Com Assets Finais` (planejada).
+Sprint atual: `Sprint 40 - Art Pipeline Real` (iniciada).
 
 Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro.
 
-Direcao visual atual: Sprint 31 validou personagens expressivos e ritmo de combate (`CombatPacing`). Sprint 32 = assets finais do cenario Vila Esperanca.
+Direcao visual atual: Sprint 39 confirmou o limite do rig procedural como arte final. Sprint 40 inicia production art real em `art/production/`.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 
 Pilar novo: clima, horario e rua viva fazem parte da identidade do jogo. Nao tratar chuva, noite, vento e tempestade como simples filtro visual.
 
-Regra visual atual: imagens de referencia guiam o resultado, mas nao devem virar imagem chapada no gameplay ativo. Personagens e cenario devem caminhar para rigs/sprite sheets/layers separados.
+Regra visual atual: `references/` e moodboard e nao entra no runtime. `art/production/` e o caminho oficial para sprites, cenarios, props e FX criados para o jogo.
 
 ## Regra Obrigatoria De Sprint
 
@@ -48,6 +48,7 @@ Foco atual:
 - ajustar velocidade, dash, stamina e combo;
 - garantir que cada mudanca continue jogavel.
 - preservar a camera/HUD validados na Sprint 30 enquanto novas poses de personagem entram.
+- tratar `CharacterSpriteVisual` como fallback jogavel enquanto production art entra.
 
 Proximas entregas:
 
@@ -67,6 +68,7 @@ Foco atual:
 - preparar variacoes futuras com o mesmo contrato visual;
 - preservar ataques telegrafados.
 - liderar Sprint 31 nas silhuetas e poses dos inimigos comuns/variantes.
+- preparar Quebra-Osso production art v0 na Sprint 42.
 
 Proximas entregas:
 
@@ -86,6 +88,7 @@ Foco atual:
 - garantir que `CharacterSpriteVisual` e `LayeredStreetPrototype` sejam ponte para arte final;
 - documentar caminhos importantes;
 - revisar mudancas antes de escalar o projeto.
+- criar arquitetura de fallback entre production art e rig procedural.
 
 Proximas entregas:
 
@@ -105,6 +108,7 @@ Foco atual:
 - cuidar de Git e versoes;
 - manter docs/README/HANDOFF atualizados antes de trocar de maquina.
 - garantir que cada sprint visual termine com docs atualizados, build validado e push.
+- manter `art/production/` organizado e rastreavel no Git.
 
 Proximas entregas:
 
@@ -126,6 +130,7 @@ Foco atual:
 - impedir que mockups de referencia sejam tratados como arte final.
 - cobrar que a Vila Esperanca conte historia visual, nao seja so fundo escuro.
 - guiar Sprint 31 com prioridade em Caua, Quebra-Osso e inimigos reconheciveis em print parado.
+- guiar Sprint 40 para que Caua, Quebra-Osso e Vila Esperanca tenham assets reais, nao somente blocagem procedural.
 
 Proximas entregas:
 
@@ -205,4 +210,3 @@ Proximas entregas:
 - manter backend fora da Sprint 02;
 - documentar ideias futuras sem implementar;
 - avaliar save local antes de qualquer API.
-

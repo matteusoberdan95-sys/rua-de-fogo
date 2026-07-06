@@ -683,13 +683,32 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         int chainLength = MoveCatalog.GetComboLength(ActiveCombatStyle);
-        int nextComboIndex = airKick ? chainLength - 1 : chaining ? (_comboIndex + 1) % chainLength : 0;
+        Vector2 input = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+        bool directional = !airKick && !_isRunning && Mathf.Abs(input.Y) > 0.45f;
+        MartialMoveDefinition move;
 
-        MartialMoveDefinition move = MoveCatalog.ResolveMove(
-            ActiveCombatStyle,
-            nextComboIndex,
-            _isRunning && !airKick,
-            airKick);
+        if (directional && MoveCatalog.TryResolveDirectional(ActiveCombatStyle, input.Y, out MartialMoveDefinition dirMove))
+        {
+            move = dirMove;
+            _comboIndex = move.ImpactComboIndex;
+            ComboChainSlot = -1;
+        }
+        else
+        {
+            int nextComboIndex = airKick ? chainLength - 1 : chaining ? (_comboIndex + 1) % chainLength : 0;
+            move = MoveCatalog.ResolveMove(
+                ActiveCombatStyle,
+                nextComboIndex,
+                _isRunning && !airKick,
+                airKick);
+            _comboIndex = move.ImpactComboIndex;
+            if (!airKick && !_isRunning)
+            {
+                _comboIndex = nextComboIndex;
+            }
+
+            ComboChainSlot = nextComboIndex;
+        }
 
         float staminaCost = MoveCatalog.GetStaminaCost(move, ActiveCombatStyle, _isRunning && !airKick);
         if (CurrentStamina < staminaCost)
@@ -698,15 +717,16 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         CurrentStamina -= staminaCost;
-        _comboIndex = move.ImpactComboIndex;
-        if (!airKick && !_isRunning)
+        if (ComboChainSlot < 0)
         {
-            _comboIndex = nextComboIndex;
+            _comboResetRemaining = ComboResetTime * 0.65f;
+        }
+        else
+        {
+            _comboIndex = ComboChainSlot;
+            _comboResetRemaining = ComboResetTime;
         }
 
-        ComboChainSlot = nextComboIndex;
-
-        _comboResetRemaining = ComboResetTime;
         _isFinisherAttack = false;
         float duration = CombatPacing.ScalePlayerMoveDuration(move.Duration);
         _attackTimeRemaining = duration;

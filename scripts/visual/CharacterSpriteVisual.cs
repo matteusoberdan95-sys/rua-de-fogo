@@ -61,6 +61,8 @@ public partial class CharacterSpriteVisual : Node2D
     private Polygon2D? _painGrimace;
     private Polygon2D? _torsoBlood;
     private Polygon2D? _criticalLimp;
+    private CanvasItem? _caseiraKnife;
+    private CanvasItem? _knifeBlood;
     private Vector2 _basePosition;
     private Vector2 _jumpOffset;
     private Vector2 _movementOffset;
@@ -688,14 +690,19 @@ public partial class CharacterSpriteVisual : Node2D
         SetLayeredState("finisher");
     }
 
-    public void BeginEnemyStrike(float duration, int patternIndex)
+    public void BeginEnemyStrike(float duration, int patternIndex, MoveAnimProfile anim)
     {
         _activeMoveDuration = Mathf.Max(duration, 0.18f);
         _attackComboIndex = patternIndex;
-        _activeMoveAnim = patternIndex == 1 ? MoveAnimProfile.SideKick : MoveAnimProfile.Jab;
+        _activeMoveAnim = anim;
         _layeredState = "attack";
         _stateTime = 0f;
         _impactSpawned = false;
+    }
+
+    public void BeginEnemyStrike(float duration, int patternIndex)
+    {
+        BeginEnemyStrike(duration, patternIndex, patternIndex == 1 ? MoveAnimProfile.SideKick : MoveAnimProfile.Jab);
     }
 
     public void SetAttackCombo(int comboIndex)
@@ -843,7 +850,8 @@ public partial class CharacterSpriteVisual : Node2D
             new Vector2(0f, 34f), new Vector2(-15f, 28f), new Vector2(-22f, 6f)
         }, 0);
         _shirtPulse = AddJoint(_torso, "ShirtPulse", Vector2.Zero, 2);
-        AddSoftPolygon(_shirtPulse, "TorsoCloth", shirt, MakeTorsoSilhouette(), 0);
+        RigShadingLibrary.AddCelShape(_shirtPulse, "TorsoCloth", shirt, MakeTorsoSilhouette(), 0);
+        RigShadingLibrary.AddTorsoShade(_shirtPulse, shirt, shirt.Darkened(0.28f));
         AddPolygon(_shirtPulse, "ChestMark", palette.ChestMark, new[]
         {
             new Vector2(-11f, -2f), new Vector2(9f, -3f), new Vector2(11f, 4f), new Vector2(-11f, 5f)
@@ -865,78 +873,89 @@ public partial class CharacterSpriteVisual : Node2D
 
         if (LayeredPreset == LayeredPrototypePreset.Caua)
         {
-            _clothSway = AddJoint(_torso, "ScarfSway", new Vector2(8f, -14f), 5);
-            AddPolygon(_clothSway, "Scarf", new Color(0.58f, 0.02f, 0.03f), new[]
+            AddPolygon(_torso, "TankTopL", shirt, new[]
             {
-                new Vector2(-4f, -2f), new Vector2(16f, -4f), new Vector2(22f, 8f), new Vector2(6f, 14f), new Vector2(-2f, 6f)
-            }, 0);
-            AddPolygon(_torso, "ShoulderPatch", new Color(0.11f, 0.09f, 0.075f), new[]
-            {
-                new Vector2(-19f, -16f), new Vector2(-8f, -20f), new Vector2(-4f, -8f), new Vector2(-16f, -4f)
+                new Vector2(-17f, -20f), new Vector2(-8f, -22f), new Vector2(-6f, 32f), new Vector2(-16f, 34f)
             }, 5);
-            AddPolygon(_torso, "ShoulderPadR", vest.Darkened(0.05f), new[]
+            AddPolygon(_torso, "TankTopR", shirt, new[]
             {
-                new Vector2(8f, -18f), new Vector2(22f, -22f), new Vector2(24f, -6f), new Vector2(10f, -2f)
+                new Vector2(8f, -21f), new Vector2(17f, -19f), new Vector2(16f, 33f), new Vector2(6f, 32f)
             }, 5);
-            AddPolygon(_torso, "CollarBone", new Color(0.72f, 0.44f, 0.24f), new[]
+            AddPolygon(_torso, "TankNeck", shirt, new[]
             {
-                new Vector2(-10f, -18f), new Vector2(10f, -19f), new Vector2(8f, -14f), new Vector2(-8f, -13f)
+                new Vector2(-8f, -20f), new Vector2(8f, -21f), new Vector2(6f, -10f), new Vector2(-6f, -9f)
             }, 6);
+            AddPolygon(_torso, "CargoPocket", new Color(0.05f, 0.055f, 0.048f), new[]
+            {
+                new Vector2(6f, 18f), new Vector2(16f, 17f), new Vector2(17f, 26f), new Vector2(5f, 27f)
+            }, 4);
+            AddPolygon(_torso, "CargoHem", pants, new[]
+            {
+                new Vector2(-15f, 28f), new Vector2(14f, 30f), new Vector2(12f, 36f), new Vector2(-13f, 35f)
+            }, 4);
         }
         else if (LayeredPreset == LayeredPrototypePreset.Brute)
         {
-            _torso.Scale = new Vector2(1.14f, 1.08f);
+            _torso.Scale = new Vector2(1.22f, 1.14f);
+            AddPolygon(_torso, "ShoulderL", palette.Shirt.Darkened(0.1f), new[]
+            {
+                new Vector2(-24f, -18f), new Vector2(-10f, -22f), new Vector2(-6f, -8f), new Vector2(-20f, -4f)
+            }, 5);
+            AddPolygon(_torso, "ShoulderR", palette.Shirt.Darkened(0.08f), new[]
+            {
+                new Vector2(10f, -21f), new Vector2(24f, -17f), new Vector2(20f, -3f), new Vector2(6f, -7f)
+            }, 5);
+        }
+        else if (LayeredPreset == LayeredPrototypePreset.QuebraOsso)
+        {
+            AddPolygon(_torso, "TankTopL", shirt, new[]
+            {
+                new Vector2(-17f, -18f), new Vector2(-7f, -20f), new Vector2(-5f, 30f), new Vector2(-15f, 32f)
+            }, 5);
+            AddPolygon(_torso, "TankTopR", shirt, new[]
+            {
+                new Vector2(7f, -19f), new Vector2(17f, -17f), new Vector2(15f, 31f), new Vector2(5f, 30f)
+            }, 5);
+        }
+        else if (LayeredPreset == LayeredPrototypePreset.Infected)
+        {
+            AddPolygon(_torso, "ButcherShirt", new Color(0.82f, 0.80f, 0.76f), new[]
+            {
+                new Vector2(-14f, -14f), new Vector2(12f, -16f), new Vector2(14f, 18f), new Vector2(-12f, 20f)
+            }, 5);
         }
         else if (LayeredPreset == LayeredPrototypePreset.Fast)
         {
             _torso.Scale = new Vector2(0.92f, 0.96f);
-            _torso.Rotation = 0.08f;
         }
 
         _frontLeg = AddLegRig(_rig, "FrontLeg", new Vector2(8f, -12f), pants, shoeAccent, z: 6, out _frontLegShin);
+        if (LayeredPreset == LayeredPrototypePreset.Caua)
+        {
+            ApplyCauaSneakers(_frontLegShin, shoeAccent);
+            ApplyCauaSneakers(_backLegShin, shoeAccent);
+        }
+
         _head = AddJoint(_rig, "Head", new Vector2(0f, _headAnchorY), 8);
-        AddPolygon(_head, "Neck", skin.Darkened(0.12f), new[]
-        {
-            new Vector2(-7f, 10f), new Vector2(8f, 10f), new Vector2(7f, 23f), new Vector2(-8f, 22f)
-        }, 0);
-        AddPolygon(_head, "Face", skin, MakeEllipse(0f, 0f, palette.FaceRx, palette.FaceRy, 12), 2);
-        AddPolygon(_head, "JawShadow", skin.Darkened(0.18f), new[]
-        {
-            new Vector2(-10f, 6f), new Vector2(11f, 5f), new Vector2(9f, 14f), new Vector2(-8f, 15f)
-        }, 3);
-        AddPolygon(_head, "Brow", new Color(0.075f, 0.045f, 0.035f), new[]
-        {
-            new Vector2(-9f, -4f), new Vector2(10f, -7f), new Vector2(14f, -3f), new Vector2(-8f, 1f)
-        }, 4);
-        AddPolygon(_head, "Nose", new Color(0.72f, 0.45f, 0.24f), new[]
-        {
-            new Vector2(8f, -1f), new Vector2(17f, 3f), new Vector2(7f, 7f)
-        }, 5);
-        AddPolygon(_head, "EarL", skin.Darkened(0.15f), MakeEllipse(-14f, 2f, 4f, 6f, 6), 1);
-        AddPolygon(_head, "EarR", skin.Darkened(0.15f), MakeEllipse(14f, 1f, 4f, 6f, 6), 1);
-        AddPolygon(_head, "Mouth", new Color(0.28f, 0.08f, 0.07f), new[]
-        {
-            new Vector2(-6f, 10f), new Vector2(6f, 10f), new Vector2(4f, 14f), new Vector2(-4f, 14f)
-        }, 6);
-        AddEnemyEyes(_head, palette);
+        BuildProfileHead(_head, skin, palette);
         _blackEye = AddPolygon(_head, "BlackEye", new Color(0.32f, 0.1f, 0.48f, 0.92f), new[]
         {
-            new Vector2(-10f, -3f), new Vector2(-2f, -5f), new Vector2(-1f, 2f), new Vector2(-11f, 4f)
+            new Vector2(4f, -4f), new Vector2(12f, -6f), new Vector2(11f, 1f), new Vector2(3f, 2f)
         }, 9);
         _blackEye.Visible = false;
         _noseBleed = AddPolygon(_head, "NoseBleed", new Color(0.48f, 0.01f, 0.02f, 0.88f), new[]
         {
-            new Vector2(10f, 4f), new Vector2(14f, 3f), new Vector2(13f, 9f), new Vector2(9f, 10f)
+            new Vector2(12f, 5f), new Vector2(15f, 4f), new Vector2(14f, 10f), new Vector2(11f, 11f)
         }, 9);
         _noseBleed.Visible = false;
         _noseBleedDrip = AddPolygon(_head, "NoseBleedDrip", new Color(0.55f, 0.01f, 0.02f, 0.75f), new[]
         {
-            new Vector2(11f, 10f), new Vector2(13f, 10f), new Vector2(12f, 16f), new Vector2(10f, 16f)
+            new Vector2(13f, 11f), new Vector2(15f, 11f), new Vector2(14f, 17f), new Vector2(12f, 17f)
         }, 10);
         _noseBleedDrip.Visible = false;
         _bloodSmearFace = AddPolygon(_head, "BloodSmearFace", new Color(0.42f, 0.01f, 0.02f, 0.72f), new[]
         {
-            new Vector2(4f, 6f), new Vector2(16f, 4f), new Vector2(18f, 12f), new Vector2(6f, 14f)
+            new Vector2(6f, 2f), new Vector2(16f, 0f), new Vector2(17f, 10f), new Vector2(5f, 12f)
         }, 9);
         _bloodSmearFace.Visible = false;
         _shirtTear = AddPolygon(_torso, "ShirtTear", new Color(0.04f, 0.04f, 0.045f, 0.85f), new[]
@@ -946,32 +965,50 @@ public partial class CharacterSpriteVisual : Node2D
         _shirtTear.Visible = false;
         _faceBruise = AddPolygon(_head, "FaceBruise", new Color(0.38f, 0.08f, 0.12f, 0.88f), new[]
         {
-            new Vector2(-12f, -2f), new Vector2(-2f, -4f), new Vector2(0f, 4f), new Vector2(-10f, 6f)
+            new Vector2(-4f, -2f), new Vector2(6f, -4f), new Vector2(5f, 4f), new Vector2(-5f, 5f)
         }, 7);
         _faceBruise.Visible = false;
         _painGrimace = AddPolygon(_head, "PainGrimace", new Color(0.42f, 0.06f, 0.08f, 0.92f), new[]
         {
-            new Vector2(-7f, 8f), new Vector2(7f, 8f), new Vector2(5f, 12f), new Vector2(0f, 10f), new Vector2(-5f, 12f)
+            new Vector2(2f, 12f), new Vector2(12f, 11f), new Vector2(10f, 16f), new Vector2(6f, 15f), new Vector2(2f, 16f)
         }, 8);
         _painGrimace.Visible = false;
         _hair = AddJoint(_head, "Hair", new Vector2(-1f, -12f), 6);
-        AddPolygon(_hair, "HairSpikes", palette.HairColor, palette.HairShape, 0);
-        _hairTail = AddJoint(_hair, "HairTail", new Vector2(6f, 6f), 1);
-        AddPolygon(_hairTail, "TailStrand", palette.HairTailColor, new[]
+        switch (LayeredPreset)
         {
-            new Vector2(-3f, 0f), new Vector2(8f, -2f), new Vector2(12f, 10f), new Vector2(0f, 12f)
-        }, 0);
+            case LayeredPrototypePreset.Caua:
+                AddPolygon(_hair, "BuzzCut", palette.HairColor, MakeEllipse(0f, -8f, 13f, 5f, 10), 0);
+                break;
+            case LayeredPrototypePreset.QuebraOsso:
+            case LayeredPrototypePreset.Brute:
+                AddPolygon(_hair, "BaldScalp", skin.Darkened(0.06f), MakeEllipse(0f, -6f, palette.FaceRx - 1f, 4f, 10), 0);
+                break;
+            case LayeredPrototypePreset.MiniBoss:
+                AddPolygon(_hair, "GreyHair", palette.HairColor, MakeEllipse(0f, -7f, 12f, 4.5f, 10), 0);
+                AddPolygon(_head, "Mustache", new Color(0.14f, 0.11f, 0.09f), new[]
+                {
+                    new Vector2(-8f, 9f), new Vector2(9f, 8f), new Vector2(7f, 13f), new Vector2(0f, 14f), new Vector2(-7f, 13f)
+                }, 7);
+                break;
+            case LayeredPrototypePreset.Infected:
+                AddPolygon(_hair, "ShortHair", palette.HairColor, MakeEllipse(0f, -6f, 11f, 4f, 10), 0);
+                break;
+            default:
+                AddPolygon(_hair, "HairSpikes", palette.HairColor, palette.HairShape, 0);
+                _hairTail = AddJoint(_hair, "HairTail", new Vector2(6f, 6f), 1);
+                AddPolygon(_hairTail, "TailStrand", palette.HairTailColor, new[]
+                {
+                    new Vector2(-3f, 0f), new Vector2(8f, -2f), new Vector2(12f, 10f), new Vector2(0f, 12f)
+                }, 0);
+                break;
+        }
 
-        if (LayeredPreset == LayeredPrototypePreset.Caua)
+        if (LayeredPreset == LayeredPrototypePreset.QuebraOsso || LayeredPreset == LayeredPrototypePreset.Fast)
         {
-            AddPolygon(_hair, "HairStrandA", new Color(0.045f, 0.032f, 0.026f), new[]
+            AddPolygon(_head, "Goatee", new Color(0.06f, 0.04f, 0.035f), new[]
             {
-                new Vector2(-12f, -2f), new Vector2(-6f, -16f), new Vector2(-2f, -4f)
-            }, 1);
-            AddPolygon(_hair, "HairStrandB", new Color(0.04f, 0.028f, 0.022f), new[]
-            {
-                new Vector2(6f, -1f), new Vector2(12f, -15f), new Vector2(8f, -3f)
-            }, 1);
+                new Vector2(-5f, 12f), new Vector2(6f, 11f), new Vector2(4f, 20f), new Vector2(0f, 22f), new Vector2(-4f, 20f)
+            }, 7);
         }
 
         _frontArm = AddArmRig(_rig, "FrontArm", new Vector2(15f, -58f), skin.Lightened(0.04f), z: 10, knuckles: palette.ShowKnuckles, out _frontArmForearm);
@@ -985,6 +1022,11 @@ public partial class CharacterSpriteVisual : Node2D
             {
                 new Vector2(-4f, -2f), new Vector2(5f, -3f), new Vector2(4f, 2f), new Vector2(-3f, 3f)
             }, 6);
+            Node2D knifeRoot = AddJoint(_frontArmForearm, "CaseiraKnifeRoot", Vector2.Zero, 7);
+            RigShadingLibrary.BuildCaseiraKnife(knifeRoot, out _, out CanvasItem? blood);
+            _caseiraKnife = knifeRoot;
+            _knifeBlood = blood;
+            SetCaseiraKnifeVisible(false);
         }
 
         _sidearm = AddJoint(_frontArmForearm, "Sidearm", new Vector2(14f, 8f), 9);
@@ -1012,21 +1054,16 @@ public partial class CharacterSpriteVisual : Node2D
         switch (LayeredPreset)
         {
             case LayeredPrototypePreset.QuebraOsso:
-                if (_torso is not null)
-                {
-                    _torso.Rotation = 0.1f;
-                }
-
                 if (_head is not null)
                 {
-                    _head.Position = new Vector2(2f, _headAnchorY + 2f);
+                    _head.Position = new Vector2(0f, _headAnchorY);
                 }
 
                 break;
             case LayeredPrototypePreset.Infected:
-                if (_head is not null)
+                if (_torso is not null)
                 {
-                    _head.Rotation = 0.06f;
+                    _torso.Scale = new Vector2(1.1f, 1.08f);
                 }
 
                 break;
@@ -1063,6 +1100,7 @@ public partial class CharacterSpriteVisual : Node2D
         public float HeadYOffset { get; init; }
         public float FaceRx { get; init; }
         public float FaceRy { get; init; }
+        public float HeadScale { get; init; }
         public bool ShowKnuckles { get; init; }
         public bool CorruptedEyes { get; init; }
     }
@@ -1083,136 +1121,142 @@ public partial class CharacterSpriteVisual : Node2D
                 HairColor = new Color(0.035f, 0.025f, 0.02f),
                 HairTailColor = new Color(0.05f, 0.035f, 0.028f),
                 EyeGlow = Colors.Transparent,
-                HairShape =
-                [
-                    new Vector2(-15f, 4f), new Vector2(-10f, -14f), new Vector2(-4f, -5f), new Vector2(1f, -19f),
-                    new Vector2(5f, -5f), new Vector2(14f, -13f), new Vector2(10f, 4f)
-                ],
-                RigScale = Vector2.One,
-                HeadYOffset = -96f,
-                FaceRx = 13f,
-                FaceRy = 17f,
+                HairShape = MakeEllipse(0f, -6f, 12f, 5f, 10),
+                RigScale = new Vector2(0.94f, 1.08f),
+                HeadYOffset = -104f,
+                FaceRx = 10f,
+                FaceRy = 12f,
+                HeadScale = 0.82f,
                 ShowKnuckles = true,
                 CorruptedEyes = false,
             },
             LayeredPrototypePreset.Fast => new PresetPalette
             {
-                Skin = new Color(0.42f, 0.24f, 0.16f),
-                Pants = new Color(0.04f, 0.038f, 0.042f),
-                Shirt = new Color(0.22f, 0.018f, 0.03f),
-                Vest = new Color(0.08f, 0.02f, 0.025f),
-                ShoeAccent = new Color(0.14f, 0.12f, 0.1f),
-                ChestMark = new Color(0.55f, 0.04f, 0.05f, 0.55f),
-                HemColor = new Color(0.18f, 0.01f, 0.02f),
-                HairColor = new Color(0.025f, 0.018f, 0.015f),
-                HairTailColor = new Color(0.03f, 0.022f, 0.018f),
-                EyeGlow = new Color(0.75f, 1f, 0.18f),
-                HairShape = MakeEllipse(0f, -4f, 11f, 7f, 10),
-                RigScale = new Vector2(0.84f, 0.84f),
-                HeadYOffset = -88f,
-                FaceRx = 11f,
-                FaceRy = 14f,
+                Skin = new Color(0.50f, 0.29f, 0.17f),
+                Pants = new Color(0.14f, 0.16f, 0.08f),
+                Shirt = new Color(0.24f, 0.22f, 0.1f),
+                Vest = new Color(0.2f, 0.18f, 0.08f),
+                ShoeAccent = new Color(0.18f, 0.14f, 0.1f),
+                ChestMark = new Color(0.82f, 0.78f, 0.66f, 0.7f),
+                HemColor = new Color(0.14f, 0.012f, 0.018f),
+                HairColor = new Color(0.03f, 0.02f, 0.018f),
+                HairTailColor = new Color(0.03f, 0.02f, 0.018f),
+                EyeGlow = Colors.Transparent,
+                HairShape = MakeEllipse(0f, -4f, 10f, 4f, 10),
+                RigScale = new Vector2(0.84f, 1.06f),
+                HeadYOffset = -101f,
+                FaceRx = 9.5f,
+                FaceRy = 11.5f,
+                HeadScale = 0.80f,
                 ShowKnuckles = true,
-                CorruptedEyes = true,
+                CorruptedEyes = false,
+            },
+            LayeredPrototypePreset.QuebraOsso => new PresetPalette
+            {
+                Skin = new Color(0.48f, 0.28f, 0.16f),
+                Pants = new Color(0.12f, 0.17f, 0.07f),
+                Shirt = new Color(0.30f, 0.34f, 0.14f),
+                Vest = new Color(0.26f, 0.30f, 0.12f),
+                ShoeAccent = new Color(0.22f, 0.14f, 0.08f),
+                ChestMark = new Color(0.78f, 0.74f, 0.62f, 0.65f),
+                HemColor = new Color(0.10f, 0.14f, 0.06f),
+                HairColor = new Color(0.04f, 0.03f, 0.025f),
+                HairTailColor = new Color(0.04f, 0.03f, 0.025f),
+                EyeGlow = Colors.Transparent,
+                HairShape = MakeEllipse(0f, -3f, 12f, 3.5f, 10),
+                RigScale = new Vector2(1.0f, 1.08f),
+                HeadYOffset = -102f,
+                FaceRx = 10.5f,
+                FaceRy = 12.5f,
+                HeadScale = 0.84f,
+                ShowKnuckles = true,
+                CorruptedEyes = false,
             },
             LayeredPrototypePreset.Brute => new PresetPalette
             {
-                Skin = new Color(0.48f, 0.27f, 0.17f),
-                Pants = new Color(0.12f, 0.055f, 0.08f),
-                Shirt = new Color(0.31f, 0.025f, 0.035f),
-                Vest = new Color(0.08f, 0.04f, 0.045f),
-                ShoeAccent = new Color(0.2f, 0.16f, 0.13f),
-                ChestMark = new Color(0.62f, 0.05f, 0.04f, 0.7f),
-                HemColor = new Color(0.22f, 0.012f, 0.015f),
+                Skin = new Color(0.42f, 0.26f, 0.16f),
+                Pants = new Color(0.72f, 0.68f, 0.58f),
+                Shirt = new Color(0.82f, 0.66f, 0.14f),
+                Vest = new Color(0.76f, 0.58f, 0.12f),
+                ShoeAccent = new Color(0.22f, 0.16f, 0.1f),
+                ChestMark = new Color(0.38f, 0.22f, 0.06f, 0.55f),
+                HemColor = new Color(0.62f, 0.48f, 0.1f),
                 HairColor = new Color(0.02f, 0.015f, 0.012f),
                 HairTailColor = new Color(0.025f, 0.018f, 0.015f),
-                EyeGlow = new Color(1f, 0.58f, 0.08f),
-                HairShape = MakeEllipse(0f, -2f, 14f, 9f, 10),
-                RigScale = new Vector2(1.16f, 1.16f),
-                HeadYOffset = -100f,
-                FaceRx = 15f,
-                FaceRy = 18f,
+                EyeGlow = Colors.Transparent,
+                HairShape = MakeEllipse(0f, -2f, 12f, 6f, 10),
+                RigScale = new Vector2(1.18f, 1.22f),
+                HeadYOffset = -108f,
+                FaceRx = 12f,
+                FaceRy = 14f,
+                HeadScale = 0.90f,
                 ShowKnuckles = true,
-                CorruptedEyes = true,
+                CorruptedEyes = false,
             },
             LayeredPrototypePreset.Infected => new PresetPalette
             {
-                Skin = new Color(0.38f, 0.46f, 0.28f),
-                Pants = new Color(0.08f, 0.12f, 0.06f),
-                Shirt = new Color(0.06f, 0.14f, 0.05f),
-                Vest = new Color(0.05f, 0.1f, 0.04f),
-                ShoeAccent = new Color(0.12f, 0.18f, 0.08f),
-                ChestMark = new Color(0.42f, 0.72f, 0.18f, 0.55f),
-                HemColor = new Color(0.1f, 0.22f, 0.06f),
-                HairColor = new Color(0.04f, 0.06f, 0.03f),
-                HairTailColor = new Color(0.05f, 0.08f, 0.04f),
-                EyeGlow = new Color(0.55f, 1f, 0.35f),
-                HairShape = MakeEllipse(0f, -3f, 12f, 8f, 10),
-                RigScale = new Vector2(1.04f, 1.04f),
-                HeadYOffset = -94f,
-                FaceRx = 12f,
-                FaceRy = 16f,
-                ShowKnuckles = true,
-                CorruptedEyes = true,
+                Skin = new Color(0.52f, 0.31f, 0.2f),
+                Pants = new Color(0.22f, 0.12f, 0.06f),
+                Shirt = new Color(0.78f, 0.76f, 0.72f),
+                Vest = new Color(0.86f, 0.84f, 0.8f),
+                ShoeAccent = new Color(0.2f, 0.14f, 0.1f),
+                ChestMark = new Color(0.52f, 0.03f, 0.04f, 0.75f),
+                HemColor = new Color(0.72f, 0.7f, 0.66f),
+                HairColor = new Color(0.04f, 0.03f, 0.028f),
+                HairTailColor = new Color(0.04f, 0.03f, 0.028f),
+                EyeGlow = Colors.Transparent,
+                HairShape = MakeEllipse(0f, -4f, 11f, 4f, 10),
+                RigScale = new Vector2(1.08f, 1.16f),
+                HeadYOffset = -104f,
+                FaceRx = 10.5f,
+                FaceRy = 13f,
+                HeadScale = 0.88f,
+                ShowKnuckles = false,
+                CorruptedEyes = false,
             },
             LayeredPrototypePreset.MiniBoss => new PresetPalette
             {
-                Skin = new Color(0.44f, 0.26f, 0.17f),
-                Pants = new Color(0.055f, 0.045f, 0.05f),
-                Shirt = new Color(0.28f, 0.015f, 0.026f),
-                Vest = new Color(0.1f, 0.02f, 0.03f),
-                ShoeAccent = new Color(0.22f, 0.14f, 0.1f),
-                ChestMark = new Color(0.78f, 0.09f, 0.035f, 0.86f),
-                HemColor = new Color(0.2f, 0.01f, 0.015f),
-                HairColor = new Color(0.02f, 0.012f, 0.01f),
-                HairTailColor = new Color(0.025f, 0.015f, 0.012f),
-                EyeGlow = new Color(1f, 0.72f, 0.08f),
-                HairShape = MakeEllipse(0f, -2f, 13f, 9f, 10),
-                RigScale = new Vector2(1.22f, 1.22f),
-                HeadYOffset = -102f,
-                FaceRx = 14f,
-                FaceRy = 18f,
-                ShowKnuckles = true,
-                CorruptedEyes = true,
+                Skin = new Color(0.46f, 0.28f, 0.18f),
+                Pants = new Color(0.08f, 0.07f, 0.075f),
+                Shirt = new Color(0.16f, 0.15f, 0.17f),
+                Vest = new Color(0.2f, 0.19f, 0.21f),
+                ShoeAccent = new Color(0.16f, 0.12f, 0.1f),
+                ChestMark = new Color(0.12f, 0.42f, 0.16f, 0.9f),
+                HemColor = new Color(0.14f, 0.13f, 0.15f),
+                HairColor = new Color(0.12f, 0.1f, 0.09f),
+                HairTailColor = new Color(0.12f, 0.1f, 0.09f),
+                EyeGlow = Colors.Transparent,
+                HairShape = MakeEllipse(0f, -2f, 12f, 5f, 10),
+                RigScale = new Vector2(1.08f, 1.16f),
+                HeadYOffset = -104f,
+                FaceRx = 10.5f,
+                FaceRy = 12.5f,
+                HeadScale = 0.86f,
+                ShowKnuckles = false,
+                CorruptedEyes = false,
             },
             _ => new PresetPalette
             {
                 Skin = new Color(0.50f, 0.29f, 0.17f),
-                Pants = new Color(0.17f, 0.085f, 0.28f),
-                Shirt = new Color(0.025f, 0.025f, 0.027f),
-                Vest = new Color(0.055f, 0.06f, 0.055f),
-                ShoeAccent = new Color(0.18f, 0.16f, 0.13f),
+                Pants = new Color(0.14f, 0.16f, 0.08f),
+                Shirt = new Color(0.24f, 0.22f, 0.1f),
+                Vest = new Color(0.2f, 0.18f, 0.08f),
+                ShoeAccent = new Color(0.18f, 0.14f, 0.1f),
                 ChestMark = new Color(0.82f, 0.78f, 0.66f, 0.7f),
                 HemColor = new Color(0.14f, 0.012f, 0.018f),
                 HairColor = new Color(0.03f, 0.02f, 0.018f),
                 HairTailColor = new Color(0.04f, 0.03f, 0.025f),
-                EyeGlow = new Color(1f, 0.82f, 0.12f),
-                HairShape = MakeEllipse(0f, -3f, 12f, 8f, 10),
-                RigScale = Vector2.One,
-                HeadYOffset = -96f,
-                FaceRx = 12f,
-                FaceRy = 16f,
+                EyeGlow = Colors.Transparent,
+                HairShape = MakeEllipse(0f, -4f, 10f, 4f, 10),
+                RigScale = new Vector2(0.96f, 1.06f),
+                HeadYOffset = -101f,
+                FaceRx = 9.5f,
+                FaceRy = 11.5f,
+                HeadScale = 0.82f,
                 ShowKnuckles = true,
-                CorruptedEyes = true,
+                CorruptedEyes = false,
             },
         };
-    }
-
-    private void AddEnemyEyes(Node2D head, PresetPalette palette)
-    {
-        if (!palette.CorruptedEyes)
-        {
-            AddPolygon(head, "EyeL", new Color(0.92f, 0.9f, 0.82f), MakeEllipse(-6f, 1f, 3f, 4f, 6), 6);
-            AddPolygon(head, "EyeR", new Color(0.92f, 0.9f, 0.82f), MakeEllipse(6f, 0f, 3f, 4f, 6), 6);
-            AddPolygon(head, "PupilL", new Color(0.08f, 0.05f, 0.04f), MakeEllipse(-6f, 2f, 1.4f, 2f, 6), 7);
-            AddPolygon(head, "PupilR", new Color(0.08f, 0.05f, 0.04f), MakeEllipse(6f, 1f, 1.4f, 2f, 6), 7);
-            return;
-        }
-
-        AddPolygon(head, "EyeGlowL", palette.EyeGlow, MakeEllipse(-7f, 0f, 4f, 5f, 6), 6);
-        AddPolygon(head, "EyeGlowR", palette.EyeGlow, MakeEllipse(7f, -1f, 4f, 5f, 6), 7);
-        AddPolygon(head, "EyeCoreL", palette.EyeGlow.Lightened(0.35f), MakeEllipse(-7f, 0f, 1.8f, 2.2f, 6), 8);
-        AddPolygon(head, "EyeCoreR", palette.EyeGlow.Lightened(0.35f), MakeEllipse(7f, -1f, 1.8f, 2.2f, 6), 8);
     }
 
     private void AddPresetAccents(PresetPalette palette)
@@ -1223,73 +1267,109 @@ public partial class CharacterSpriteVisual : Node2D
         switch (LayeredPreset)
         {
             case LayeredPrototypePreset.QuebraOsso:
-                AddPolygon(_torso!, "CorruptionVein", new Color(0.36f, 0.04f, 0.08f, 0.72f), new[]
-                {
-                    new Vector2(-14f, -6f), new Vector2(-2f, -10f), new Vector2(8f, 0f), new Vector2(-4f, 8f), new Vector2(-16f, 4f)
-                }, 7);
-                AddPolygon(_frontArm!, "RustKnife", new Color(0.62f, 0.58f, 0.48f), new[]
-                {
-                    new Vector2(6f, 28f), new Vector2(24f, 24f), new Vector2(28f, 30f), new Vector2(8f, 34f)
-                }, 11);
+                RigShadingLibrary.BuildIronPipe(_variantAccentRoot, 24f, -74f, 76f, 12f);
                 break;
             case LayeredPrototypePreset.Fast:
-                AddPolygon(_frontArm!, "ClawA", new Color(0.82f, 0.76f, 0.52f), new[]
-                {
-                    new Vector2(8f, 30f), new Vector2(22f, 26f), new Vector2(30f, 32f), new Vector2(12f, 36f)
-                }, 11);
-                AddPolygon(_frontArm!, "ClawB", new Color(0.82f, 0.76f, 0.52f), new[]
-                {
-                    new Vector2(10f, 34f), new Vector2(26f, 30f), new Vector2(32f, 36f), new Vector2(14f, 40f)
-                }, 11);
-                if (_torso is not null)
-                {
-                    _torso.Rotation = 0.12f;
-                }
+                RigShadingLibrary.BuildIronPipe(_variantAccentRoot, 20f, -66f, 64f, 10f);
                 break;
             case LayeredPrototypePreset.Brute:
-                AddPolygon(_variantAccentRoot, "ConcreteArm", new Color(0.36f, 0.32f, 0.27f), new[]
-                {
-                    new Vector2(34f, -42f), new Vector2(78f, -48f), new Vector2(92f, -18f), new Vector2(48f, -8f)
-                }, 0);
-                AddPolygon(_variantAccentRoot, "ConcreteChunk", new Color(0.46f, 0.43f, 0.36f), new[]
-                {
-                    new Vector2(72f, -52f), new Vector2(118f, -58f), new Vector2(128f, -34f), new Vector2(82f, -26f)
-                }, 1);
+                RigShadingLibrary.AddLeopardPrint(_torso!);
                 break;
             case LayeredPrototypePreset.Infected:
-                AddPolygon(_torso!, "SickVeinA", new Color(0.35f, 0.82f, 0.18f, 0.45f), new[]
+                AddPolygon(_torso!, "ButcherApron", new Color(0.84f, 0.82f, 0.78f), new[]
                 {
-                    new Vector2(-10f, -8f), new Vector2(6f, -12f), new Vector2(12f, 2f), new Vector2(-2f, 6f)
-                }, 7);
-                AddPolygon(_torso!, "SickVeinB", new Color(0.35f, 0.82f, 0.18f, 0.45f), new[]
-                {
-                    new Vector2(4f, 6f), new Vector2(16f, 2f), new Vector2(18f, 18f), new Vector2(2f, 20f)
-                }, 7);
-                AddPolygon(_head!, "BiteMark", new Color(0.22f, 0.42f, 0.08f, 0.75f), new[]
-                {
-                    new Vector2(-8f, 10f), new Vector2(0f, 6f), new Vector2(8f, 11f), new Vector2(0f, 14f)
-                }, 9);
+                    new Vector2(-18f, -8f), new Vector2(16f, -10f), new Vector2(20f, 34f), new Vector2(-16f, 36f)
+                }, 6);
+                RigShadingLibrary.AddApronDetail(_torso!);
+                RigShadingLibrary.BuildButcherCleaver(_variantAccentRoot, 42f, -38f);
                 break;
             case LayeredPrototypePreset.MiniBoss:
-                AddPolygon(_variantAccentRoot, "SpikeL", new Color(0.13f, 0.012f, 0.02f), new[]
+                RigShadingLibrary.AddSuitLapels(_torso!);
+                AddPolygon(_torso!, "OfficialSash", new Color(0.12f, 0.48f, 0.16f), new[]
                 {
-                    new Vector2(-38f, -72f), new Vector2(-62f, -64f), new Vector2(-42f, -52f)
-                }, 0);
-                AddPolygon(_variantAccentRoot, "SpikeR", new Color(0.13f, 0.012f, 0.02f), new[]
+                    new Vector2(-16f, -6f), new Vector2(14f, -8f), new Vector2(18f, 28f), new Vector2(-12f, 30f)
+                }, 7);
+                AddPolygon(_torso!, "SashStripe", new Color(0.82f, 0.68f, 0.08f), new[]
                 {
-                    new Vector2(28f, -76f), new Vector2(58f, -66f), new Vector2(34f, -54f)
-                }, 0);
-                AddPolygon(_variantAccentRoot, "Club", new Color(0.46f, 0.43f, 0.36f), new[]
-                {
-                    new Vector2(52f, -28f), new Vector2(96f, -34f), new Vector2(106f, -8f), new Vector2(58f, 0f)
-                }, 1);
-                AddPolygon(_torso!, "ChestCrack", palette.ChestMark, new[]
-                {
-                    new Vector2(-12f, -17f), new Vector2(14f, -22f), new Vector2(18f, -13f), new Vector2(-8f, -9f),
-                    new Vector2(-18f, -2f), new Vector2(17f, -4f), new Vector2(20f, 4f), new Vector2(-12f, 10f)
+                    new Vector2(-4f, -4f), new Vector2(2f, -5f), new Vector2(6f, 26f), new Vector2(0f, 27f)
                 }, 8);
+                RigShadingLibrary.BuildBaton(_variantAccentRoot, 34f, -42f);
                 break;
         }
+    }
+
+    private void BuildProfileHead(Node2D head, Color skin, PresetPalette palette)
+    {
+        float s = palette.HeadScale;
+        Color shadow = skin.Darkened(0.22f);
+        Color deep = skin.Darkened(0.32f);
+        Color highlight = skin.Lightened(0.1f);
+
+        AddPolygon(head, "Neck", shadow, new[]
+        {
+            new Vector2(-5f * s, 14f * s), new Vector2(7f * s, 14f * s), new Vector2(5f * s, 24f * s), new Vector2(-6f * s, 23f * s)
+        }, 0);
+        AddPolygon(head, "SkullOutline", deep, new[]
+        {
+            new Vector2(-10f * s, -13f * s), new Vector2(5f * s, -16f * s), new Vector2(14f * s, -9f * s),
+            new Vector2(16f * s, 3f * s), new Vector2(12f * s, 15f * s), new Vector2(5f * s, 21f * s),
+            new Vector2(-3f * s, 23f * s), new Vector2(-11f * s, 18f * s), new Vector2(-13f * s, 6f * s),
+            new Vector2(-12f * s, -4f * s)
+        }, 1);
+        AddPolygon(head, "SkullProfile", skin, new[]
+        {
+            new Vector2(-9f * s, -12f * s), new Vector2(4f * s, -15f * s), new Vector2(13f * s, -8f * s),
+            new Vector2(15f * s, 2f * s), new Vector2(12f * s, 13f * s), new Vector2(5f * s, 20f * s),
+            new Vector2(-2f * s, 22f * s), new Vector2(-10f * s, 17f * s), new Vector2(-11f * s, 5f * s),
+            new Vector2(-10f * s, -3f * s)
+        }, 2);
+        AddPolygon(head, "SkullBackShade", shadow, new[]
+        {
+            new Vector2(-11f * s, -8f * s), new Vector2(-3f * s, -10f * s), new Vector2(-2f * s, 18f * s), new Vector2(-11f * s, 16f * s)
+        }, 3);
+        AddPolygon(head, "SkullHighlight", new Color(highlight.R, highlight.G, highlight.B, 0.65f), new[]
+        {
+            new Vector2(2f * s, -10f * s), new Vector2(11f * s, -7f * s), new Vector2(10f * s, 2f * s), new Vector2(1f * s, 0f)
+        }, 4);
+        AddPolygon(head, "BrowRidge", new Color(0.05f, 0.03f, 0.025f), new[]
+        {
+            new Vector2(3f * s, -7f * s), new Vector2(14f * s, -9f * s), new Vector2(13f * s, -4f * s), new Vector2(2f * s, -2f * s)
+        }, 5);
+        AddPolygon(head, "EyeWhite", new Color(0.92f, 0.88f, 0.80f), new[]
+        {
+            new Vector2(6f * s, -4f * s), new Vector2(12f * s, -5f * s), new Vector2(11f * s, -1f * s), new Vector2(5f * s, 0f)
+        }, 6);
+        if (palette.CorruptedEyes)
+        {
+            AddPolygon(head, "EyeGlow", palette.EyeGlow, new[]
+            {
+                new Vector2(6f * s, -4f * s), new Vector2(12f * s, -5f * s), new Vector2(11f * s, -1f * s), new Vector2(5f * s, 0f)
+            }, 7);
+        }
+        else
+        {
+            AddPolygon(head, "Pupil", new Color(0.05f, 0.035f, 0.03f), new[]
+            {
+                new Vector2(8f * s, -3.5f * s), new Vector2(11f * s, -4f * s), new Vector2(10f * s, -1.5f * s), new Vector2(7f * s, -1f * s)
+            }, 7);
+        }
+
+        AddPolygon(head, "NoseBridge", deep, new[]
+        {
+            new Vector2(12f * s, 0f), new Vector2(14f * s, 4f * s), new Vector2(12f * s, 7f * s), new Vector2(10f * s, 5f * s)
+        }, 5);
+        AddPolygon(head, "EarBack", shadow, new[]
+        {
+            new Vector2(-11f * s, 0f), new Vector2(-8f * s, 3f * s), new Vector2(-9f * s, 8f * s), new Vector2(-12f * s, 6f * s)
+        }, 1);
+        AddPolygon(head, "Mouth", new Color(0.22f, 0.06f, 0.05f), new[]
+        {
+            new Vector2(5f * s, 12f * s), new Vector2(11f * s, 11f * s), new Vector2(10f * s, 14f * s), new Vector2(4f * s, 15f * s)
+        }, 7);
+        AddPolygon(head, "JawLine", deep, new[]
+        {
+            new Vector2(-1f * s, 17f * s), new Vector2(9f * s, 16f * s), new Vector2(7f * s, 20f * s), new Vector2(-3f * s, 21f * s)
+        }, 4);
     }
 
     private void AddReadabilitySilhouette(Node2D parent, PresetPalette palette)
@@ -1331,9 +1411,9 @@ public partial class CharacterSpriteVisual : Node2D
     {
         return
         [
-            new Vector2(-15f, -18f), new Vector2(-6f, -20f), new Vector2(8f, -19f), new Vector2(16f, -14f),
-            new Vector2(19f, 2f), new Vector2(15f, 20f), new Vector2(6f, 33f), new Vector2(-4f, 35f),
-            new Vector2(-14f, 30f), new Vector2(-19f, 12f), new Vector2(-18f, -2f)
+            new Vector2(-16f, -24f), new Vector2(-3f, -27f), new Vector2(11f, -25f), new Vector2(18f, -16f),
+            new Vector2(20f, 5f), new Vector2(16f, 27f), new Vector2(7f, 43f), new Vector2(-4f, 44f),
+            new Vector2(-16f, 36f), new Vector2(-21f, 14f), new Vector2(-20f, -4f)
         ];
     }
 
@@ -1341,8 +1421,8 @@ public partial class CharacterSpriteVisual : Node2D
     {
         return
         [
-            new Vector2(-7f, -34f), new Vector2(4f, -36f), new Vector2(9f, -24f), new Vector2(8f, -8f),
-            new Vector2(5f, -2f), new Vector2(-4f, -4f), new Vector2(-9f, -16f), new Vector2(-10f, -28f)
+            new Vector2(-8f, -38f), new Vector2(6f, -40f), new Vector2(12f, -22f), new Vector2(10f, 14f),
+            new Vector2(5f, 23f), new Vector2(-6f, 21f), new Vector2(-12f, 4f), new Vector2(-12f, -26f)
         ];
     }
 
@@ -1350,8 +1430,8 @@ public partial class CharacterSpriteVisual : Node2D
     {
         return
         [
-            new Vector2(-6f, -10f), new Vector2(6f, -11f), new Vector2(7f, 2f), new Vector2(5f, 14f),
-            new Vector2(0f, 16f), new Vector2(-5f, 13f), new Vector2(-7f, 0f)
+            new Vector2(-6f, -12f), new Vector2(6f, -13f), new Vector2(8f, 4f), new Vector2(6f, 22f),
+            new Vector2(1f, 28f), new Vector2(-5f, 25f), new Vector2(-8f, 2f)
         ];
     }
 
@@ -1359,8 +1439,8 @@ public partial class CharacterSpriteVisual : Node2D
     {
         return
         [
-            new Vector2(-5f, -9f), new Vector2(6f, -10f), new Vector2(8f, 0f), new Vector2(7f, 12f),
-            new Vector2(2f, 15f), new Vector2(-4f, 12f), new Vector2(-7f, 2f)
+            new Vector2(-6f, -11f), new Vector2(7f, -12f), new Vector2(10f, 2f), new Vector2(8f, 21f),
+            new Vector2(2f, 25f), new Vector2(-5f, 22f), new Vector2(-8f, 4f)
         ];
     }
 
@@ -1368,16 +1448,27 @@ public partial class CharacterSpriteVisual : Node2D
     {
         return
         [
-            new Vector2(-6f, -5f), new Vector2(7f, -6f), new Vector2(8f, 8f), new Vector2(6f, 17f),
-            new Vector2(0f, 19f), new Vector2(-5f, 16f), new Vector2(-7f, 4f)
+            new Vector2(-7f, -8f), new Vector2(8f, -9f), new Vector2(10f, 10f), new Vector2(7f, 27f),
+            new Vector2(0f, 30f), new Vector2(-6f, 27f), new Vector2(-8f, 5f)
         ];
     }
 
-    private static Polygon2D AddSoftPolygon(Node parent, string name, Color color, Vector2[] points, int z)
+    private static void AddSoftPolygon(Node parent, string name, Color color, Vector2[] points, int z)
     {
-        Color outline = color.Darkened(0.35f);
-        AddPolygon(parent, $"{name}Outline", outline, points, z - 1);
-        return AddPolygon(parent, name, color, points, z);
+        RigShadingLibrary.AddCelShape(parent, name, color, points, z);
+    }
+
+    private static void ApplyCauaSneakers(Node2D shin, Color sneakerRed)
+    {
+        AddPolygon(shin, "SneakerBody", sneakerRed, new[]
+        {
+            new Vector2(-12f, 22f), new Vector2(5f, 21f), new Vector2(20f, 24f), new Vector2(21f, 31f),
+            new Vector2(6f, 34f), new Vector2(-11f, 32f), new Vector2(-14f, 26f)
+        }, 2);
+        AddPolygon(shin, "SoleWhite", new Color(0.88f, 0.86f, 0.82f), new[]
+        {
+            new Vector2(-13f, 30f), new Vector2(20f, 31f), new Vector2(19f, 34f), new Vector2(-12f, 33f)
+        }, 3);
     }
 
     private static Node2D AddLegRig(
@@ -1391,16 +1482,16 @@ public partial class CharacterSpriteVisual : Node2D
     {
         Node2D hip = AddJoint(parent, name, position, z);
         AddSoftPolygon(hip, "Thigh", cloth, MakeThighSilhouette(), 0);
-        shinJoint = AddJoint(hip, "ShinJoint", new Vector2(0f, 22f), 1);
+        shinJoint = AddJoint(hip, "ShinJoint", new Vector2(0f, 24f), 1);
         AddSoftPolygon(shinJoint, "Shin", cloth.Darkened(0.15f), MakeShinSilhouette(), 0);
         AddSoftPolygon(shinJoint, "Boot", new Color(0.09f, 0.06f, 0.045f), new[]
         {
-            new Vector2(-11f, 10f), new Vector2(4f, 9f), new Vector2(16f, 12f), new Vector2(18f, 18f),
-            new Vector2(6f, 20f), new Vector2(-10f, 19f), new Vector2(-13f, 14f)
+            new Vector2(-12f, 22f), new Vector2(5f, 21f), new Vector2(20f, 24f), new Vector2(21f, 31f),
+            new Vector2(7f, 34f), new Vector2(-11f, 32f), new Vector2(-14f, 26f)
         }, 1);
         AddPolygon(shinJoint, "ShoeAccent", accent, new[]
         {
-            new Vector2(-5f, 7f), new Vector2(7f, 8f), new Vector2(7f, 12f), new Vector2(-6f, 12f)
+            new Vector2(-5f, 20f), new Vector2(8f, 21f), new Vector2(8f, 25f), new Vector2(-6f, 25f)
         }, 2);
         return hip;
     }
@@ -1416,19 +1507,19 @@ public partial class CharacterSpriteVisual : Node2D
     {
         Node2D shoulder = AddJoint(parent, name, position, z);
         AddSoftPolygon(shoulder, "UpperArm", skin, MakeUpperArmSilhouette(), 0);
-        forearmJoint = AddJoint(shoulder, "ForearmJoint", new Vector2(0f, 24f), 1);
+        forearmJoint = AddJoint(shoulder, "ForearmJoint", new Vector2(0f, 30f), 1);
         AddSoftPolygon(forearmJoint, "Forearm", skin.Lightened(0.04f), MakeForearmSilhouette(), 0);
         AddPolygon(forearmJoint, "Wrap", new Color(0.85f, 0.78f, 0.62f), new[]
         {
-            new Vector2(-9f, 2f), new Vector2(9f, 1f), new Vector2(9f, 7f), new Vector2(-8f, 8f)
+            new Vector2(-9f, 7f), new Vector2(9f, 6f), new Vector2(9f, 12f), new Vector2(-8f, 13f)
         }, 1);
         float fistRx = knuckles ? 9f : 8f;
-        AddPolygon(forearmJoint, "Fist", skin.Darkened(0.08f), MakeEllipse(1f, 18f, fistRx, 7f, 8), 2);
+        AddPolygon(forearmJoint, "Fist", skin.Darkened(0.08f), MakeEllipse(1f, 31f, fistRx, 7f, 8), 2);
         if (knuckles)
         {
             AddPolygon(forearmJoint, "Knuckles", new Color(0.78f, 0.72f, 0.58f), new[]
             {
-                new Vector2(-4f, 14f), new Vector2(6f, 13f), new Vector2(5f, 18f), new Vector2(-3f, 19f)
+                new Vector2(-4f, 27f), new Vector2(6f, 26f), new Vector2(5f, 31f), new Vector2(-3f, 32f)
             }, 3);
         }
 
@@ -1645,7 +1736,7 @@ public partial class CharacterSpriteVisual : Node2D
 
         _noseBleedDrip.Visible = true;
         float drip = (_stateTime * 2.6f) % 1f;
-        _noseBleedDrip.Position = new Vector2(11f, 10f + drip * 14f);
+        _noseBleedDrip.Position = new Vector2(13f, 11f + drip * 14f);
         _noseBleedDrip.Modulate = new Color(1f, 1f, 1f, 1f - drip * 0.85f);
     }
 
@@ -1655,10 +1746,10 @@ public partial class CharacterSpriteVisual : Node2D
         SetPart(_frontArm, new Vector2(15f, -58f), 0.08f, Vector2.One);
         SetPart(_backLeg, new Vector2(-8f, -12f), 0.04f, Vector2.One);
         SetPart(_frontLeg, new Vector2(8f, -12f), -0.04f, Vector2.One);
-        SetPart(_backLegShin, new Vector2(0f, 22f), 0f, Vector2.One);
-        SetPart(_frontLegShin, new Vector2(0f, 22f), 0f, Vector2.One);
-        SetPart(_backArmForearm, new Vector2(0f, 24f), 0f, Vector2.One);
-        SetPart(_frontArmForearm, new Vector2(0f, 24f), 0f, Vector2.One);
+        SetPart(_backLegShin, new Vector2(0f, 24f), 0f, Vector2.One);
+        SetPart(_frontLegShin, new Vector2(0f, 24f), 0f, Vector2.One);
+        SetPart(_backArmForearm, new Vector2(0f, 30f), 0f, Vector2.One);
+        SetPart(_frontArmForearm, new Vector2(0f, 30f), 0f, Vector2.One);
         if (_rig is not null)
         {
             _rig.Position = Vector2.Zero;
@@ -1675,7 +1766,7 @@ public partial class CharacterSpriteVisual : Node2D
             _torso.Modulate = Colors.White;
             _torso.Scale = LayeredPreset switch
             {
-                LayeredPrototypePreset.Brute => new Vector2(1.14f, 1.08f),
+                LayeredPrototypePreset.Brute => new Vector2(1.18f, 1.12f),
                 LayeredPrototypePreset.Fast => new Vector2(0.92f, 0.96f),
                 _ => Vector2.One,
             };
@@ -1777,56 +1868,47 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateCauaFighterIdle(float idle, float sway)
     {
+        float breath = idle * 0.5f;
+        ApplyFighterStance(1.05f);
+        ApplyFighterGuardArm(0.52f + breath * 0.04f);
+
         if (_torso is not null)
         {
-            _torso.Rotation = -0.05f + sway * 0.025f;
-            _torso.Position = new Vector2(sway * 2.5f, -56f + idle * 1.1f);
-        }
-
-        if (_frontArm is not null)
-        {
-            _frontArm.Rotation = -0.62f + idle * 0.05f;
-            _frontArm.Position = new Vector2(14f + sway, -54f);
-        }
-
-        if (_backArm is not null)
-        {
-            _backArm.Rotation = -0.88f - idle * 0.04f;
-            _backArm.Position = new Vector2(-12f, -56f);
-        }
-
-        if (_frontLeg is not null && _backLeg is not null)
-        {
-            _frontLeg.Rotation = -sway * 0.06f;
-            _backLeg.Rotation = sway * 0.05f;
+            _torso.Rotation = sway * 0.008f - 0.03f;
+            _torso.Position = new Vector2(sway * 0.9f, -54f + breath * 0.8f);
         }
 
         if (_head is not null)
         {
-            _head.Rotation = -0.03f + sway * 0.02f;
+            _head.Rotation = sway * 0.008f - 0.02f;
+            _head.Position = new Vector2(sway * 0.4f, _headAnchorY + breath * 0.4f);
         }
     }
 
     private void AnimateQuebraOssoIdle(float idle, float sway)
     {
-        float twitch = Mathf.Sin((_stateTime + _idlePersonalityOffset) * 9.5f) * 0.015f;
-
         if (_torso is not null)
         {
-            _torso.Rotation = 0.12f + sway * 0.04f + twitch;
-            _torso.Position = new Vector2(-2f + sway * 1.5f, -54f + idle * 0.8f);
+            _torso.Rotation = sway * 0.015f;
+            _torso.Position = new Vector2(sway * 0.8f, -56f + idle * 0.5f);
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = -0.25f + twitch * 4f;
-            _frontArm.Position = new Vector2(16f, -56f);
+            _frontArm.Rotation = -0.72f;
+            _frontArm.Position = new Vector2(12f, -60f);
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -1.05f;
+            _backArm.Position = new Vector2(-12f, -58f);
         }
 
         if (_head is not null)
         {
-            _head.Rotation = 0.08f + twitch * 3f;
-            _head.Position = new Vector2(2f, _headAnchorY + idle * 0.5f);
+            _head.Rotation = sway * 0.012f;
+            _head.Position = new Vector2(0f, _headAnchorY + idle * 0.25f);
         }
     }
 
@@ -1930,84 +2012,90 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateWalk(float walk, float walkOpposite, float limpFactor)
     {
-        float stride = (_isRunning ? 0.78f : 0.52f) * limpFactor;
-        float lift = _isRunning ? 9f : 6f;
-        float bob = _isRunning ? 3.8f : 2.6f;
+        float stride = (_isRunning ? 1.05f : 0.74f) * limpFactor;
+        float lift = _isRunning ? 14f : 10f;
+        float bob = _isRunning ? 5.2f : 3.8f;
+        float guard = _isRunning ? 0.28f : 0.46f;
 
         if (_rig is not null)
         {
-            _rig.Position = new Vector2(walkOpposite * (_isRunning ? 6f : 3.5f), Mathf.Abs(walk) * bob * 0.35f);
+            _rig.Position = new Vector2(walkOpposite * (_isRunning ? 7f : 4f), Mathf.Abs(walk) * bob * 0.42f);
         }
 
         if (_torso is not null)
         {
             float runBoost = _isRunning ? 1.25f : _isExhausted ? 0.72f : 1f;
-            _torso.Position += new Vector2(walkOpposite * 2.5f, Mathf.Abs(walk) * bob * runBoost);
-            _torso.Rotation = walk * (_isRunning ? 0.06f : _isExhausted ? 0.022f : 0.035f);
+            _torso.Position += new Vector2(walkOpposite * 3f, -2f + Mathf.Abs(walk) * bob * runBoost * 0.35f);
+            _torso.Rotation = walk * (_isRunning ? 0.05f : 0.028f) - (_isRunning ? 0.04f : 0.05f);
             if (_isRunning)
             {
-                _torso.Position += new Vector2(5f, -2f);
-                _torso.Rotation += 0.1f;
+                _torso.Position += new Vector2(6f, -3f);
+                _torso.Rotation += 0.08f;
             }
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = walk * stride;
-            _frontLeg.Position = new Vector2(8f + walk * 5f, -12f - Mathf.Max(0f, walk) * lift);
+            _frontLeg.Rotation = walk * stride - 0.06f;
+            _frontLeg.Position = new Vector2(12f + walk * 9f, -10f - Mathf.Max(0f, walk) * lift);
         }
 
         if (_frontLegShin is not null)
         {
-            _frontLegShin.Rotation = Mathf.Clamp(-walk * 1.05f, -0.08f, 1.25f);
+            _frontLegShin.Rotation = Mathf.Clamp(-walk * 1.45f + 0.12f, -0.1f, 1.65f);
         }
 
         if (_backLeg is not null)
         {
-            _backLeg.Rotation = -walk * stride * 0.95f;
-            _backLeg.Position = new Vector2(-8f - walk * 4f, -12f - Mathf.Max(0f, -walk) * lift);
+            _backLeg.Rotation = -walk * stride * 0.92f + 0.05f;
+            _backLeg.Position = new Vector2(-12f - walk * 8f, -11f - Mathf.Max(0f, -walk) * lift);
         }
 
         if (_backLegShin is not null)
         {
-            _backLegShin.Rotation = Mathf.Clamp(walk * 0.95f, -0.08f, 1.15f);
+            _backLegShin.Rotation = Mathf.Clamp(walk * 1.35f - 0.1f, -0.1f, 1.5f);
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = -walk * 0.38f + 0.08f;
-            _frontArm.Position = new Vector2(15f - walk * 2f, -58f + Mathf.Abs(walk) * 1.2f);
+            _frontArm.Rotation = -walk * 0.5f - guard * 0.38f;
+            _frontArm.Position = new Vector2(14f - walk * 5f, -54f - guard * 2f + Mathf.Abs(walk) * 1.4f);
         }
 
         if (_frontArmForearm is not null)
         {
-            _frontArmForearm.Rotation = -Mathf.Abs(walk) * 0.42f;
+            _frontArmForearm.Rotation = -Mathf.Abs(walk) * 0.52f - guard * 0.22f;
         }
 
         if (_backArm is not null)
         {
-            _backArm.Rotation = walk * 0.36f - 0.12f;
-            _backArm.Position = new Vector2(-15f + walk * 2f, -58f);
+            _backArm.Rotation = walk * 0.48f - 0.78f - guard * 0.15f;
+            _backArm.Position = new Vector2(-13f + walk * 5f, -56f - guard * 2f);
         }
 
         if (_backArmForearm is not null)
         {
-            _backArmForearm.Rotation = -Mathf.Abs(walkOpposite) * 0.35f;
+            _backArmForearm.Rotation = -Mathf.Abs(walkOpposite) * 0.46f - guard * 0.18f;
         }
 
         if (_head is not null)
         {
-            _head.Rotation += walk * 0.018f;
+            _head.Rotation += walk * 0.012f - 0.02f;
         }
 
-        if (LayeredPreset == LayeredPrototypePreset.Caua)
-        {
-            if (_torso is not null && !_isRunning)
-            {
-                _torso.Rotation += -0.04f;
-            }
+        SetCaseiraKnifeVisible(false);
+    }
 
-            ApplyFighterGuardArm(_isRunning ? 0.25f : 0.42f);
+    private void SetCaseiraKnifeVisible(bool visible)
+    {
+        if (_caseiraKnife is not null)
+        {
+            _caseiraKnife.Visible = visible;
+        }
+
+        if (_knifeBlood is not null)
+        {
+            _knifeBlood.Visible = visible;
         }
     }
 
@@ -2082,27 +2170,132 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateKnifeSlash()
     {
-        float duration = 0.14f;
-        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float slash = Mathf.Sin(t * Mathf.Pi);
+        (float windup, float strike, float recover) = SampleMartialPhase(0.28f, 0.16f);
+        SetCaseiraKnifeVisible(true);
+        ApplySifuLunge(windup, strike, recover, 14f, 2f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = slash * 0.1f;
+            _torso.Rotation = -windup * 0.1f + strike * 0.28f - recover * 0.08f;
+            _torso.Position = new Vector2(-windup * 8f + strike * 16f, -54f - strike * 3f);
+        }
+
+        ApplySifuHipTorque(windup, strike, recover, 1f, 0.3f);
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.2f - windup * 0.55f - strike * 1.45f + recover * 0.2f;
+            _frontArm.Position = new Vector2(10f + strike * 20f, -54f - strike * 4f);
+        }
+
+        if (_frontArmForearm is not null)
+        {
+            _frontArmForearm.Rotation = -windup * 0.2f - strike * 1.1f + recover * 0.15f;
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.5f + windup * 0.25f - strike * 0.15f;
+        }
+
+        TrySpawnImpact(1, strike, _frontArmForearm ?? _frontArm);
+    }
+
+    private void AnimatePipeOverhead()
+    {
+        (float windup, float strike, float recover) = SampleMartialPhase(0.38f, 0.16f);
+        ApplySifuLunge(windup, strike, recover, 10f, 6f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -windup * 0.22f + strike * 0.18f - recover * 0.06f;
+            _torso.Position = new Vector2(-windup * 6f, -54f - windup * 8f + strike * 4f);
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.35f - slash * 1.35f;
-            _frontArm.Position = new Vector2(16f + slash * 14f, -56f - slash * 4f);
+            _frontArm.Rotation = -0.1f - windup * 1.25f + strike * 0.95f + recover * 0.15f;
+            _frontArm.Position = new Vector2(12f, -54f - windup * 16f + strike * 8f);
         }
 
-        if (_improvisedWeapon is not null)
+        if (_backLeg is not null)
         {
-            _improvisedWeapon.Rotation = slash * 0.6f;
+            _backLeg.Rotation = windup * 0.1f + strike * 0.2f;
         }
 
-        TrySpawnImpact(1, slash, _frontArm);
+        TrySpawnImpact(0, strike, _frontArm);
+    }
+
+    private void AnimateCleaverChop()
+    {
+        (float windup, float strike, float recover) = SampleMartialPhase(0.36f, 0.17f);
+        ApplySifuLunge(windup, strike, recover, 16f, 4f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = windup * 0.1f + strike * 0.3f - recover * 0.08f;
+            _torso.Position = new Vector2(-windup * 8f + strike * 16f, -54f + windup * 2f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.05f - windup * 0.85f - strike * 1.15f + recover * 0.12f;
+            _frontArm.Position = new Vector2(14f + strike * 18f, -54f - strike * 4f);
+        }
+
+        TrySpawnImpact(0, strike, _frontArmForearm ?? _frontArm);
+    }
+
+    private void AnimateHeavyPunch()
+    {
+        (float windup, float strike, float recover) = SampleMartialPhase(0.40f, 0.18f);
+        ApplySifuLunge(windup, strike, recover, 22f, 3f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -windup * 0.1f + strike * 0.24f - recover * 0.08f;
+            _torso.Position = new Vector2(-windup * 14f + strike * 28f, -54f + strike * 3f);
+        }
+
+        ApplySifuHipTorque(windup, strike, recover, 1f, 0.42f);
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.05f - windup * 0.55f - strike * 1.35f + recover * 0.15f;
+            _frontArm.Position = new Vector2(14f + strike * 30f, -54f - strike * 4f);
+        }
+
+        if (_frontArmForearm is not null)
+        {
+            _frontArmForearm.Rotation = -windup * 0.3f - strike * 0.5f;
+        }
+
+        TrySpawnImpact(0, strike, _frontArmForearm ?? _frontArm);
+    }
+
+    private void AnimateBatonStrike()
+    {
+        (float windup, float strike, float recover) = SampleMartialPhase(0.34f, 0.15f);
+        ApplySifuLunge(windup, strike, recover, 14f, 2f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -windup * 0.08f + strike * 0.16f;
+            _torso.Position = new Vector2(strike * 12f, -56f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -0.28f - windup * 0.65f - strike * 1.05f + recover * 0.2f;
+            _frontArm.Position = new Vector2(12f + strike * 16f, -56f);
+        }
+
+        if (_sidearm is not null && strike > 0.35f)
+        {
+            _sidearm.Visible = true;
+        }
+
+        TrySpawnImpact(0, strike, _frontArm);
     }
 
     private void AnimateFinisherAttack()
@@ -2331,10 +2524,56 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateUnarmedAttack()
     {
+        if (LayeredPreset != LayeredPrototypePreset.Caua)
+        {
+            switch (LayeredPreset)
+            {
+                case LayeredPrototypePreset.QuebraOsso:
+                case LayeredPrototypePreset.Fast:
+                    if (_activeMoveAnim is MoveAnimProfile.Teep or MoveAnimProfile.LowKick or MoveAnimProfile.SideKick)
+                    {
+                        AnimatePipeOverhead();
+                    }
+                    else
+                    {
+                        AnimatePipeOverhead();
+                    }
+
+                    return;
+                case LayeredPrototypePreset.Brute:
+                    AnimateHeavyPunch();
+                    return;
+                case LayeredPrototypePreset.Infected:
+                    AnimateCleaverChop();
+                    return;
+                case LayeredPrototypePreset.MiniBoss:
+                    if (_activeMoveAnim == MoveAnimProfile.Cross)
+                    {
+                        AnimateBatonStrike();
+                    }
+                    else
+                    {
+                        AnimateBatonStrike();
+                    }
+
+                    return;
+            }
+        }
+
         bool playerStyled = LayeredPreset == LayeredPrototypePreset.Caua;
+        SetCaseiraKnifeVisible(_activeMoveAnim == MoveAnimProfile.KnifeSlash);
 
         switch (_activeMoveAnim)
         {
+            case MoveAnimProfile.KnifeSlash:
+                AnimateKnifeSlash();
+                break;
+            case MoveAnimProfile.HighKick:
+                AnimateHighKick();
+                break;
+            case MoveAnimProfile.LowKick:
+                AnimateLowKick();
+                break;
             case MoveAnimProfile.BoxLead:
                 AnimateBoxLead();
                 break;
@@ -2436,7 +2675,7 @@ public partial class CharacterSpriteVisual : Node2D
             _frontArm.Position = new Vector2(14f + strike * 32f, -56f - strike * 5f);
         }
 
-        ApplyFighterGuardArm(0.45f + strike * 0.2f);
+        ApplyFighterGuardArm(0.45f + strike * 0.2f, includeFrontArm: false);
 
         if (_head is not null)
         {
@@ -2479,43 +2718,53 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateCross()
     {
-        (float windup, float strike, float recover) = SampleMartialPhase(0.42f, 0.24f);
+        (float windup, float strike, float recover) = SampleMartialPhase(0.34f, 0.15f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup, strike, recover, 26f, 4f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = windup * 0.2f - strike * 0.28f - recover * 0.08f;
-            _torso.Position = new Vector2(-windup * 8f + strike * 20f, -56f - strike * 5f);
+            _torso.Rotation = windup * 0.18f - strike * 0.38f - recover * 0.1f;
+            _torso.Position = new Vector2(-windup * 14f + strike * 30f, -54f - strike * 7f + recover * 3f);
         }
+
+        ApplySifuHipTorque(windup, strike, recover, 1f, 0.38f);
 
         if (_backArm is not null)
         {
-            _backArm.Rotation = -0.12f - windup * 0.55f - strike * 1.45f + recover * 0.4f;
-            _backArm.Position = new Vector2(-14f + strike * 26f, -56f - strike * 8f);
+            _backArm.Rotation = -0.08f - windup * 0.65f - strike * 1.9f + recover * 0.45f;
+            _backArm.Position = new Vector2(-13f + strike * 42f, -56f - strike * 10f);
         }
 
         if (_backArmForearm is not null)
         {
-            _backArmForearm.Rotation = -windup * 0.25f - strike * 0.55f;
+            _backArmForearm.Rotation = -windup * 0.35f - strike * 1.05f + recover * 0.12f;
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.48f - strike * 0.42f;
-            _frontArm.Position = new Vector2(12f, -58f);
+            _frontArm.Rotation = 0.52f - strike * 0.55f + recover * 0.15f;
+            _frontArm.Position = new Vector2(14f - strike * 4f, -54f);
         }
 
         if (_backLeg is not null)
         {
-            _backLeg.Rotation = windup * 0.1f + strike * 0.32f;
+            _backLeg.Rotation = windup * 0.08f + strike * 0.42f;
             if (_backLegShin is not null)
             {
-                _backLegShin.Rotation = strike * 0.18f;
+                _backLegShin.Rotation = strike * 0.25f;
             }
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = -strike * 0.15f;
+            _frontLeg.Rotation = -windup * 0.1f - strike * 0.22f;
+        }
+
+        if (_head is not null)
+        {
+            _head.Position = new Vector2(strike * 8f, _headAnchorY - strike * 4f);
+            _head.Rotation = -strike * 0.12f;
         }
 
         TrySpawnImpact(0, strike, _backArmForearm ?? _backArm);
@@ -2523,66 +2772,84 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateHook()
     {
-        (float windup, float strike, float recover) = SampleMartialPhase(0.44f, 0.26f);
+        (float windup, float strike, float recover) = SampleMartialPhase(0.36f, 0.16f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup, strike, recover, 14f, 3f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = -windup * 0.14f + strike * 0.22f - recover * 0.06f;
-            _torso.Position = new Vector2(strike * 8f, -56f - strike * 4f);
+            _torso.Rotation = -windup * 0.2f + strike * 0.32f - recover * 0.08f;
+            _torso.Position = new Vector2(-windup * 6f + strike * 12f, -54f - strike * 5f);
         }
+
+        ApplySifuHipTorque(windup, strike, recover, -1f, 0.35f);
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.55f + windup * 0.5f - strike * 1.05f + recover * 0.35f;
-            _frontArm.Position = new Vector2(8f + strike * 16f, -54f - strike * 10f);
-        }
-
-        if (_head is not null)
-        {
-            _head.Rotation = strike * 0.1f;
-        }
-
-        ApplyFighterGuardArm(0.35f);
-
-        TrySpawnImpact(2, strike, _frontArm);
-    }
-
-    private void AnimateUppercut()
-    {
-        float duration = 0.26f;
-        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float windup = t < 0.34f ? t / 0.34f : 0f;
-        float extend = t >= 0.34f ? Mathf.Sin(((t - 0.34f) / 0.66f) * Mathf.Pi) : 0f;
-
-        if (_torso is not null)
-        {
-            _torso.Rotation = windup * 0.1f - extend * 0.22f;
-            _torso.Position += new Vector2(-windup * 6f + extend * 8f, -extend * 10f);
-        }
-
-        if (_frontArm is not null)
-        {
-            _frontArm.Rotation = 0.35f + windup * 0.55f - extend * 1.65f;
-            _frontArm.Position = new Vector2(8f + extend * 10f, -58f - extend * 18f);
+            _frontArm.Rotation = 0.65f + windup * 0.65f - strike * 1.25f + recover * 0.4f;
+            _frontArm.Position = new Vector2(6f + strike * 20f, -52f - strike * 12f);
         }
 
         if (_frontArmForearm is not null)
         {
-            _frontArmForearm.Rotation = -windup * 0.35f - extend * 0.55f;
-        }
-
-        if (_backLeg is not null)
-        {
-            _backLeg.Rotation = extend * 0.25f;
+            _frontArmForearm.Rotation = windup * 0.35f - strike * 0.55f;
         }
 
         if (_head is not null)
         {
-            _head.Rotation = -extend * 0.1f;
-            _head.Position += new Vector2(0f, -extend * 6f);
+            _head.Rotation = windup * 0.06f + strike * 0.14f - recover * 0.05f;
+            _head.Position = new Vector2(strike * 4f, _headAnchorY - strike * 2f);
         }
 
-        TrySpawnImpact(2, extend, _frontArmForearm ?? _frontArm);
+        ApplyFighterGuardArm(0.38f, includeFrontArm: false);
+
+        TrySpawnImpact(2, strike, _frontArmForearm ?? _frontArm);
+    }
+
+    private void AnimateUppercut()
+    {
+        (float windup, float strike, float recover) = SampleMartialPhase(0.32f, 0.16f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup, strike, recover, 10f, 8f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = windup * 0.14f - strike * 0.28f + recover * 0.06f;
+            _torso.Position = new Vector2(-windup * 8f + strike * 10f, -52f - strike * 14f + recover * 6f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.28f + windup * 0.7f - strike * 1.85f + recover * 0.35f;
+            _frontArm.Position = new Vector2(6f + strike * 12f, -54f - strike * 22f);
+        }
+
+        if (_frontArmForearm is not null)
+        {
+            _frontArmForearm.Rotation = -windup * 0.42f - strike * 0.65f;
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = windup * 0.12f + strike * 0.25f;
+            if (_backLegShin is not null)
+            {
+                _backLegShin.Rotation = -windup * 0.15f + strike * 0.2f;
+            }
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = -windup * 0.18f - strike * 0.08f;
+        }
+
+        if (_head is not null)
+        {
+            _head.Position = new Vector2(strike * 3f, _headAnchorY - strike * 8f);
+            _head.Rotation = -strike * 0.08f;
+        }
+
+        TrySpawnImpact(3, strike, _frontArmForearm ?? _frontArm);
     }
 
     private void AnimateRunningHook()
@@ -2651,49 +2918,53 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateKnee(bool aerial)
     {
-        float duration = aerial ? 0.32f : 0.26f;
-        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float lift = Mathf.Sin(t * Mathf.Pi);
+        (float windup, float chamber, float strike, float recover) = SampleSifuKickPhase(0.24f, 0.28f, 0.14f);
+        ApplySifuLunge(windup, strike, recover, aerial ? 18f : 12f, aerial ? 12f : 8f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = -lift * 0.14f;
-            _torso.Position += new Vector2(lift * 6f, -lift * (aerial ? 14f : 8f));
+            _torso.Rotation = -windup * 0.08f - chamber * 0.06f - strike * 0.18f;
+            _torso.Position = new Vector2(-windup * 6f + strike * 8f, -54f - chamber * 6f - strike * (aerial ? 16f : 10f));
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = -lift * 1.35f;
-            _frontLeg.Position = new Vector2(4f + lift * 8f, -18f - lift * 12f);
+            _frontLeg.Rotation = windup * 0.15f + chamber * 0.95f - strike * 1.45f + recover * 0.15f;
+            _frontLeg.Position = new Vector2(6f + chamber * 4f + strike * 10f, -10f - chamber * 16f - strike * 14f);
+        }
+
+        if (_frontLegShin is not null)
+        {
+            _frontLegShin.Rotation = -chamber * 0.5f - strike * 0.35f;
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = -0.35f - lift * 0.4f;
+            _frontArm.Rotation = -0.38f - chamber * 0.25f - strike * 0.35f;
         }
 
-        TrySpawnImpact(2, lift, _frontLeg);
+        ApplyFighterGuardArm(0.5f, includeFrontArm: false);
+        TrySpawnImpact(2, strike, _frontLeg);
     }
 
     private void AnimateElbow()
     {
-        float duration = 0.2f;
-        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
-        float drop = Mathf.Sin(t * Mathf.Pi);
+        (float windup, float strike, float recover) = SampleMartialPhase(0.28f, 0.14f);
+        ApplySifuLunge(windup, strike, recover, 10f, 3f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = drop * 0.16f;
-            _torso.Position += new Vector2(drop * 5f, drop * 4f);
+            _torso.Rotation = windup * 0.12f + strike * 0.22f - recover * 0.06f;
+            _torso.Position = new Vector2(strike * 8f, -52f + strike * 6f);
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = -0.95f + drop * 0.55f;
-            _frontArm.Position = new Vector2(14f, -48f + drop * 8f);
+            _frontArm.Rotation = -1.05f + windup * 0.35f + strike * 0.65f - recover * 0.2f;
+            _frontArm.Position = new Vector2(12f, -48f + strike * 10f);
         }
 
-        TrySpawnImpact(2, drop, _frontArm);
+        TrySpawnImpact(2, strike, _frontArmForearm ?? _frontArm);
     }
 
     private void AnimateMeiaLua()
@@ -2814,45 +3085,53 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateJab()
     {
-        (float windup, float strike, float recover) = SampleMartialPhase(0.4f, 0.22f);
+        (float windup, float strike, float recover) = SampleMartialPhase(0.30f, 0.14f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup, strike, recover, 20f, 2f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = -windup * 0.18f + strike * 0.16f - recover * 0.06f;
-            _torso.Position = new Vector2(-windup * 10f + strike * 16f, -56f - strike * 3f + recover * 2f);
+            _torso.Rotation = -windup * 0.12f + strike * 0.14f - recover * 0.05f;
+            _torso.Position = new Vector2(-windup * 12f + strike * 24f, -54f - strike * 4f + recover * 2f);
         }
+
+        ApplySifuHipTorque(windup, strike, recover, -1f, 0.22f);
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.22f - windup * 0.85f - strike * 1.15f + recover * 0.35f;
-            _frontArm.Position = new Vector2(10f - windup * 12f + strike * 22f, -58f - strike * 5f);
+            _frontArm.Rotation = 0.15f - windup * 0.95f - strike * 1.72f + recover * 0.4f;
+            _frontArm.Position = new Vector2(9f - windup * 14f + strike * 40f, -55f - strike * 6f);
         }
 
         if (_frontArmForearm is not null)
         {
-            _frontArmForearm.Rotation = -windup * 0.35f - strike * 0.65f;
+            _frontArmForearm.Rotation = -windup * 0.45f - strike * 1.08f + recover * 0.15f;
         }
 
-        ApplyFighterGuardArm(0.35f + strike * 0.25f);
+        ApplyFighterGuardArm(0.42f + strike * 0.2f, includeFrontArm: false);
 
         if (_backLeg is not null)
         {
-            _backLeg.Rotation = windup * 0.08f + strike * 0.28f;
+            _backLeg.Rotation = windup * 0.06f + strike * 0.35f;
             if (_backLegShin is not null)
             {
-                _backLegShin.Rotation = strike * 0.22f;
+                _backLegShin.Rotation = strike * 0.28f - recover * 0.1f;
             }
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = -windup * 0.06f - strike * 0.12f;
+            _frontLeg.Rotation = -windup * 0.08f - strike * 0.18f;
+            if (_frontLegShin is not null)
+            {
+                _frontLegShin.Rotation = windup * 0.1f;
+            }
         }
 
         if (_head is not null)
         {
-            _head.Position = new Vector2(strike * 5f, _headAnchorY - strike * 2f);
-            _head.Rotation = -windup * 0.04f - strike * 0.07f;
+            _head.Position = new Vector2(strike * 6f - recover * 2f, _headAnchorY - strike * 3f);
+            _head.Rotation = -windup * 0.05f - strike * 0.1f + recover * 0.04f;
         }
 
         TrySpawnImpact(0, strike, _frontArmForearm ?? _frontArm);
@@ -2884,42 +3163,110 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateSideKick()
     {
-        (float windup, float strike, float recover) = SampleMartialPhase(0.46f, 0.26f);
+        (float windup, float chamber, float strike, float recover) = SampleSifuKickPhase(0.24f, 0.26f, 0.14f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup + chamber * 0.4f, strike, recover, 28f, 2f);
 
         if (_torso is not null)
         {
-            _torso.Rotation = windup * 0.12f - strike * 0.22f - recover * 0.05f;
-            _torso.Position = new Vector2(-windup * 8f + strike * 8f, -56f - strike * 4f);
+            _torso.Rotation = windup * 0.08f - chamber * 0.05f - strike * 0.28f;
+            _torso.Position = new Vector2(-windup * 10f + strike * 16f, -54f - chamber * 4f - strike * 5f);
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = windup * 0.35f - strike * 1.25f + recover * 0.25f;
-            _frontLeg.Position = new Vector2(6f - windup * 6f + strike * 28f, -12f - strike * 8f);
+            float legRot = windup * 0.2f + chamber * 0.85f - strike * 1.35f + recover * 0.2f;
+            _frontLeg.Rotation = legRot;
+            _frontLeg.Position = new Vector2(
+                8f - windup * 8f + chamber * 5f + strike * 46f,
+                -10f - chamber * 15f - strike * 12f + recover * 4f);
         }
 
         if (_frontLegShin is not null)
         {
-            _frontLegShin.Rotation = -strike * 0.35f;
+            _frontLegShin.Rotation = -chamber * 0.65f - strike * 0.78f + recover * 0.15f;
         }
 
         if (_backLeg is not null)
         {
-            _backLeg.Rotation = 0.04f + strike * 0.15f;
+            _backLeg.Rotation = 0.02f + strike * 0.18f;
             if (_backLegShin is not null)
             {
-                _backLegShin.Rotation = strike * 0.12f;
+                _backLegShin.Rotation = strike * 0.15f;
             }
         }
 
-        ApplyFighterGuardArm(0.55f + strike * 0.15f);
+        ApplyFighterGuardArm(0.58f + strike * 0.12f, includeFrontArm: false);
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = 0.35f + strike * 0.2f;
+            _frontArm.Rotation = 0.3f + chamber * 0.15f + strike * 0.22f;
         }
 
         TrySpawnImpact(1, strike, _frontLeg);
+    }
+
+    private void AnimateHighKick()
+    {
+        (float windup, float chamber, float strike, float recover) = SampleSifuKickPhase(0.26f, 0.28f, 0.13f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup, strike, recover, 12f, 10f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -windup * 0.12f - chamber * 0.08f - strike * 0.22f;
+            _torso.Position = new Vector2(-windup * 8f + strike * 8f, -54f - chamber * 8f - strike * 16f);
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = windup * 0.15f + chamber * 1.1f - strike * 1.65f + recover * 0.18f;
+            _frontLeg.Position = new Vector2(6f + chamber * 6f + strike * 20f, -10f - chamber * 20f - strike * 24f);
+        }
+
+        if (_frontLegShin is not null)
+        {
+            _frontLegShin.Rotation = -chamber * 0.4f - strike * 0.65f;
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = 0.06f + strike * 0.25f;
+        }
+
+        ApplyFighterGuardArm(0.68f);
+        TrySpawnImpact(2, strike, _frontLeg);
+    }
+
+    private void AnimateLowKick()
+    {
+        (float windup, float chamber, float strike, float recover) = SampleSifuKickPhase(0.22f, 0.20f, 0.14f);
+        SetCaseiraKnifeVisible(false);
+        ApplySifuLunge(windup, strike, recover, 16f, -2f);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = windup * 0.16f - strike * 0.14f;
+            _torso.Position = new Vector2(-windup * 10f + strike * 14f, -52f + chamber * 3f + strike * 5f);
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = windup * 0.25f + chamber * 0.35f - strike * 0.95f + recover * 0.12f;
+            _frontLeg.Position = new Vector2(10f + strike * 28f, -8f + chamber * 4f + strike * 8f);
+        }
+
+        if (_frontLegShin is not null)
+        {
+            _frontLegShin.Rotation = chamber * 0.2f + strike * 0.55f;
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = -windup * 0.14f;
+        }
+
+        TrySpawnImpact(3, strike, _frontLeg);
     }
 
     private void AnimateFlyingKick()
@@ -2984,23 +3331,30 @@ public partial class CharacterSpriteVisual : Node2D
 
     private void AnimateHurt()
     {
-        float maxHurt = 0.55f + _hurtStrength * 0.08f;
+        float maxHurt = 0.48f + _hurtStrength * 0.07f;
         float t = 1f - Mathf.Clamp(_hurtTime / maxHurt, 0f, 1f);
-        float recoil = Mathf.Sin(t * Mathf.Pi);
-        float lean = _hurtDirection.X * recoil * 0.32f * _hurtStrength;
+        float snap = EaseOutExpo(Mathf.Clamp(t * 1.4f, 0f, 1f));
+        float settle = t < 0.55f ? 0f : EaseOutCubic((t - 0.55f) / 0.45f);
+        float recoil = snap * (1f - settle * 0.6f);
+        float lean = _hurtDirection.X * recoil * 0.38f * _hurtStrength;
         float buckle = recoil * _hurtStrength;
+
+        if (_rig is not null)
+        {
+            _rig.Position = new Vector2(_hurtDirection.X * recoil * 8f * _hurtStrength, buckle * 2f);
+        }
 
         if (_torso is not null)
         {
             _torso.Rotation = lean;
-            _torso.Position += new Vector2(_hurtDirection.X * recoil * 11f * _hurtStrength, buckle * 3f);
-            _torso.Modulate = Colors.White.Lerp(new Color(1f, 0.55f, 0.5f), recoil * 0.45f);
+            _torso.Position += new Vector2(_hurtDirection.X * recoil * 14f * _hurtStrength, buckle * 5f);
+            _torso.Modulate = Colors.White.Lerp(new Color(1f, 0.55f, 0.5f), recoil * 0.5f);
         }
 
         if (_head is not null)
         {
-            _head.Rotation = -lean * 1.1f;
-            _head.Position += new Vector2(_hurtDirection.X * recoil * 9f, recoil * 3f);
+            _head.Rotation = -lean * 1.25f - recoil * 0.08f;
+            _head.Position += new Vector2(_hurtDirection.X * recoil * 12f, recoil * 4f);
         }
 
         if (_painGrimace is not null)
@@ -3287,33 +3641,140 @@ public partial class CharacterSpriteVisual : Node2D
         }
     }
 
-    private (float windup, float strike, float recover) SampleMartialPhase(float windupPortion = 0.38f, float strikePortion = 0.24f)
+    private (float windup, float strike, float recover) SampleMartialPhase(float windupPortion = 0.32f, float strikePortion = 0.18f)
     {
         float dur = Mathf.Max(_activeMoveDuration, 0.2f);
         float t = Mathf.Clamp(_stateTime / dur, 0f, 1f);
         float windupEnd = windupPortion;
         float strikeEnd = windupPortion + strikePortion;
+        float recoverSpan = Mathf.Max(1f - strikeEnd, 0.01f);
 
-        float windup = t < windupEnd ? t / windupEnd : 1f;
-        float strike = t >= windupEnd && t <= strikeEnd
-            ? Mathf.Sin(((t - windupEnd) / strikePortion) * Mathf.Pi)
-            : 0f;
-        float recover = t > strikeEnd ? (t - strikeEnd) / Mathf.Max(1f - strikeEnd, 0.01f) : 0f;
+        float windupRaw = t < windupEnd ? t / Mathf.Max(windupEnd, 0.001f) : 1f;
+        float windup = EaseInCubic(windupRaw);
+
+        float strike = 0f;
+        if (t >= windupEnd && t <= strikeEnd)
+        {
+            float st = (t - windupEnd) / Mathf.Max(strikePortion, 0.001f);
+            strike = EaseOutExpo(st);
+        }
+
+        float recover = t > strikeEnd ? EaseOutCubic((t - strikeEnd) / recoverSpan) : 0f;
         return (windup, strike, recover);
     }
 
-    private void ApplyFighterGuardArm(float guardLevel)
+    private (float windup, float chamber, float strike, float recover) SampleSifuKickPhase(
+        float windupPortion = 0.26f,
+        float chamberPortion = 0.24f,
+        float strikePortion = 0.14f)
+    {
+        float dur = Mathf.Max(_activeMoveDuration, 0.22f);
+        float t = Mathf.Clamp(_stateTime / dur, 0f, 1f);
+        float wEnd = windupPortion;
+        float cEnd = windupPortion + chamberPortion;
+        float sEnd = cEnd + strikePortion;
+        float recoverSpan = Mathf.Max(1f - sEnd, 0.01f);
+
+        float windup = t < wEnd ? EaseInCubic(t / Mathf.Max(wEnd, 0.001f)) : 1f;
+        float chamber = t >= wEnd && t < cEnd
+            ? EaseInOutQuad((t - wEnd) / Mathf.Max(chamberPortion, 0.001f))
+            : t >= cEnd ? 1f : 0f;
+        float strike = t >= cEnd && t <= sEnd
+            ? EaseOutExpo((t - cEnd) / Mathf.Max(strikePortion, 0.001f))
+            : 0f;
+        float recover = t > sEnd ? EaseOutCubic((t - sEnd) / recoverSpan) : 0f;
+        return (windup, chamber, strike, recover);
+    }
+
+    private static float EaseInCubic(float x) => x * x * x;
+
+    private static float EaseOutCubic(float x)
+    {
+        float inv = 1f - x;
+        return 1f - inv * inv * inv;
+    }
+
+    private static float EaseInOutQuad(float x) =>
+        x < 0.5f ? 2f * x * x : 1f - Mathf.Pow(-2f * x + 2f, 2f) / 2f;
+
+    private static float EaseOutExpo(float x) =>
+        x >= 1f ? 1f : 1f - Mathf.Pow(2f, -10f * x);
+
+    private void ApplySifuLunge(float windup, float strike, float recover, float forward = 16f, float dip = 3f)
+    {
+        if (_rig is null)
+        {
+            return;
+        }
+
+        float x = -windup * 5f + strike * forward - recover * 8f;
+        float y = windup * 1.5f - strike * dip + recover * 2f;
+        _rig.Position = new Vector2(x, y);
+    }
+
+    private void ApplySifuHipTorque(float windup, float strike, float recover, float sign, float power = 0.32f)
+    {
+        if (_torso is null)
+        {
+            return;
+        }
+
+        _torso.Rotation += sign * (-windup * power * 0.55f + strike * power - recover * power * 0.35f);
+    }
+
+    private void ApplyFighterStance(float depth = 1f)
+    {
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = -0.16f * depth;
+            _frontLeg.Position = new Vector2(13f, -10f + depth * 3f);
+        }
+
+        if (_frontLegShin is not null)
+        {
+            _frontLegShin.Rotation = 0.22f * depth;
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = 0.12f * depth;
+            _backLeg.Position = new Vector2(-13f, -11f + depth * 2f);
+        }
+
+        if (_backLegShin is not null)
+        {
+            _backLegShin.Rotation = -0.18f * depth;
+        }
+    }
+
+    private void ApplyFighterGuardArm(float guardLevel, bool includeFrontArm = true)
     {
         if (_backArm is null)
         {
             return;
         }
 
-        _backArm.Rotation = -0.82f - guardLevel * 0.15f;
-        _backArm.Position = new Vector2(-10f - guardLevel * 4f, -56f - guardLevel * 2f);
+        _backArm.Rotation = -0.76f - guardLevel * 0.28f;
+        _backArm.Position = new Vector2(-13f - guardLevel * 6f, -57f - guardLevel * 3f);
         if (_backArmForearm is not null)
         {
-            _backArmForearm.Rotation = -0.35f - guardLevel * 0.2f;
+            _backArmForearm.Rotation = -0.34f - guardLevel * 0.34f;
+        }
+
+        if (!includeFrontArm)
+        {
+            return;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = -0.32f - guardLevel * 0.16f;
+            _frontArm.Position = new Vector2(15f + guardLevel * 3f, -54f - guardLevel * 2f);
+        }
+
+        if (_frontArmForearm is not null)
+        {
+            _frontArmForearm.Rotation = -0.22f - guardLevel * 0.22f;
         }
     }
 
@@ -3411,12 +3872,40 @@ public partial class CharacterSpriteVisual : Node2D
             _ => new Color(1f, 0.92f, 0.62f, 0.72f),
         };
 
+        Color arcColor = comboIndex switch
+        {
+            2 => new Color(1f, 0.42f, 0.12f, 0.55f),
+            1 => new Color(1f, 0.72f, 0.28f, 0.48f),
+            _ => new Color(1f, 0.88f, 0.52f, 0.42f),
+        };
+
         float size = comboIndex switch
         {
             2 => 1.35f,
             1 => 1.15f,
             _ => 1f,
         };
+
+        Vector2 impactPos = strikePart.GlobalPosition + new Vector2(_facingSign * 14f, 0f);
+
+        Polygon2D arc = new()
+        {
+            Color = arcColor,
+            Polygon =
+            [
+                new Vector2(-4f, -28f),
+                new Vector2(38f * _facingSign, -18f),
+                new Vector2(42f * _facingSign, -8f),
+                new Vector2(8f * _facingSign, -2f),
+                new Vector2(-6f, -12f),
+            ],
+            ZIndex = 11,
+        };
+        parent.AddChild(arc);
+        arc.GlobalPosition = impactPos;
+        Tween arcTween = arc.CreateTween();
+        arcTween.TweenProperty(arc, "modulate:a", 0f, 0.12f);
+        arcTween.TweenCallback(Callable.From(arc.QueueFree));
 
         Polygon2D burst = new()
         {
@@ -3435,7 +3924,7 @@ public partial class CharacterSpriteVisual : Node2D
         };
 
         parent.AddChild(burst);
-        burst.GlobalPosition = strikePart.GlobalPosition + new Vector2(_facingSign * 14f, 0f);
+        burst.GlobalPosition = impactPos;
 
         Tween tween = burst.CreateTween();
         tween.TweenProperty(burst, "scale", burst.Scale * 1.8f, 0.05f);

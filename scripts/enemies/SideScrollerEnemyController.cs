@@ -53,6 +53,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private Health? _health;
     private PostureComponent? _posture;
     private ParryTelegraphMarker? _parryMarker;
+    private LayeredPrototypePreset _enemyPreset = LayeredPrototypePreset.QuebraOsso;
+    private EnemyAttackPattern _pendingAttack;
 
     public PostureComponent? Posture => _posture;
 
@@ -71,14 +73,14 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         AddToGroup("side_enemy");
 
         _spriteVisual = GetNodeOrNull<CharacterSpriteVisual>("SpriteVisual");
+        _enemyPreset = EnemyLayeredVisual.ResolvePreset(this);
         if (_spriteVisual is null)
         {
-            LayeredPrototypePreset preset = EnemyLayeredVisual.ResolvePreset(this);
-            _spriteVisual = EnemyLayeredVisual.AttachLayeredRig(this, preset);
+            _spriteVisual = EnemyLayeredVisual.AttachLayeredRig(this, _enemyPreset);
         }
         else
         {
-            _spriteVisual.EnsureLayeredRig(EnemyLayeredVisual.ResolvePreset(this));
+            _spriteVisual.EnsureLayeredRig(_enemyPreset);
             EnemyLayeredVisual.HideBlockMeshes(this);
         }
 
@@ -126,7 +128,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         TelegraphDuration = Mathf.Max(TelegraphDuration, CombatPacing.MinEnemyTelegraph);
         AttackCooldown = Mathf.Max(AttackCooldown, CombatPacing.MinEnemyAttackCooldown);
         AttackDuration = Mathf.Max(AttackDuration, CombatPacing.MinEnemyAttackDuration);
-        MoveSpeed = Mathf.Min(MoveSpeed, 108f);
+        MoveSpeed = Mathf.Min(MoveSpeed * EnemyCombatProfile.GetMoveSpeedMultiplier(_enemyPreset), 125f);
+        AttackRangeX *= EnemyCombatProfile.GetAggroBias(_enemyPreset);
     }
 
     public override void _PhysicsProcess(double delta)
@@ -222,9 +225,9 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         }
 
         _cooldownRemaining = AttackCooldown;
-        _telegraphRemaining = TelegraphDuration;
-        int telegraphCombo = (_attackPatternIndex + 1) % 3 == 2 ? 1 : 0;
-        _spriteVisual?.SetAttackCombo(telegraphCombo);
+        _pendingAttack = EnemyCombatProfile.Resolve(_enemyPreset, _attackPatternIndex);
+        _telegraphRemaining = TelegraphDuration * _pendingAttack.TelegraphMultiplier;
+        _spriteVisual?.SetAttackCombo(_pendingAttack.VisualComboIndex);
         _parryMarker?.SetActive(true);
     }
 
@@ -240,11 +243,10 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         if (_telegraphRemaining <= 0f)
         {
             _parryMarker?.SetActive(false);
-            _attackTimeRemaining = AttackDuration;
+            _attackTimeRemaining = AttackDuration * _pendingAttack.DurationMultiplier;
             _attackPatternIndex = (_attackPatternIndex + 1) % 3;
-            int combo = _attackPatternIndex == 2 ? 1 : 0;
-            _spriteVisual?.SetAttackCombo(combo);
-            _spriteVisual?.BeginEnemyStrike(AttackDuration, combo);
+            _spriteVisual?.SetAttackCombo(_pendingAttack.VisualComboIndex);
+            _spriteVisual?.BeginEnemyStrike(_attackTimeRemaining, _pendingAttack.VisualComboIndex, _pendingAttack.Anim);
             SetAttackCollision(false);
         }
     }
@@ -299,7 +301,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             return;
         }
 
-        _attackArea.Position = new Vector2(_facingSign * 38f, -4f);
+        _attackArea.Position = new Vector2(_facingSign * (38f * _pendingAttack.RangeMultiplier), -4f);
         _attackArea.Rotation = _facingSign > 0 ? 0f : Mathf.Pi;
     }
 

@@ -12,6 +12,10 @@ Linguagem: C#
 
 Direcao atual: prototipo lateral/2.5D beat 'em up implementado para validacao, com o top-down mantido como laboratorio antigo.
 
+Sprint atual: Sprint 40 - Art Pipeline Real.
+
+Decisao critica: o rig procedural em `Polygon2D` continua como gameplay-lab/fallback. Ele nao e mais o caminho de arte final. A partir da Sprint 40, assets reais entram por `art/production/`.
+
 Sprint atual: ver `docs/SPRINTS.md`.
 
 ## Arquivos Que Devem Ser Lidos Primeiro
@@ -21,11 +25,14 @@ Ao abrir o projeto em outro ambiente, leia nesta ordem:
 1. `README.md`
 2. `docs/PROJECT_BRIEF.md`
 3. `docs/SPRINTS.md`
-4. `docs/VISUAL_BIBLE.md`
-5. `docs/AGENTS.md`
-6. `docs/WEATHER_TIME_SYSTEM.md`
-7. `docs/ARCHITECTURE.md`
-8. `docs/BACKLOG.md`
+4. `docs/SPRINT_40_ART_PIPELINE_REAL.md`
+5. `docs/VISUAL_RULE.md`
+6. `art/production/README.md`
+7. `docs/VISUAL_BIBLE.md`
+8. `docs/AGENTS.md`
+9. `docs/WEATHER_TIME_SYSTEM.md`
+10. `docs/ARCHITECTURE.md`
+11. `docs/BACKLOG.md`
 
 ## Como Validar O Projeto
 
@@ -483,5 +490,4 @@ So entra quando houver necessidade real, por exemplo:
 - ferramentas internas.
 
 Enquanto o jogo esta em prototipo, saves locais e dados locais bastam.
-
 

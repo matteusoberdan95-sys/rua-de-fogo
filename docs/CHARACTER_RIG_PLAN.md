@@ -2,11 +2,46 @@
 
 Este documento define o que continua como **rig 2D procedural** no runtime e o que deve virar **sprite sheet / camadas pintadas** na arte final.
 
+## Atualizacao Sprint 39 - Anatomia e poses
+
+Feedback do playtest em 06/07/2026: o rig procedural ficou funcional, mas ainda parecia cabecudo/travado demais. A direcao atual e manter `Polygon2D` no runtime, porem com:
+
+- corpo mais alto e menos achatado;
+- cabeca menor em todos os presets;
+- coxa/canela/braco/antebraco mais longos;
+- caminhada com passada maior e joelho dobrando;
+- golpes sem sobrescrever o braco de ataque pela guarda;
+- jab/cross/side kick com extensao visual clara.
+
+Proxima prioridade de personagem: animacao secundaria (cabelo, roupa, respiracao, impacto e recuperacao), usando uma pose desenhada por cima do rig como guia de arte final.
+
+## Atualizacao Sprint 40 - Rig como fallback
+
+Decisao apos playtest: `CharacterSpriteVisual` nao e mais tratado como visual final vendavel.
+
+Uso correto daqui para frente:
+
+- fallback jogavel;
+- laboratorio de hitbox, timing, combate e camera;
+- referencia tecnica para pivot/baseline;
+- suporte temporario ate production art entrar.
+
+Caminho final:
+
+- Caua em sprite sheet ou rig 2D com partes desenhadas;
+- Quebra-Osso em sprite sheet/rig real;
+- cenarios em camadas pintadas;
+- assets dentro de `art/production/`.
+
+Documento principal: `docs/SPRINT_40_ART_PIPELINE_REAL.md`.
+
 ## Regra do projeto
 
-- `art/` e `references/` são **referência visual**, nunca PNG colado no gameplay.
-- Runtime atual: `CharacterSpriteVisual` + `EnemyLayeredVisual` com `UseLayeredPrototype = true`.
-- Sprint 31 reforçou **poses, silhueta e leitura de combate** no rig procedural.
+**Leia `docs/VISUAL_RULE.md` primeiro.**
+
+- `art/` e `references/` sao **somente ideia** — moodboard, silhueta, cor, pose.
+- Runtime: **rig 2D em camadas** (`UseLayeredPrototype = true`) — `Polygon2D` e animacao por codigo na engine.
+- **Nunca** colar PNG de referencia no gameplay.
 
 ## Caua (jogador)
 

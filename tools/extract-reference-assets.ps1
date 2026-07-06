@@ -2,6 +2,9 @@ param(
     [string]$Root = (Resolve-Path ".").Path
 )
 
+# AVISO: saida deste script e APENAS estudo em art/. NUNCA apontar .tscn ou runtime para estes PNG.
+# Gameplay = UseLayeredPrototype (Polygon2D na engine). Ver docs/VISUAL_RULE.md
+
 $ErrorActionPreference = "Stop"
 
 Add-Type -AssemblyName System.Drawing

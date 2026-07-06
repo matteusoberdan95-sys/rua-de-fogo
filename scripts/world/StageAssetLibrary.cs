@@ -15,7 +15,7 @@ public static class StageAssetLibrary
 
     public static void BuildBotecoDoZe(Node2D root, StageAssetContext ctx, float x, float y)
     {
-        AddRect(root, "BotecoWall", new Vector2(x, y), new Vector2(460f, 204f), new Color(0.105f, 0.095f, 0.075f), 2);
+        ProceduralStageTextures.AddBrickWall(root, x, y, 460f, 204f, 7, 2);
         AddRect(root, "BotecoTrim", new Vector2(x, y + 196f), new Vector2(460f, 8f), new Color(0.06f, 0.055f, 0.045f), 3);
 
         AddRect(root, "BotecoDoor", new Vector2(x + 158f, y + 72f), new Vector2(156f, 132f), new Color(0.028f, 0.03f, 0.028f), 4);
@@ -35,12 +35,21 @@ public static class StageAssetLibrary
         AddLabel(root, "SkolText", "SKOL", new Vector2(x + 328f, y + 94f), 16, new Color(0.95f, 0.88f, 0.42f), 9);
 
         AddRect(root, "BotecoWindow", new Vector2(x + 38f, y + 118f), new Vector2(88f, 52f), new Color(0.04f, 0.045f, 0.05f, 0.92f), 6);
-        ColorRect windowGlow = AddRect(root, "WindowGlow", new Vector2(x + 42f, y + 122f), new Vector2(80f, 44f), new Color(0.9f, 0.55f, 0.16f, 0.14f), 7);
-        ctx.NeonItems.Add(windowGlow);
+        ProceduralStageTextures.AddLitWindow(root, ctx, x + 42f, y + 122f, 80f, 44f, 71, lit: true, 7);
+
+        for (int row = 0; row < 2; row++)
+        {
+            for (int col = 0; col < 5; col++)
+            {
+                AddRect(root, $"BottleShelf{row}{col}", new Vector2(x + 44f + col * 14f, y + 126f + row * 16f), new Vector2(8f, 12f), new Color(0.32f + col * 0.04f, 0.48f, 0.18f, 0.7f), 8);
+            }
+        }
 
         for (int i = 0; i < 3; i++)
         {
             AddRect(root, $"Table{i}", new Vector2(x + 24f + i * 52f, y + 178f), new Vector2(38f, 6f), new Color(0.14f, 0.11f, 0.08f), 9);
+            AddRect(root, $"Chair{i}", new Vector2(x + 30f + i * 52f, y + 186f), new Vector2(26f, 14f), new Color(0.78f, 0.12f, 0.08f, 0.85f), 9);
+            AddRect(root, $"ChairBack{i}", new Vector2(x + 32f + i * 52f, y + 178f), new Vector2(22f, 10f), new Color(0.82f, 0.62f, 0.08f, 0.8f), 10);
             AddPoly(root, $"Bottle{i}", new Color(0.38f, 0.62f, 0.22f, 0.75f), [
                 new Vector2(x + 36f + i * 52f, y + 168f), new Vector2(x + 44f + i * 52f, y + 152f), new Vector2(x + 50f + i * 52f, y + 168f)
             ], 10);
@@ -49,11 +58,13 @@ public static class StageAssetLibrary
         AddPoly(root, "WallGraffiti", new Color(0.56f, 0.03f, 0.035f, 0.78f), [
             new Vector2(x + 22f, y + 158f), new Vector2(x + 96f, y + 134f), new Vector2(x + 152f, y + 166f), new Vector2(x + 98f, y + 182f)
         ], 8);
+        AddLabel(root, "GraffitiText", "A JUSTICA E LENTA", new Vector2(x + 28f, y + 148f), 13, new Color(0.86f, 0.74f, 0.48f, 0.88f), 9);
+        AddLabel(root, "GraffitiSub", "MAS NAO E SURDA", new Vector2(x + 32f, y + 164f), 11, new Color(0.72f, 0.62f, 0.40f, 0.82f), 9);
     }
 
     public static void BuildMercadinho(Node2D root, StageAssetContext ctx, float x, float y, string title, Color wall, bool neon)
     {
-        AddRect(root, $"StoreWall{title}", new Vector2(x, y), new Vector2(380f, 176f), wall, 4);
+        ProceduralStageTextures.AddBrickWall(root, x, y, 380f, 176f, title.GetHashCode() % 9, 4);
         AddRect(root, $"StoreRollDoor{title}", new Vector2(x + 96f, y + 64f), new Vector2(200f, 112f), new Color(0.07f, 0.072f, 0.068f), 6);
         for (int i = 0; i < 7; i++)
         {
@@ -99,11 +110,17 @@ public static class StageAssetLibrary
             ], 2);
             ctx.WetHighlights.Add(pool);
 
+            Polygon2D cone = AddPoly(root, $"LightCone{x}", new Color(PostLight.R, PostLight.G, PostLight.B, 0.09f), [
+                new Vector2(x + 62f, y + 34f), new Vector2(x - 140f, y + 430f), new Vector2(x + 240f, y + 430f)
+            ], 1);
+            ctx.WetHighlights.Add(cone);
+
             if (flicker)
             {
                 ctx.FlickerItems.Add(lamp);
                 ctx.FlickerItems.Add(bulb);
                 ctx.FlickerItems.Add(pool);
+                ctx.FlickerItems.Add(cone);
             }
         }
     }
@@ -327,7 +344,46 @@ public static class StageAssetLibrary
         AddRect(root, "BusRoof", new Vector2(x - 74f, y - 50f), new Vector2(148f, 14f), new Color(0.14f, 0.13f, 0.11f), 6);
         AddRect(root, "BusBack", new Vector2(x - 66f, y - 36f), new Vector2(132f, 90f), new Color(0.08f, 0.085f, 0.08f, 0.88f), 5);
         AddRect(root, "BusBench", new Vector2(x - 52f, y + 16f), new Vector2(104f, 12f), new Color(0.22f, 0.18f, 0.14f), 7);
-        AddLabel(root, "BusSign", "ONIBUS", new Vector2(x - 38f, y - 40f), 14, new Color(0.82f, 0.72f, 0.28f), 8);
+        AddLabel(root, "BusSign", "PONTO FINAL", new Vector2(x - 52f, y - 42f), 12, new Color(0.82f, 0.72f, 0.28f), 8);
+        AddLabel(root, "BusSub", "VILA ESPERANCA", new Vector2(x - 58f, y - 28f), 10, new Color(0.72f, 0.66f, 0.42f, 0.85f), 8);
+        AddLabel(root, "BusMissing", "DESAPARECIDO", new Vector2(x - 52f, y - 8f), 9, new Color(0.62f, 0.05f, 0.06f, 0.75f), 7);
         AddRect(root, "BusAd", new Vector2(x - 58f, y - 28f), new Vector2(48f, 36f), new Color(0.52f, 0.48f, 0.38f, 0.65f), 6);
+        AddLabel(root, "BusMissingName", "RAFAEL", new Vector2(x - 48f, y + 6f), 8, new Color(0.38f, 0.34f, 0.28f, 0.7f), 7);
+    }
+
+    public static void BuildParkedCar(Node2D root, float x, float y, bool damaged = false)
+    {
+        AddPoly(root, $"CarBody{x}", new Color(0.11f, 0.115f, 0.12f), [
+            new Vector2(x - 98f, y + 10f), new Vector2(x + 78f, y + 6f), new Vector2(x + 104f, y - 20f), new Vector2(x + 44f, y - 38f),
+            new Vector2(x - 44f, y - 34f), new Vector2(x - 106f, y - 10f)
+        ], 8);
+        AddPoly(root, $"CarWindow{x}", new Color(0.04f, 0.05f, 0.06f, 0.9f), [
+            new Vector2(x - 22f, y - 30f), new Vector2(x + 38f, y - 32f), new Vector2(x + 26f, y - 14f), new Vector2(x - 12f, y - 12f)
+        ], 9);
+        if (damaged)
+        {
+            AddPoly(root, $"CarDent{x}", new Color(0.28f, 0.03f, 0.03f, 0.58f), [
+                new Vector2(x + 52f, y - 10f), new Vector2(x + 78f, y - 6f), new Vector2(x + 70f, y + 12f), new Vector2(x + 48f, y + 8f)
+            ], 10);
+            AddPoly(root, $"CarBlood{x}", new Color(0.35f, 0.02f, 0.04f, 0.72f), [
+                new Vector2(x + 8f, y + 14f), new Vector2(x + 48f, y + 10f), new Vector2(x + 42f, y + 28f), new Vector2(x + 4f, y + 26f)
+            ], 11);
+        }
+    }
+
+    public static void BuildStrayDog(Node2D root, float x, float y)
+    {
+        AddPoly(root, $"DogBody{x}", new Color(0.18f, 0.12f, 0.08f), [
+            new Vector2(x, y + 6f), new Vector2(x + 38f, y + 2f), new Vector2(x + 52f, y - 8f), new Vector2(x + 48f, y + 10f), new Vector2(x + 8f, y + 14f)
+        ], 8);
+        AddPoly(root, $"DogHead{x}", new Color(0.22f, 0.14f, 0.09f), [
+            new Vector2(x + 48f, y - 6f), new Vector2(x + 68f, y - 12f), new Vector2(x + 72f, y - 2f), new Vector2(x + 54f, y + 4f)
+        ], 9);
+        AddPoly(root, $"DogEar{x}", new Color(0.14f, 0.08f, 0.05f), [
+            new Vector2(x + 58f, y - 14f), new Vector2(x + 64f, y - 22f), new Vector2(x + 68f, y - 10f)
+        ], 10);
+        AddPoly(root, $"DogLeg{x}", new Color(0.12f, 0.08f, 0.05f), [
+            new Vector2(x + 12f, y + 12f), new Vector2(x + 18f, y + 12f), new Vector2(x + 16f, y + 22f), new Vector2(x + 10f, y + 22f)
+        ], 8);
     }
 }

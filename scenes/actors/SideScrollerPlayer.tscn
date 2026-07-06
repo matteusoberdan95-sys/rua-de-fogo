@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/SideScrollerPlayerController.cs" id="1_player"]
 [ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
@@ -7,31 +7,15 @@
 [ext_resource type="PackedScene" path="res://scenes/actors/PlayerProjectile.tscn" id="5_projectile"]
 [ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="6_sprite_visual"]
 [ext_resource type="Script" path="res://scripts/combat/PostureComponent.cs" id="7_posture"]
-[ext_resource type="Texture2D" path="res://art/sprites/player/caua_ref_idle.png" id="7_idle"]
-[ext_resource type="Texture2D" path="res://art/sprites/player/caua_ref_walk_sheet.png" id="8_walk"]
-[ext_resource type="Texture2D" path="res://art/sprites/player/caua_ref_attack.png" id="9_attack"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk0"]
-atlas = ExtResource("8_walk")
-region = Rect2(0, 0, 384, 1024)
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sprite"]
+size = Vector2(4, 4)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk1"]
-atlas = ExtResource("8_walk")
-region = Rect2(384, 0, 384, 1024)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk2"]
-atlas = ExtResource("8_walk")
-region = Rect2(768, 0, 384, 1024)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk3"]
-atlas = ExtResource("8_walk")
-region = Rect2(1152, 0, 384, 1024)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_caua"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_fallback"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_idle")
+"texture": SubResource("PlaceholderTexture2D_sprite")
 }],
 "loop": true,
 "name": &"idle",
@@ -39,16 +23,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_walk0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk3")
+"texture": SubResource("PlaceholderTexture2D_sprite")
 }],
 "loop": true,
 "name": &"walk",
@@ -56,7 +31,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("9_attack")
+"texture": SubResource("PlaceholderTexture2D_sprite")
 }],
 "loop": false,
 "name": &"attack",
@@ -88,12 +63,13 @@ position = Vector2(-8, -4)
 script = ExtResource("6_sprite_visual")
 UseLayeredPrototype = true
 DisplayScale = 0.135
+LayeredPreset = 0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteVisual"]
 visible = false
 texture_filter = 0
 position = Vector2(0, -52)
-sprite_frames = SubResource("SpriteFrames_caua")
+sprite_frames = SubResource("SpriteFrames_fallback")
 animation = &"idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

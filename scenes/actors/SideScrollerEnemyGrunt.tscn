@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
@@ -8,13 +8,14 @@
 [ext_resource type="Script" path="res://scripts/combat/BleedEffect.cs" id="6_bleed"]
 [ext_resource type="Script" path="res://scripts/combat/PostureComponent.cs" id="7_posture"]
 
-[ext_resource type="Texture2D" path="res://art/sprites/enemies/grunt_idle_game.png" id="7_idle"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sprite"]
+size = Vector2(4, 4)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_grunt"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_idle")
+"texture": SubResource("PlaceholderTexture2D_sprite")
 }],
 "loop": true,
 "name": &"idle",
@@ -22,7 +23,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_idle")
+"texture": SubResource("PlaceholderTexture2D_sprite")
 }],
 "loop": true,
 "name": &"walk",
@@ -30,7 +31,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_idle")
+"texture": SubResource("PlaceholderTexture2D_sprite")
 }],
 "loop": false,
 "name": &"attack",

@@ -4,9 +4,11 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: nenhuma sprint ativa — marco vertical slice v1.1 concluido.
+Sprint atual: `Sprint 40 - Art Pipeline Real` (iniciada / build validado).
 
-Ultima sprint concluida: `Sprint 34 - Demo Vertical Slice E QC` (validada no Godot).
+Ultima sprint concluida: `Sprint 39 - Anatomia e Poses Anti-South-Park` (build validado; validacao visual reprovou a abordagem procedural como caminho final).
+
+**Regra visual obrigatoria:** `docs/VISUAL_RULE.md` - `references/` nao vira runtime; `art/production/` e o caminho oficial para assets reais.
 
 Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/STAGE_ASSET_PIPELINE.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
@@ -18,6 +20,39 @@ Direcao oficial atual:
 - personagens fortes como pilar visual;
 - clima, horario e rua viva como identidade do jogo;
 - prototipo top-down mantido como laboratorio de sistemas.
+
+Resumo da Sprint 40:
+
+- aberta apos playtest da Sprint 39 em 06/07/2026;
+- decisao: rig procedural fica como laboratorio de gameplay, nao como arte final vendavel;
+- foco: criar pipeline real de arte para Caua, Quebra-Osso e Vila Esperanca;
+- nova pasta oficial: `art/production/`;
+- documento guia: `docs/SPRINT_40_ART_PIPELINE_REAL.md`;
+- status: iniciada / build validado / aguardando primeira importacao de asset real.
+
+## Sprint 40 - Art Pipeline Real (iniciada)
+
+Status: iniciada / build validado.
+
+Objetivo: parar de tratar o rig procedural como caminho final e criar a primeira trilha real de producao visual.
+
+Entregas iniciais:
+
+- `docs/SPRINT_40_ART_PIPELINE_REAL.md`;
+- `art/production/README.md`;
+- estrutura `art/production/characters/caua/`;
+- estrutura `art/production/characters/enemies/quebra-osso/`;
+- estrutura `art/production/stages/vila-esperanca/`;
+- estrutura `art/production/props/`, `fx/` e `_exports/`;
+- `docs/VISUAL_RULE.md` reescrito para separar `references/` de `art/production/`.
+
+Proximas tarefas:
+
+- criar `ArtCharacterVisual.cs` com `AnimatedSprite2D`/`SpriteFrames`;
+- adicionar flag `UseProductionArt`;
+- manter fallback para `CharacterSpriteVisual`;
+- importar primeiro Caua real;
+- montar primeiro trecho pintado da Vila Esperanca.
 
 ## Definicao De Pronto
 
@@ -1209,3 +1244,44 @@ Validacao:
 - fluxo vertical slice v1.1, tutorial, checkpoint, chefes e QC aprovados;
 - demo pronta para export/pacote testers (`scripts/package-vertical-slice.ps1`).
 
+## Sprint 35 - Referencia em Blocking 2D (implementada)
+
+Status: implementada / aguardando validacao no Godot.
+
+Objetivo: alinhar personagens e cenario da Vila Esperanca as pranchas de referencia — **somente** via blocking 2D no Godot (zero PNG no runtime).
+
+Entregas:
+
+- `docs/REFERENCE_BLOCKING_MAP.md` — mapa referencia → preset → poligonos;
+- Caua: regata vermelha, cargo, buzz cut, faca caseira, corte horizontal;
+- Inimigos Ato 1: Quebra-Osso (tubo), Acougueiro (avental/facao), Grande (onca/soco), Capitao (faixa/bastao);
+- olhos humanos nos capangas; postura idle reta;
+- cenario: boteco com graffiti, ponto final, cadeiras vermelhas, ceu ambar;
+- `dotnet build` validado.
+
+Validacao pendente: F5 — conferir se silhuetas e golpes lembram as pranchas.
+
+## Sprint 36 - Identidade de Combate (implementada)
+
+- `MoveCatalog.cs`: golpes direcionais (↑+J chute alto, ↓+J chute baixo), combo Rua com facada;
+- `EnemyCombatProfile.cs`: padroes de ataque por arquetipo;
+- Faca caseira so aparece na facada do combo.
+
+## Sprint 37 - Animacoes Estilo SIFU (implementada)
+
+- Easing em golpes, guarda de lutador, rostos em perfil, chutes com windup/strike/recover.
+
+## Sprint 38 - Cel-Shading e Polish Visual (validada com ressalva)
+
+Objetivo: sair do aspecto "boneco de cera" — cel-shading duro, armas detalhadas, cenario com textura.
+
+Entregas:
+
+- `scripts/visual/RigShadingLibrary.cs` — cel-shading, faca/tubo/facao/bastao procedurais;
+- membros e torso com sombra/highlight em bandas duras (nao gradiente suave);
+- rostos mais angulares em perfil; ombros largos no Brute; onca/leopard print;
+- impactos de golpe com arco de swipe + burst;
+- cenario: grunge nas paredes, sujeira/cracks no asfalto, neblina de profundidade, ceu com gradiente;
+- `dotnet build` validado.
+
+Validacao pendente: F5 — comparar com pranchas em `references/`.

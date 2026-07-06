@@ -64,6 +64,7 @@ public partial class LayeredStreetPrototype : Node2D
         StageAssetLibrary.BuildCurbAndLane(nearRoot, -1080f, 4550f);
         StageAssetLibrary.BuildSidewalkTiles(midRoot, -1080f, 320f, 4550f);
         StageAssetLibrary.BuildAsphaltReadability(nearRoot, _ctx, -1080f, 430f, 4550f);
+        ProceduralStageTextures.AddWetAsphaltReflections(nearRoot, _ctx, -1080f, 468f, 4550f);
 
         AddStageOneProductionDress();
         StageActLandmarks.BuildAll(midRoot, nearRoot, _ctx);
@@ -119,14 +120,20 @@ public partial class LayeredStreetPrototype : Node2D
             OffsetTop = -40f,
             OffsetRight = 3900f,
             OffsetBottom = 720f,
-            Color = new Color(0.018f, 0.023f, 0.03f),
+            Color = new Color(0.04f, 0.035f, 0.045f),
             ZIndex = -110
         };
         AddChild(sky);
 
-        AddPoly(this, "DistantGlow", new Color(0.65f, 0.23f, 0.12f, 0.12f), [
+        AddPoly(this, "DistantGlow", new Color(0.72f, 0.32f, 0.14f, 0.18f), [
             new Vector2(-1100f, 120f), new Vector2(3900f, 88f), new Vector2(3900f, 250f), new Vector2(-1100f, 280f)
         ], -109);
+        AddPoly(this, "HorizonAmber", new Color(0.58f, 0.22f, 0.08f, 0.1f), [
+            new Vector2(-1100f, 200f), new Vector2(3900f, 175f), new Vector2(3900f, 310f), new Vector2(-1100f, 330f)
+        ], -108);
+        AddPoly(this, "SkyTopCool", new Color(0.02f, 0.028f, 0.05f, 0.35f), [
+            new Vector2(-1100f, -40f), new Vector2(3900f, -40f), new Vector2(3900f, 140f), new Vector2(-1100f, 140f)
+        ], -107);
     }
 
     private void AddFarFavela(Node2D root)
@@ -139,23 +146,33 @@ public partial class LayeredStreetPrototype : Node2D
             new Vector2(3900f, 330f), new Vector2(-1100f, 330f)
         ], 0);
 
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 28; i++)
         {
-            float x = -980f + i * 145f;
-            float y = 142f + (i % 4) * 18f;
-            float h = 78f + (i % 3) * 22f;
-            AddRect(root, $"FarHouse{i}", new Vector2(x, y), new Vector2(92f, h), new Color(0.045f, 0.05f, 0.055f), 1);
-            AddWindowCluster(root, x + 12f, y + 12f, i);
+            float x = -960f + i * 158f;
+            float y = 128f + (i % 5) * 14f;
+            float w = 72f + (i % 4) * 18f;
+            float h = 88f + (i % 3) * 24f;
+            ProceduralStageTextures.BuildFavelaHouse(root, _ctx, x, y, w, h, i);
         }
 
         AddWire(root, "FarWireA", -1100f, 150f, 3900f, 112f, 0.018f, 4);
         AddWire(root, "FarWireB", -1100f, 188f, 3900f, 174f, 0.014f, 4);
+        AddPoly(root, "PoliceGlowL", new Color(0.82f, 0.12f, 0.10f, 0.18f), [
+            new Vector2(820f, 198f), new Vector2(860f, 168f), new Vector2(900f, 198f), new Vector2(860f, 228f)
+        ], 3);
+        AddPoly(root, "PoliceGlowR", new Color(0.14f, 0.32f, 0.88f, 0.15f), [
+            new Vector2(1680f, 192f), new Vector2(1720f, 162f), new Vector2(1760f, 192f), new Vector2(1720f, 222f)
+        ], 3);
+        AddPoly(root, "HazeBand", new Color(0.38f, 0.22f, 0.12f, 0.08f), [
+            new Vector2(-1100f, 210f), new Vector2(3900f, 190f), new Vector2(3900f, 260f), new Vector2(-1100f, 280f)
+        ], 2);
     }
 
     private void AddMidStreet(Node2D root)
     {
-        AddRect(root, "WallBase", new Vector2(-1100f, 170f), new Vector2(5000f, 150f), new Color(0.08f, 0.085f, 0.08f), 0);
-        AddRect(root, "SidewalkBack", new Vector2(-1100f, 318f), new Vector2(5000f, 54f), new Color(0.18f, 0.18f, 0.16f), 3);
+        ProceduralStageTextures.AddBrickWall(root, -1100f, 170f, 5000f, 150f, 3, 0);
+        ProceduralStageTextures.AddWallGrunge(root, -1100f, 170f, 5000f, 150f, 3, 3);
+        ProceduralStageTextures.AddDepthFog(root, -1100f, 5000f, 318f, 5);
         AddRect(root, "SidewalkFront", new Vector2(-1100f, 366f), new Vector2(5000f, 20f), new Color(0.10f, 0.105f, 0.10f), 4);
 
         StageAssetLibrary.BuildFenceSection(root, _ctx, -450f, 178f, 850f);
@@ -172,6 +189,8 @@ public partial class LayeredStreetPrototype : Node2D
     {
         AddRect(root, "WetAsphaltBack", new Vector2(-1100f, 385f), new Vector2(5000f, 115f), StageAssetLibrary.AsphaltBlack, 0);
         AddRect(root, "WetAsphaltFront", new Vector2(-1100f, 500f), new Vector2(5000f, 220f), new Color(0.024f, 0.028f, 0.03f), 0);
+        ProceduralStageTextures.AddAsphaltGrime(root, -1100f, 388f, 5000f, 1);
+        ProceduralStageTextures.AddAsphaltGrime(root, -1100f, 502f, 5000f, 1);
 
         for (int i = 0; i < 22; i++)
         {
@@ -201,7 +220,6 @@ public partial class LayeredStreetPrototype : Node2D
             return;
         }
 
-        StageAssetLibrary.BuildMercadinho(midRoot, _ctx, -920f, 145f, "BAR DO ZE", new Color(0.12f, 0.07f, 0.045f), neon: true);
         StageAssetLibrary.BuildMercadinho(midRoot, _ctx, -120f, 155f, "MERCADINHO", new Color(0.085f, 0.10f, 0.08f), neon: false);
         StageAssetLibrary.BuildMercadinho(midRoot, _ctx, 2220f, 158f, "ACAI E LANCHES", new Color(0.075f, 0.07f, 0.09f), neon: true);
 
@@ -447,11 +465,16 @@ public partial class LayeredStreetPrototype : Node2D
     private void AddForegroundAtmosphere()
     {
         Node2D fg = AddLayer("ForegroundAtmosphere", Vector2.Zero, -45);
+        ProceduralStageTextures.AddRainLayer(fg, _ctx, -1080f, 4550f);
+        ProceduralStageTextures.AddFilmGrain(fg, -1080f, 4550f, 120);
         for (int i = 0; i < 16; i++)
         {
             float x = -980f + i * 300f;
             AddRect(fg, $"RainSplash{i}", new Vector2(x, 646f + (i % 3) * 18f), new Vector2(42f, 2f), new Color(0.62f, 0.78f, 0.85f, 0.16f), 0);
         }
+        AddPoly(fg, "StreetMist", new Color(0.42f, 0.38f, 0.34f, 0.06f), [
+            new Vector2(-1100f, 520f), new Vector2(3900f, 500f), new Vector2(3900f, 620f), new Vector2(-1100f, 640f)
+        ], 0);
     }
 
     private void AddRoadsideAltar(Node2D root, float x, float y)
@@ -507,7 +530,7 @@ public partial class LayeredStreetPrototype : Node2D
             OffsetRight = 3900f,
             OffsetBottom = 720f,
             MouseFilter = Control.MouseFilterEnum.Ignore,
-            Color = new Color(0f, 0f, 0f, 0.14f),
+            Color = new Color(0f, 0f, 0f, 0.22f),
             ZIndex = -40
         };
         AddChild(vignette);

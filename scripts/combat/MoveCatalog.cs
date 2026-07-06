@@ -18,6 +18,9 @@ public enum MoveAnimProfile
     FlyingKnee,
     MeiaLua,
     GingaKick,
+    KnifeSlash,
+    HighKick,
+    LowKick,
 }
 
 public readonly record struct MartialMoveDefinition(
@@ -57,6 +60,39 @@ public static class MoveCatalog
     private static readonly MartialMoveDefinition CapoeiraBencao = Def("capoeira_bencao", "Bencao", MoveAnimProfile.GingaKick, 34, 0.26f, 410f, 18f, 14f, 1);
     private static readonly MartialMoveDefinition CapoeiraGiro = Def("capoeira_giro", "Meia-lua", MoveAnimProfile.MeiaLua, 46, 0.26f, 500f, 22f, 17f, 2);
     private static readonly MartialMoveDefinition CapoeiraAu = Def("capoeira_au", "Au batido", MoveAnimProfile.FlyingKick, 44, 0.28f, 490f, 20f, 18f, 3);
+
+    private static readonly MartialMoveDefinition StreetHighKick = Def("street_high_kick", "Chute alto", MoveAnimProfile.HighKick, 36, 0.68f, 430f, 19f, 14f, 2);
+    private static readonly MartialMoveDefinition StreetLowKick = Def("street_low_kick", "Chute baixo", MoveAnimProfile.LowKick, 30, 0.62f, 390f, 16f, 12f, 3);
+    private static readonly MartialMoveDefinition StreetKnifeSlash = Def("street_knife", "Facada", MoveAnimProfile.KnifeSlash, 40, 0.70f, 440f, 20f, 14f, 2);
+
+    public static bool TryResolveDirectional(CombatStyleKind style, float verticalInput, out MartialMoveDefinition move)
+    {
+        move = default;
+        if (verticalInput < -0.45f)
+        {
+            move = style switch
+            {
+                CombatStyleKind.MuayThai => MuayElbow with { DisplayName = "Chute baixo", Anim = MoveAnimProfile.LowKick },
+                CombatStyleKind.Boxe => BoxUpper with { DisplayName = "Uppercut", Anim = MoveAnimProfile.Uppercut },
+                _ => StreetLowKick,
+            };
+            return true;
+        }
+
+        if (verticalInput > 0.45f)
+        {
+            move = style switch
+            {
+                CombatStyleKind.MuayThai => MuayKnee with { DisplayName = "Joelhada alta", Anim = MoveAnimProfile.HighKick },
+                CombatStyleKind.Capoeira => CapoeiraMeiaLua with { DisplayName = "Chute alto", Anim = MoveAnimProfile.HighKick },
+                CombatStyleKind.Boxe => BoxHook with { DisplayName = "Chute alto", Anim = MoveAnimProfile.HighKick },
+                _ => StreetHighKick,
+            };
+            return true;
+        }
+
+        return false;
+    }
 
     public static MartialMoveDefinition ResolveMove(
         CombatStyleKind style,
@@ -113,7 +149,7 @@ public static class MoveCatalog
             return "soco · bencao · meia-lua · au batido  |  corrida: meia-lua";
         }
 
-        return "soco · cruzado · chute · joelhada  |  corrida: voadora";
+        return "soco · cruzado · facada · joelhada  |  ↑ chute alto  ↓ chute baixo  |  corrida: voadora";
     }
 
     public static string GetComboMoveName(CombatStyleKind style, int slot, bool isRunning)
@@ -176,7 +212,7 @@ public static class MoveCatalog
             CombatStyleKind.Boxe => [BoxJab, BoxCross, BoxHook, BoxUpper],
             CombatStyleKind.MuayThai => [MuayJab, MuayTeep, MuayKnee, MuayElbow],
             CombatStyleKind.Capoeira => [StreetJab, CapoeiraBencao, CapoeiraGiro, CapoeiraAu],
-            _ => [StreetJab, StreetCross, StreetKick, StreetKnee],
+            _ => [StreetJab, StreetCross, StreetKnifeSlash, StreetKnee],
         };
     }
 

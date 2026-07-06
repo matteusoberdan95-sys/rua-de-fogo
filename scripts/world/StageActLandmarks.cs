@@ -19,6 +19,8 @@ public static class StageActLandmarks
     {
         StageAssetLibrary.BuildEntranceArch(mid, ctx, -180f, 118f);
         StageAssetLibrary.BuildBotecoDoZe(mid, ctx, -1120f, 118f);
+        StageAssetLibrary.BuildParkedCar(near, -420f, 468f);
+        StageAssetLibrary.BuildStrayDog(near, 180f, 538f);
         StageAssetLibrary.BuildTrashCluster(near, ctx, -560f, 524f, 0);
         StageAssetLibrary.BuildTrashCluster(near, ctx, -320f, 518f, 1);
         AddZoneBanner(mid, "Act1Banner", "ENTRADA DA VILA", -60f, 138f, new Color(0.82f, 0.58f, 0.22f));
@@ -43,7 +45,7 @@ public static class StageActLandmarks
         StageAssetLibrary.BuildStreetPole(mid, ctx, 1920f, 116f, lit: true, flicker: true);
         StageAssetLibrary.BuildMercadinho(mid, ctx, 1480f, 150f, "OFICINA", new Color(0.10f, 0.088f, 0.075f), false);
         BuildPoliceDetail(near, 890f, 482f);
-        BuildBrokenCarDetail(near, 2050f, 474f);
+        StageAssetLibrary.BuildParkedCar(near, 2050f, 474f, damaged: true);
         StageAssetLibrary.BuildPuddle(near, ctx, 1580f, 612f, 320f, 38f, new Color(0.48f, 0.24f, 0.14f, 0.22f));
     }
 
@@ -82,23 +84,6 @@ public static class StageActLandmarks
         AddRect(root, "PoliceLightL", new Vector2(x - 12f, y - 32f), new Vector2(14f, 7f), new Color(0.9f, 0.15f, 0.12f, 0.8f), 9);
         AddRect(root, "PoliceLightR", new Vector2(x + 10f, y - 32f), new Vector2(14f, 7f), new Color(0.15f, 0.35f, 0.95f, 0.8f), 9);
         AddLabel(root, "PoliceMark", "190", new Vector2(x - 18f, y + 2f), 12, new Color(0.72f, 0.68f, 0.55f, 0.55f), 9);
-    }
-
-    private static void BuildBrokenCarDetail(Node2D root, float x, float y)
-    {
-        AddPoly(root, "CarBody", new Color(0.11f, 0.115f, 0.12f), [
-            new Vector2(x - 98f, y + 10f), new Vector2(x + 78f, y + 6f), new Vector2(x + 104f, y - 20f), new Vector2(x + 44f, y - 38f),
-            new Vector2(x - 44f, y - 34f), new Vector2(x - 106f, y - 10f)
-        ], 8);
-        AddPoly(root, "CarWindow", new Color(0.04f, 0.05f, 0.06f, 0.9f), [
-            new Vector2(x - 22f, y - 30f), new Vector2(x + 38f, y - 32f), new Vector2(x + 26f, y - 14f), new Vector2(x - 12f, y - 12f)
-        ], 9);
-        AddPoly(root, "CarDent", new Color(0.28f, 0.03f, 0.03f, 0.58f), [
-            new Vector2(x + 52f, y - 10f), new Vector2(x + 78f, y - 6f), new Vector2(x + 70f, y + 12f), new Vector2(x + 48f, y + 8f)
-        ], 10);
-        AddPoly(root, "CarBlood", new Color(0.35f, 0.02f, 0.04f, 0.72f), [
-            new Vector2(x + 8f, y + 14f), new Vector2(x + 48f, y + 10f), new Vector2(x + 42f, y + 28f), new Vector2(x + 4f, y + 26f)
-        ], 11);
     }
 
     private static void BuildBossAltar(Node2D root, float x, float y, StageAssetContext ctx)
