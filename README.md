@@ -54,6 +54,7 @@ dotnet build SangueNoAsfalto.csproj
 - **Props quebraveis** (`BreakableStageProp`): caixote, cerca, lixo, placa.
 - **Clima e horario** dinamicos, chuva, rua em camadas, HUD arcade.
 - **Sprint 29:** primeira passada de producao visual na Vila Esperanca: lojas, lixeira, fios, roupas no varal, caixa eletrica, pichacoes, asfalto remendado, buracos, lixo, cacos, marcas de rua e atmosfera no trecho inteiro.
+- **Correcao visual Sprint 29:** camadas antigas `Road`/`LaneBand`/`NightVignette` foram escondidas e a rua nova teve `ZIndex` corrigido para aparecer no gameplay.
 
 ### Regra visual
 

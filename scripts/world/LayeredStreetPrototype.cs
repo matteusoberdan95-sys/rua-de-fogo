@@ -45,15 +45,15 @@ public partial class LayeredStreetPrototype : Node2D
     {
         AddSky();
 
-        Node2D far = AddLayer("FarFavela", new Vector2(0f, 10f), -30);
+        Node2D far = AddLayer("FarFavela", new Vector2(0f, 10f), -90);
         Node2D farRoot = AddNode(far, "FarRoot", Vector2.Zero, 0);
         AddFarFavela(farRoot);
 
-        Node2D mid = AddLayer("MidStreet", new Vector2(0f, 28f), -20);
+        Node2D mid = AddLayer("MidStreet", new Vector2(0f, 28f), -80);
         Node2D midRoot = AddNode(mid, "MidRoot", Vector2.Zero, 0);
         AddMidStreet(midRoot);
 
-        Node2D near = AddLayer("NearStreet", new Vector2(0f, 44f), -10);
+        Node2D near = AddLayer("NearStreet", new Vector2(0f, 44f), -70);
         Node2D nearRoot = AddNode(near, "NearRoot", Vector2.Zero, 0);
         AddNearStreet(nearRoot);
 
@@ -90,7 +90,7 @@ public partial class LayeredStreetPrototype : Node2D
 
     private void AddStageExitGate()
     {
-        Node2D root = AddNode(this, "StageExitGate", new Vector2(3090f, 0f), 15);
+        Node2D root = AddNode(this, "StageExitGate", new Vector2(3090f, 0f), -60);
         AddRect(root, "ExitArch", new Vector2(-70f, 120f), new Vector2(140f, 210f), new Color(0.12f, 0.11f, 0.09f), 0);
         AddRect(root, "ExitGlow", new Vector2(-52f, 138f), new Vector2(104f, 170f), new Color(0.22f, 0.62f, 0.38f, 0.35f), 1);
         Label exit = AddLabel(root, "ExitLabel", "SAIDA", new Vector2(-34f, 152f), 20, new Color(0.92f, 0.88f, 0.55f), 2);
@@ -109,13 +109,14 @@ public partial class LayeredStreetPrototype : Node2D
             OffsetTop = -40f,
             OffsetRight = 3900f,
             OffsetBottom = 720f,
-            Color = new Color(0.018f, 0.023f, 0.03f)
+            Color = new Color(0.018f, 0.023f, 0.03f),
+            ZIndex = -110
         };
         AddChild(sky);
 
         AddPoly(this, "DistantGlow", new Color(0.65f, 0.23f, 0.12f, 0.12f), [
             new Vector2(-1100f, 120f), new Vector2(3900f, 88f), new Vector2(3900f, 250f), new Vector2(-1100f, 280f)
-        ], 0);
+        ], -109);
     }
 
     private void AddFarFavela(Node2D root)
@@ -566,7 +567,7 @@ public partial class LayeredStreetPrototype : Node2D
 
     private void AddForegroundAtmosphere()
     {
-        Node2D fg = AddLayer("ForegroundAtmosphere", Vector2.Zero, 90);
+        Node2D fg = AddLayer("ForegroundAtmosphere", Vector2.Zero, -45);
         for (int i = 0; i < 16; i++)
         {
             float x = -980f + i * 300f;
@@ -658,7 +659,7 @@ public partial class LayeredStreetPrototype : Node2D
             OffsetBottom = 720f,
             MouseFilter = Control.MouseFilterEnum.Ignore,
             Color = new Color(0f, 0f, 0f, 0.20f),
-            ZIndex = 100
+            ZIndex = -40
         };
         AddChild(vignette);
     }

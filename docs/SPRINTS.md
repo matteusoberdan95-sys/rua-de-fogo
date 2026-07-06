@@ -1067,6 +1067,9 @@ Entregas implementadas:
 - adicionados pichacoes originais, lixeiras, caixa eletrica, varal, cabos, cacos de garrafa, papeis soltos, buracos e pocas;
 - adicionada atmosfera de primeiro plano com respingos/chuva no chao;
 - elementos foram mantidos como partes separadas para animacao leve e futura substituicao por arte final;
+- correcao apos playtest: a primeira passada estava escondida por `ZIndex` negativo e pelas camadas antigas `Road`/`LaneBand`/`NightVignette`;
+- `SideScrollerPrototype.tscn` agora esconde as camadas antigas que tapavam a rua nova;
+- `LayeredStreetPrototype` reorganiza sky/far/mid/near/fg para aparecer atras do jogador e nao atras do ceu;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
 Validacao pendente:

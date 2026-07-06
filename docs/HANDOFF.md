@@ -249,6 +249,9 @@ Estado da Sprint 29:
 - `scripts/world/LayeredStreetPrototype.cs` recebeu passada visual de fase 1;
 - adicionados comercios, pichacoes, calcada, asfalto remendado, lixeiras, caixa eletrica, varal, cabos, cacos, papeis, buracos, pocas e marcas de rua;
 - objetivo: transformar as referencias em camadas editaveis, nao em fundo chapado;
+- correcao apos playtest: os detalhes existiam, mas estavam escondidos atras do ceu/camadas antigas por ordem de renderizacao;
+- `scenes/levels/SideScrollerPrototype.tscn` agora esconde `Road`, `WetRoadSheen`, `LaneBandBack`, `LaneBandMid`, `LaneBandFront` e `NightVignette`;
+- `LayeredStreetPrototype` agora usa ordem `sky -> far -> mid -> near -> foreground`, sempre atras do jogador;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
 Proximo passo recomendado:
