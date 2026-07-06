@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (implementada / aguardando validacao no Godot).
+Sprint atual: `Sprint 31 - Personagens E Inimigos Expressivos` (planejada).
 
-Ultima sprint concluida: `Sprint 29 - Polimento Visual Da Fase 1` (validada no Godot).
+Ultima sprint concluida: `Sprint 30 - Legibilidade, Camera e HUD` (validada no Godot).
 
 Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
@@ -1079,9 +1079,9 @@ Validacao:
 - observacao: ainda esta longe da arte final, mas a direcao da rua viva foi aprovada como proximo degrau de prototipo.
 
 
-## Sprint 30 - Legibilidade, Camera e HUD (implementada)
+## Sprint 30 - Legibilidade, Camera e HUD (concluida)
 
-Status: implementada / aguardando validacao no Godot.
+Status: concluida e validada no Godot.
 
 Objetivo: melhorar a leitura do jogo antes de adicionar mais conteudo: camera, escala, contraste, HUD e composicao visual precisam deixar personagem, inimigos, pickups e golpes claros em meio segundo.
 
@@ -1112,12 +1112,74 @@ Criterio de pronto:
 - build sem erros;
 - validacao F5 no Godot.
 
-Pendencias de validacao:
+Validacao:
 
-- abrir no Godot e testar com `F5`;
-- checar se o HUD nao cobre luta quando ha varios inimigos;
-- checar se a camera nao afasta demais o impacto dos golpes;
-- confirmar se chuva, vignette e halo melhoram leitura sem deixar o jogo claro demais;
-- se aprovado, marcar Sprint 30 como concluida e planejar Sprint 31 focada em personagens/inimigos mais expressivos.
+- validada no Godot pelo usuario em 06/07/2026;
+- resultado aprovado: leitura geral melhorou e o jogo ficou pronto para a proxima passada de personagem/cenario;
+- observacao: a camera/HUD agora sao base para as proximas sprints, mas ainda podem ser ajustados conforme novos sprites/rigs ficarem mais ricos.
+
+## Sprint 31 - Personagens E Inimigos Expressivos (planejada)
+
+Status: planejada.
+
+Objetivo: fazer Caua, Quebra-Osso e os inimigos principais parecerem menos blocados e mais vivos, mantendo o rig em camadas atual como base jogavel.
+
+Entregas planejadas:
+
+- revisar silhueta do Caua em idle, walk, corrida, ataque, hit reaction e low health;
+- melhorar rosto, cabelo, ombros, maos, postura e roupa do Caua sem voltar para PNG colado;
+- dar identidade visual aos inimigos comuns e variantes (`QuebraOsso`, `Fast`, `Brute`, `Infected`, `MiniBoss`);
+- melhorar poses de ataque/telegraph/parry/hurt/morte para leitura de combate;
+- adicionar variacoes simples de idle e hit reaction para evitar bonecos identicos;
+- documentar o que vira sprite sheet/arte final e o que continua como rig procedural.
+
+Criterio de pronto:
+
+- Caua e inimigos sao reconheciveis em print parado;
+- idle/walk/ataque/hurt nao parecem o mesmo boneco rigido;
+- inimigos possuem silhuetas diferentes entre si;
+- build sem erros;
+- validacao F5 no Godot.
+
+## Sprint 32 - Cenario Fase 1 Com Assets Finais (planejada)
+
+Status: planejada.
+
+Objetivo: transformar a Vila Esperanca de cenario bom de prototipo para cenario com cara de fase real: lojas, postes, lixo, pocas, muros, placas, barracos e profundidade visual.
+
+Entregas planejadas:
+
+- escolher quais elementos do `LayeredStreetPrototype` viram assets finais primeiro;
+- substituir/aperfeicoar boteco, mercadinho, poste, lixo, cerca, placas e pocas;
+- criar landmarks por trecho da fase para evitar repeticao visual;
+- melhorar chao/asfalto/calcada com leitura lateral clara;
+- preparar pipeline de export de assets 2D limpos para Godot.
+
+## Sprint 33 - Clima E Rua Viva Como Gameplay (planejada)
+
+Status: planejada.
+
+Objetivo: fazer chuva, horario, vento, lama, eletricidade e luz afetarem sensacao de jogo, leitura e ritmo da fase, nao apenas o visual.
+
+Entregas planejadas:
+
+- revisar estados de clima e horario por ato da fase;
+- ligar eventos simples: relampago, apagao, poca perigosa, objeto solto no vento;
+- melhorar som/feedback de chuva e trovão quando houver audio placeholder;
+- definir assinatura climatica para mini-chefes/bosses.
+
+## Sprint 34 - Demo Vertical Slice E QC (planejada)
+
+Status: planejada.
+
+Objetivo: consolidar uma demo vertical slice curta, estavel e compartilhavel, com checklist de qualidade para testar fora da maquina de desenvolvimento.
+
+Entregas planejadas:
+
+- checklist de bugs/feel/legibilidade;
+- revisao de balanceamento da fase inteira;
+- ajustes de menu/tutorial/morte/vitoria;
+- screenshots internas com `F9`;
+- preparar build local quando a qualidade visual estiver aceitavel.
 
 

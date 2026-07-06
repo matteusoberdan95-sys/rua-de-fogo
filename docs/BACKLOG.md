@@ -273,6 +273,39 @@
 - [x] Melhorar leitura de pickups, props e perigos.
 - [x] Revisar chuva/vignette/alpha para nao esconder elementos.
 - [x] Validar `dotnet build SangueNoAsfalto.csproj`.
-- [ ] Validar Sprint 30 no Godot com F5.
-- [ ] Fechar sprint apos validacao.
+- [x] Validar Sprint 30 no Godot com F5.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.28 - Personagens E Inimigos Expressivos (Sprint 31)
+
+- [ ] Melhorar silhueta e pose idle do Caua.
+- [ ] Melhorar walk/run/ataque/hurt/low health do Caua.
+- [ ] Diferenciar visualmente Quebra-Osso, Fast, Brute, Infected e MiniBoss.
+- [ ] Melhorar telegraph, parry, hurt e morte dos inimigos.
+- [ ] Documentar o que continua rig procedural e o que vira sprite sheet final.
+- [ ] Validar `dotnet build SangueNoAsfalto.csproj`.
+- [ ] Validar Sprint 31 no Godot com F5.
+
+## Marco 0.29 - Cenario Fase 1 Com Assets Finais (Sprint 32)
+
+- [ ] Escolher primeiros assets finais da Vila Esperanca.
+- [ ] Refinar boteco, mercadinho, poste, lixo, cerca, placas e pocas.
+- [ ] Criar landmarks por trecho da fase.
+- [ ] Melhorar asfalto, calcada e profundidade lateral.
+- [ ] Validar leitura com camera da Sprint 30.
+
+## Marco 0.30 - Clima E Rua Viva Como Gameplay (Sprint 33)
+
+- [ ] Revisar estados de clima/horario por ato.
+- [ ] Criar eventos simples de relampago, apagao, poca ou vento.
+- [ ] Definir clima-assinatura de mini-chefes/bosses.
+- [ ] Manter clima dramatico sem esconder combate.
+
+## Marco 0.31 - Demo Vertical Slice E QC (Sprint 34)
+
+- [ ] Checklist de bugs, feel e legibilidade.
+- [ ] Revisar balanceamento da fase inteira.
+- [ ] Ajustar menu/tutorial/morte/vitoria.
+- [ ] Capturar screenshots internas com F9.
+- [ ] Preparar build local quando visual estiver aceitavel.
 

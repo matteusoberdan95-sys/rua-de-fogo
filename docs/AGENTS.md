@@ -13,11 +13,11 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (implementada / aguardando validacao no Godot).
+Sprint atual: `Sprint 31 - Personagens E Inimigos Expressivos` (planejada).
 
 Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro.
 
-Direcao visual atual: Sprint 29 validou a rua viva como caminho; Sprint 30 implementou leitura, camera, HUD compacto, chuva menos poluida e contraste dos personagens antes de novos sistemas.
+Direcao visual atual: Sprint 29 validou a rua viva como caminho; Sprint 30 validou leitura, camera, HUD compacto, chuva menos poluida e contraste dos personagens. Sprint 31 deve focar Caua e inimigos mais expressivos.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 
@@ -47,7 +47,7 @@ Foco atual:
 - melhorar feedback de acerto;
 - ajustar velocidade, dash, stamina e combo;
 - garantir que cada mudanca continue jogavel.
-- validar se a camera aberta da Sprint 30 ainda preserva peso e impacto dos golpes.
+- preservar a camera/HUD validados na Sprint 30 enquanto novas poses de personagem entram.
 
 Proximas entregas:
 
@@ -66,6 +66,7 @@ Foco atual:
 - garantir que Quebra-Osso nao pareca recorte;
 - preparar variacoes futuras com o mesmo contrato visual;
 - preservar ataques telegrafados.
+- liderar Sprint 31 nas silhuetas e poses dos inimigos comuns/variantes.
 
 Proximas entregas:
 
@@ -124,6 +125,7 @@ Foco atual:
 - definir protagonista, inimigos e mundo;
 - impedir que mockups de referencia sejam tratados como arte final.
 - cobrar que a Vila Esperanca conte historia visual, nao seja so fundo escuro.
+- guiar Sprint 31 com prioridade em Caua, Quebra-Osso e inimigos reconheciveis em print parado.
 
 Proximas entregas:
 
@@ -143,7 +145,7 @@ Foco atual:
 - criar tela de morte;
 - criar menu inicial;
 - mostrar feedback claro sem poluir a tela.
-- manter o HUD compacto da Sprint 30 e evitar que debug/tecnicas cubram a acao.
+- manter o HUD compacto validado na Sprint 30 e ajustar somente se as novas silhuetas exigirem.
 
 Proximas entregas:
 
@@ -178,7 +180,7 @@ Foco atual:
 - manter `docs/WEATHER_TIME_SYSTEM.md` como fonte do sistema;
 - garantir que a rua viva tenha luzes, chuva e fundo em camadas;
 - pensar clima como gameplay e narrativa, nao so decoracao.
-- validar a reducao de chuva/vignette da Sprint 30 sem perder clima dark.
+- preservar a reducao de chuva/vignette validada na Sprint 30 ate a Sprint 33.
 
 Proximas entregas:
 

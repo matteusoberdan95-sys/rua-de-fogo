@@ -256,7 +256,7 @@ Estado da Sprint 29:
 
 Estado da Sprint 30:
 
-- implementada / aguardando validacao no Godot;
+- concluida e validada no Godot pelo usuario em 06/07/2026;
 - `BeatEmUpHud` e `SideScrollerPrototype.tscn` usam HUD compacto: painel menor, barras menores, textos abreviados e `TechniquesLabel` previsto na cena;
 - `SideScrollerPlayer.tscn` abriu a camera (`zoom 1.28`) e deslocou enquadramento para mostrar mais rua e perigo a frente;
 - `CharacterSpriteVisual` adicionou halo, sombra de contato e rim light sutil atras do rig para destacar personagens no cenario escuro;
@@ -264,12 +264,21 @@ Estado da Sprint 30:
 - chuva placeholder e vinheta foram atenuadas para nao esconder personagem/pickups;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
-Proximo passo recomendado:
+Proximo passo recomendado no Cursor CLI:
 
-1. abrir no Godot e testar **Sprint 30** com `F5`;
-2. conferir se HUD/camera/chuva/halo melhoram leitura sem matar o peso visual;
-3. se aprovado, marcar Sprint 30 como concluida;
-4. planejar Sprint 31 focada em personagens/inimigos mais expressivos ou Sprint 32 focada em cenario com assets finais.
+1. rodar `git pull origin main`;
+2. ler `README.md`, `docs/SPRINTS.md`, `docs/BACKLOG.md`, `docs/AGENTS.md` e este `docs/HANDOFF.md`;
+3. iniciar **Sprint 31 - Personagens E Inimigos Expressivos**;
+4. priorizar Caua, Quebra-Osso e inimigos principais em idle/walk/ataque/hurt/morte;
+5. manter camera, HUD compacto, chuva e vinheta da Sprint 30 como baseline;
+6. antes de trocar de maquina novamente: `dotnet build`, atualizar docs, commit e push.
+
+Roadmap planejado:
+
+- Sprint 31: personagens e inimigos expressivos;
+- Sprint 32: cenario da Fase 1 com assets finais;
+- Sprint 33: clima e rua viva como gameplay;
+- Sprint 34: demo vertical slice e QC.
 
 Estado da Sprint 28:
 
@@ -357,11 +366,11 @@ Estado da Sprint 17:
 - concluida e validada no playtest;
 - combo, hurt, telegraph e trails aprovados.
 
-Proximo passo recomendado:
+Proximo passo recomendado atual:
 
-1. implementar Sprint 20 — armas no chao + finishers (`docs/COMBAT_DESIGN.md`);
-2. reload da pistola e VFX de sangue esguichando;
-3. depois Sprint 21 (estilos marciais por XP).
+1. iniciar Sprint 31 pelo roadmap acima;
+2. manter Sprint 30 como baseline de leitura/camera/HUD;
+3. nao voltar para sprints antigas ja validadas sem motivo claro.
 
 ## Regra Obrigatoria De Sprint
 
