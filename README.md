@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 31 - Personagens E Inimigos Expressivos` (planejada).
+**Sprint atual:** `Sprint 32 - Cenario Fase 1 Com Assets Finais` (planejada).
 
-**Ultima concluida:** Sprint 30 - legibilidade, camera e HUD validada no Godot.
+**Ultima concluida:** Sprint 31 — personagens expressivos, `CombatPacing` e combate validado no Godot.
 
 ### O que ja funciona
 
@@ -56,7 +56,7 @@ dotnet build SangueNoAsfalto.csproj
 - **Sprint 29:** primeira passada de producao visual na Vila Esperanca: lojas, lixeira, fios, roupas no varal, caixa eletrica, pichacoes, asfalto remendado, buracos, lixo, cacos, marcas de rua e atmosfera no trecho inteiro.
 - **Correcao visual Sprint 29:** camadas antigas `Road`/`LaneBand`/`NightVignette` foram escondidas e a rua nova teve `ZIndex` corrigido para aparecer no gameplay.
 - **Sprint 30 concluida:** HUD compacto, camera mais aberta, chuva/vinheta menos invasivas e contorno sutil de leitura nos personagens, validada no Godot.
-- **Proxima sprint:** deixar Caua, Quebra-Osso e inimigos principais mais expressivos: poses, hit reaction, idle, ataque, morte e leitura corporal.
+- **Sprint 31 concluida:** personagens expressivos, telegraph/morte legiveis, `CombatPacing` (combate mais lento e com peso), validada no Godot.
 
 ### Regra visual
 
@@ -76,7 +76,6 @@ Toda sprint so e concluida apos: `dotnet build` sem erros, validacao F5 no Godot
 | `docs/COMBAT_DESIGN.md` | Combate, armas, progressao marcial |
 | `docs/VISUAL_BIBLE.md` | Direcao visual |
 | `docs/ARCHITECTURE.md` | Arquitetura de codigo |
+| `docs/CHARACTER_RIG_PLAN.md` | Rig procedural vs arte final dos personagens |
 | `docs/BACKLOG.md` | Marcos e checklist |
 | `docs/AGENTS.md` | Responsabilidades dos agentes |
-
-

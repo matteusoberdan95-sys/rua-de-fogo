@@ -10,10 +10,10 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private const float RunDurationSec = 2.4f;
 
     [Export]
-    public float HorizontalSpeed { get; set; } = 260f;
+    public float HorizontalSpeed { get; set; } = 220f;
 
     [Export]
-    public float RunSpeed { get; set; } = 390f;
+    public float RunSpeed { get; set; } = 330f;
 
     [Export]
     public float LaneSpeed { get; set; } = 150f;
@@ -34,7 +34,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     public float AttackDuration { get; set; } = 0.13f;
 
     [Export]
-    public float ComboResetTime { get; set; } = 1.05f;
+    public float ComboResetTime { get; set; } = 1.35f;
 
     [Export]
     public float ShootCooldown { get; set; } = 0.32f;
@@ -491,6 +491,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         _attackTimeRemaining -= dt;
+        SyncPlayerAttackHitWindow();
+
         if (_attackTimeRemaining <= 0f)
         {
             SetAttackCollision(false);
@@ -704,8 +706,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
         _comboResetRemaining = ComboResetTime;
         _isFinisherAttack = false;
-        _attackTimeRemaining = move.Duration;
-        _currentMoveDuration = move.Duration;
+        float duration = CombatPacing.ScalePlayerMoveDuration(move.Duration);
+        _attackTimeRemaining = duration;
+        _currentMoveDuration = duration;
         _attackBuffered = false;
         LastMoveDisplayName = move.DisplayName;
 
@@ -718,11 +721,32 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             _attackArea.PostureDamage = move.PostureDamage;
         }
 
-        SetAttackCollision(true);
-        _spriteVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle);
+        SetAttackCollision(false);
+        _spriteVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle, duration);
         CombatFeedback.SpawnMoveCallout(this, move.DisplayName, ActiveCombatStyle);
         UpdateAttackArc();
         SpawnStrikeEffect(move.ImpactComboIndex);
+    }
+
+    private void SyncPlayerAttackHitWindow()
+    {
+        if (_isFinisherAttack || _currentMoveDuration <= 0f)
+        {
+            return;
+        }
+
+        if (_attackArea is not null && (_attackArea.IsPostureKill || _attackArea.IsParryRiposte || _attackArea.IsFinisherHit))
+        {
+            return;
+        }
+
+        float elapsed = _currentMoveDuration - _attackTimeRemaining;
+        float progress = elapsed / _currentMoveDuration;
+        bool inWindow = CombatPacing.IsInHitWindow(
+            progress,
+            CombatPacing.PlayerHitWindowStart,
+            CombatPacing.PlayerHitWindowEnd);
+        SetAttackCollision(inWindow);
     }
 
     private void StartWeaponAttack()
@@ -1020,8 +1044,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         CurrentStamina -= staminaCost;
         _comboIndex = 0;
         _comboResetRemaining = ComboResetTime;
-        _attackTimeRemaining = move.Duration;
-        _currentMoveDuration = move.Duration;
+        float duration = CombatPacing.ScalePlayerMoveDuration(move.Duration);
+        _attackTimeRemaining = duration;
+        _currentMoveDuration = duration;
         LastMoveDisplayName = move.DisplayName;
 
         if (_attackArea is not null)
@@ -1033,8 +1058,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             _attackArea.IsFinisherHit = false;
         }
 
-        SetAttackCollision(true);
-        _spriteVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle);
+        SetAttackCollision(false);
+        _spriteVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle, duration);
         CombatFeedback.SpawnMoveCallout(this, move.DisplayName, ActiveCombatStyle);
         UpdateAttackArc();
     }

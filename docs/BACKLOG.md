@@ -278,13 +278,13 @@
 
 ## Marco 0.28 - Personagens E Inimigos Expressivos (Sprint 31)
 
-- [ ] Melhorar silhueta e pose idle do Caua.
-- [ ] Melhorar walk/run/ataque/hurt/low health do Caua.
-- [ ] Diferenciar visualmente Quebra-Osso, Fast, Brute, Infected e MiniBoss.
-- [ ] Melhorar telegraph, parry, hurt e morte dos inimigos.
-- [ ] Documentar o que continua rig procedural e o que vira sprite sheet final.
-- [ ] Validar `dotnet build SangueNoAsfalto.csproj`.
-- [ ] Validar Sprint 31 no Godot com F5.
+- [x] Idle/telegraph/morte distintos por preset (Caua, Quebra-Osso, Fast, Brute, Infected, MiniBoss).
+- [x] Corrigir escala do rig ao virar personagem (`SetFacing` + `RigScale`).
+- [x] Morte animada + parry stagger nos inimigos.
+- [x] `docs/CHARACTER_RIG_PLAN.md`.
+- [x] Validar `dotnet build SangueNoAsfalto.csproj`.
+- [x] Validar Sprint 31 no Godot com F5.
+- [x] Fechar sprint apos validacao.
 
 ## Marco 0.29 - Cenario Fase 1 Com Assets Finais (Sprint 32)
 

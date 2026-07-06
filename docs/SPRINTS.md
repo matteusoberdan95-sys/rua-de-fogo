@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 31 - Personagens E Inimigos Expressivos` (planejada).
+Sprint atual: `Sprint 32 - Cenario Fase 1 Com Assets Finais` (planejada).
 
-Ultima sprint concluida: `Sprint 30 - Legibilidade, Camera e HUD` (validada no Godot).
+Ultima sprint concluida: `Sprint 31 - Personagens E Inimigos Expressivos` (validada no Godot).
 
 Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
@@ -1118,28 +1118,30 @@ Validacao:
 - resultado aprovado: leitura geral melhorou e o jogo ficou pronto para a proxima passada de personagem/cenario;
 - observacao: a camera/HUD agora sao base para as proximas sprints, mas ainda podem ser ajustados conforme novos sprites/rigs ficarem mais ricos.
 
-## Sprint 31 - Personagens E Inimigos Expressivos (planejada)
+## Sprint 31 - Personagens E Inimigos Expressivos (concluida)
 
-Status: planejada.
+Status: concluida e validada no Godot (06/07/2026).
 
 Objetivo: fazer Caua, Quebra-Osso e os inimigos principais parecerem menos blocados e mais vivos, mantendo o rig em camadas atual como base jogavel.
 
-Entregas planejadas:
+Entregas implementadas:
 
-- revisar silhueta do Caua em idle, walk, corrida, ataque, hit reaction e low health;
-- melhorar rosto, cabelo, ombros, maos, postura e roupa do Caua sem voltar para PNG colado;
-- dar identidade visual aos inimigos comuns e variantes (`QuebraOsso`, `Fast`, `Brute`, `Infected`, `MiniBoss`);
-- melhorar poses de ataque/telegraph/parry/hurt/morte para leitura de combate;
-- adicionar variacoes simples de idle e hit reaction para evitar bonecos identicos;
-- documentar o que vira sprite sheet/arte final e o que continua como rig procedural.
+- **correcao de escala:** `SetFacing` preserva `RigScale` por preset (Fast menor, Brute/MiniBoss maiores);
+- **idle por preset:** Caua em guarda de lutador; Quebra-Osso encolhido; Fast nervoso; Brute pesado; Infected espasmo; MiniBoss imponente;
+- **telegraph distinto** por variante de inimigo (windup legivel antes do golpe);
+- **morte animada:** colapso visivel (~2,1s) — bug do hurt sobrescrever death corrigido;
+- **parry stagger** no inimigo ao ser parryado (pose + flash azul);
+- **Caua:** ombros, colete, guarda alta, golpes com windup/impacto/recuperacao;
+- **`CombatPacing.cs`:** telegraph ≥1,2s, cooldown ≥2s, hitbox so na janela do golpe;
+- **dano cumulativo:** rig dos inimigos tinge conforme tier de HP;
+- `docs/CHARACTER_RIG_PLAN.md` — o que fica procedural vs arte final;
+- `dotnet build` validado.
 
-Criterio de pronto:
+Validacao:
 
-- Caua e inimigos sao reconheciveis em print parado;
-- idle/walk/ataque/hurt nao parecem o mesmo boneco rigido;
-- inimigos possuem silhuetas diferentes entre si;
-- build sem erros;
-- validacao F5 no Godot.
+- validada no Godot pelo usuario em 06/07/2026;
+- telegraph legivel, morte visivel, combate mais lento e com peso;
+- inimigos distinguiveis; Caua com leitura de lutador aprovada.
 
 ## Sprint 32 - Cenario Fase 1 Com Assets Finais (planejada)
 

@@ -94,6 +94,16 @@ public partial class Hurtbox : Area2D
 
     private void ApplyKnockback(Hitbox hitbox)
     {
+        if (Owner is SideScrollerEnemyController dyingEnemy && dyingEnemy.IsDying)
+        {
+            return;
+        }
+
+        if (_health?.CurrentHealth <= 0)
+        {
+            return;
+        }
+
         if (Owner is not CharacterBody2D body || hitbox.Source is not Node2D source)
         {
             return;

@@ -33,25 +33,25 @@ public readonly record struct MartialMoveDefinition(
 
 public static class MoveCatalog
 {
-    private static readonly MartialMoveDefinition StreetJab = Def("street_jab", "Soco", MoveAnimProfile.Jab, 24, 0.18f, 350f, 14f, 9f, 0);
-    private static readonly MartialMoveDefinition StreetCross = Def("street_cross", "Cruzado", MoveAnimProfile.Cross, 28, 0.2f, 380f, 16f, 11f, 1);
-    private static readonly MartialMoveDefinition StreetKick = Def("street_kick", "Chute", MoveAnimProfile.SideKick, 32, 0.22f, 400f, 18f, 13f, 2);
-    private static readonly MartialMoveDefinition StreetKnee = Def("street_knee", "Joelhada", MoveAnimProfile.Knee, 38, 0.24f, 460f, 22f, 15f, 3);
-    private static readonly MartialMoveDefinition StreetFlying = Def("street_flying", "Voadora", MoveAnimProfile.FlyingKick, 50, 0.28f, 520f, 22f, 22f, 3);
-    private static readonly MartialMoveDefinition StreetRunPunch = Def("street_run_punch", "Soco corrida", MoveAnimProfile.RunningPunch, 26, 0.16f, 380f, 12f, 12f, 0);
-    private static readonly MartialMoveDefinition StreetRunKick = Def("street_run_kick", "Chute corrida", MoveAnimProfile.RunningKick, 32, 0.18f, 400f, 16f, 16f, 1);
+    private static readonly MartialMoveDefinition StreetJab = Def("street_jab", "Soco", MoveAnimProfile.Jab, 24, 0.58f, 350f, 14f, 9f, 0);
+    private static readonly MartialMoveDefinition StreetCross = Def("street_cross", "Cruzado", MoveAnimProfile.Cross, 28, 0.64f, 380f, 16f, 11f, 1);
+    private static readonly MartialMoveDefinition StreetKick = Def("street_kick", "Chute", MoveAnimProfile.SideKick, 32, 0.72f, 400f, 18f, 13f, 2);
+    private static readonly MartialMoveDefinition StreetKnee = Def("street_knee", "Joelhada", MoveAnimProfile.Knee, 38, 0.78f, 460f, 22f, 15f, 3);
+    private static readonly MartialMoveDefinition StreetFlying = Def("street_flying", "Voadora", MoveAnimProfile.FlyingKick, 50, 0.86f, 520f, 22f, 22f, 3);
+    private static readonly MartialMoveDefinition StreetRunPunch = Def("street_run_punch", "Soco corrida", MoveAnimProfile.RunningPunch, 26, 0.52f, 380f, 12f, 12f, 0);
+    private static readonly MartialMoveDefinition StreetRunKick = Def("street_run_kick", "Chute corrida", MoveAnimProfile.RunningKick, 32, 0.58f, 400f, 16f, 16f, 1);
 
-    private static readonly MartialMoveDefinition BoxJab = Def("box_jab", "Jab", MoveAnimProfile.BoxLead, 26, 0.18f, 340f, 15f, 9f, 0);
-    private static readonly MartialMoveDefinition BoxCross = Def("box_cross", "Cross", MoveAnimProfile.Cross, 30, 0.2f, 380f, 17f, 12f, 1);
-    private static readonly MartialMoveDefinition BoxHook = Def("box_hook", "Hook", MoveAnimProfile.Hook, 34, 0.22f, 420f, 19f, 13f, 2);
-    private static readonly MartialMoveDefinition BoxUpper = Def("box_upper", "Uppercut", MoveAnimProfile.Uppercut, 40, 0.24f, 480f, 22f, 16f, 3);
-    private static readonly MartialMoveDefinition BoxRunHook = Def("box_run_hook", "Hook corrida", MoveAnimProfile.RunningHook, 36, 0.17f, 440f, 16f, 13f, 1);
+    private static readonly MartialMoveDefinition BoxJab = Def("box_jab", "Jab", MoveAnimProfile.BoxLead, 26, 0.54f, 340f, 15f, 9f, 0);
+    private static readonly MartialMoveDefinition BoxCross = Def("box_cross", "Cross", MoveAnimProfile.Cross, 30, 0.62f, 380f, 17f, 12f, 1);
+    private static readonly MartialMoveDefinition BoxHook = Def("box_hook", "Hook", MoveAnimProfile.Hook, 34, 0.68f, 420f, 19f, 13f, 2);
+    private static readonly MartialMoveDefinition BoxUpper = Def("box_upper", "Uppercut", MoveAnimProfile.Uppercut, 40, 0.74f, 480f, 22f, 16f, 3);
+    private static readonly MartialMoveDefinition BoxRunHook = Def("box_run_hook", "Hook corrida", MoveAnimProfile.RunningHook, 36, 0.56f, 440f, 16f, 13f, 1);
 
-    private static readonly MartialMoveDefinition MuayJab = Def("muay_teep_open", "Teep", MoveAnimProfile.Teep, 28, 0.22f, 360f, 16f, 11f, 0);
-    private static readonly MartialMoveDefinition MuayTeep = Def("muay_knee", "Joelhada", MoveAnimProfile.Knee, 38, 0.26f, 460f, 22f, 16f, 1);
-    private static readonly MartialMoveDefinition MuayKnee = Def("muay_elbow", "Cotovelada", MoveAnimProfile.Elbow, 42, 0.2f, 480f, 24f, 17f, 2);
-    private static readonly MartialMoveDefinition MuayElbow = Def("muay_lowkick", "Chute baixo", MoveAnimProfile.SideKick, 36, 0.22f, 440f, 20f, 14f, 3);
-    private static readonly MartialMoveDefinition MuayRunTeep = Def("muay_run_teep", "Teep corrida", MoveAnimProfile.Teep, 34, 0.15f, 410f, 18f, 13f, 1);
+    private static readonly MartialMoveDefinition MuayJab = Def("muay_teep_open", "Teep", MoveAnimProfile.Teep, 28, 0.62f, 360f, 16f, 11f, 0);
+    private static readonly MartialMoveDefinition MuayTeep = Def("muay_knee", "Joelhada", MoveAnimProfile.Knee, 38, 0.74f, 460f, 22f, 16f, 1);
+    private static readonly MartialMoveDefinition MuayKnee = Def("muay_elbow", "Cotovelada", MoveAnimProfile.Elbow, 42, 0.58f, 480f, 24f, 17f, 2);
+    private static readonly MartialMoveDefinition MuayElbow = Def("muay_lowkick", "Chute baixo", MoveAnimProfile.SideKick, 36, 0.66f, 440f, 20f, 14f, 3);
+    private static readonly MartialMoveDefinition MuayRunTeep = Def("muay_run_teep", "Teep corrida", MoveAnimProfile.Teep, 34, 0.52f, 410f, 18f, 13f, 1);
 
     private static readonly MartialMoveDefinition CapoeiraMeiaLua = Def("capoeira_meia_lua", "Meia-lua", MoveAnimProfile.MeiaLua, 40, 0.22f, 480f, 20f, 15f, 1);
     private static readonly MartialMoveDefinition CapoeiraBencao = Def("capoeira_bencao", "Bencao", MoveAnimProfile.GingaKick, 34, 0.26f, 410f, 18f, 14f, 1);

@@ -23,14 +23,15 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     [Export]
     public float AttackRangeY { get; set; } = 34f;
 
-    [Export]
-    public float AttackCooldown { get; set; } = 1.15f;
+    public float AttackCooldown { get; set; } = 2.25f;
 
     [Export]
-    public float TelegraphDuration { get; set; } = 0.62f;
+    public float TelegraphDuration { get; set; } = 1.35f;
 
     [Export]
-    public float AttackDuration { get; set; } = 0.2f;
+    public float AttackDuration { get; set; } = 0.45f;
+
+    public bool IsDying => _dying;
 
     [Export]
     public float MinLaneY { get; set; } = 260f;
@@ -48,6 +49,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private int _facingSign = -1;
     private int _attackPatternIndex;
     private CharacterSpriteVisual? _spriteVisual;
+    private bool _dying;
     private Health? _health;
     private PostureComponent? _posture;
     private ParryTelegraphMarker? _parryMarker;
@@ -120,11 +122,26 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             };
             AddChild(_parryMarker);
         }
+
+        TelegraphDuration = Mathf.Max(TelegraphDuration, CombatPacing.MinEnemyTelegraph);
+        AttackCooldown = Mathf.Max(AttackCooldown, CombatPacing.MinEnemyAttackCooldown);
+        AttackDuration = Mathf.Max(AttackDuration, CombatPacing.MinEnemyAttackDuration);
+        MoveSpeed = Mathf.Min(MoveSpeed, 108f);
     }
 
     public override void _PhysicsProcess(double delta)
     {
         float dt = (float)delta;
+
+        if (_dying)
+        {
+            Velocity = Velocity.MoveToward(Vector2.Zero, 720f * dt);
+            MoveAndSlide();
+            GlobalPosition = new Vector2(GlobalPosition.X, Mathf.Clamp(GlobalPosition.Y, MinLaneY, MaxLaneY));
+            UpdateLocomotionVisual();
+            return;
+        }
+
         _cooldownRemaining = Mathf.Max(_cooldownRemaining - dt, 0f);
         TickTelegraph(dt);
         TickAttack(dt);
@@ -227,7 +244,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             _attackPatternIndex = (_attackPatternIndex + 1) % 3;
             int combo = _attackPatternIndex == 2 ? 1 : 0;
             _spriteVisual?.SetAttackCombo(combo);
-            SetAttackCollision(true);
+            _spriteVisual?.BeginEnemyStrike(AttackDuration, combo);
+            SetAttackCollision(false);
         }
     }
 
@@ -239,6 +257,17 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         }
 
         _attackTimeRemaining -= dt;
+
+        if (AttackDuration > 0f)
+        {
+            float progress = 1f - (_attackTimeRemaining / AttackDuration);
+            bool inWindow = CombatPacing.IsInHitWindow(
+                progress,
+                CombatPacing.EnemyHitWindowStart,
+                CombatPacing.EnemyHitWindowEnd);
+            SetAttackCollision(inWindow);
+        }
+
         if (_attackTimeRemaining <= 0f)
         {
             SetAttackCollision(false);
@@ -289,6 +318,11 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
     public void ReceiveKnockback(Vector2 impulse, float duration)
     {
+        if (_dying)
+        {
+            return;
+        }
+
         _telegraphRemaining = 0f;
         _attackTimeRemaining = 0f;
         _parryMarker?.SetActive(false);
@@ -306,6 +340,11 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
     private void UpdateLocomotionVisual()
     {
+        if (_dying)
+        {
+            return;
+        }
+
         bool moving = Velocity.LengthSquared() > 225f
             && _telegraphRemaining <= 0f
             && _attackTimeRemaining <= 0f
@@ -332,6 +371,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         SetAttackCollision(false);
         Velocity = (GlobalPosition - player.GlobalPosition).Normalized() * 240f;
         Modulate = new Color(0.75f, 0.88f, 1f, 1f);
+        _spriteVisual?.PlayParryStagger();
+        _spriteVisual?.PlayHitReaction(Velocity.Normalized(), 1.6f);
     }
 
     private void OnPostureBroken()
@@ -347,6 +388,39 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
     private void OnDied()
     {
-        QueueFree();
+        if (_dying)
+        {
+            return;
+        }
+
+        _dying = true;
+        _telegraphRemaining = 0f;
+        _attackTimeRemaining = 0f;
+        _parryMarker?.SetActive(false);
+        SetAttackCollision(false);
+        Velocity = Vector2.Zero;
+        CollisionLayer = 0;
+        CollisionMask = 0;
+
+        if (GetNodeOrNull<Area2D>("Hurtbox") is Area2D hurtbox)
+        {
+            hurtbox.Monitoring = false;
+            hurtbox.Monitorable = false;
+        }
+
+        if (GetNodeOrNull<CollisionShape2D>("CollisionShape2D") is CollisionShape2D bodyShape)
+        {
+            bodyShape.Disabled = true;
+        }
+
+        _spriteVisual?.PlayDeath();
+        CombatFeedback.PlayHit(this, this, 8);
+        GetTree().CreateTimer(CombatPacing.DeathBodySeconds).Timeout += () =>
+        {
+            if (IsInstanceValid(this))
+            {
+                QueueFree();
+            }
+        };
     }
 }

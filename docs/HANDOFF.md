@@ -264,18 +264,18 @@ Estado da Sprint 30:
 - chuva placeholder e vinheta foram atenuadas para nao esconder personagem/pickups;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
-Proximo passo recomendado no Cursor CLI:
+Proximo passo recomendado:
 
-1. rodar `git pull origin main`;
-2. ler `README.md`, `docs/SPRINTS.md`, `docs/BACKLOG.md`, `docs/AGENTS.md` e este `docs/HANDOFF.md`;
-3. iniciar **Sprint 31 - Personagens E Inimigos Expressivos**;
-4. priorizar Caua, Quebra-Osso e inimigos principais em idle/walk/ataque/hurt/morte;
-5. manter camera, HUD compacto, chuva e vinheta da Sprint 30 como baseline;
-6. antes de trocar de maquina novamente: `dotnet build`, atualizar docs, commit e push.
+1. iniciar **Sprint 32** — cenario Fase 1 com assets finais (`docs/STAGE_01_VILA_ESPERANCA.md`);
+2. manter `CombatPacing` como baseline de ritmo de combate;
+3. `dotnet build`, docs, commit e push ao fechar cada sprint.
+
+Estado da Sprint 31:
+
+- concluida e validada no Godot em 06/07/2026; personagens expressivos, morte/telegraph legiveis, `CombatPacing` aprovados.
 
 Roadmap planejado:
 
-- Sprint 31: personagens e inimigos expressivos;
 - Sprint 32: cenario da Fase 1 com assets finais;
 - Sprint 33: clima e rua viva como gameplay;
 - Sprint 34: demo vertical slice e QC.
@@ -368,9 +368,9 @@ Estado da Sprint 17:
 
 Proximo passo recomendado atual:
 
-1. iniciar Sprint 31 pelo roadmap acima;
-2. manter Sprint 30 como baseline de leitura/camera/HUD;
-3. nao voltar para sprints antigas ja validadas sem motivo claro.
+1. validar Sprint 31 no Godot (F5);
+2. iniciar Sprint 32 — cenario com assets finais;
+3. manter Sprint 30 como baseline de camera/HUD/chuva.
 
 ## Regra Obrigatoria De Sprint
 

@@ -13,11 +13,11 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 31 - Personagens E Inimigos Expressivos` (planejada).
+Sprint atual: `Sprint 32 - Cenario Fase 1 Com Assets Finais` (planejada).
 
 Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro.
 
-Direcao visual atual: Sprint 29 validou a rua viva como caminho; Sprint 30 validou leitura, camera, HUD compacto, chuva menos poluida e contraste dos personagens. Sprint 31 deve focar Caua e inimigos mais expressivos.
+Direcao visual atual: Sprint 31 validou personagens expressivos e ritmo de combate (`CombatPacing`). Sprint 32 = assets finais do cenario Vila Esperanca.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 

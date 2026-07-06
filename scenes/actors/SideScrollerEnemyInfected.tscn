@@ -22,8 +22,10 @@ MoveSpeed = 118.0
 LaneSpeed = 102.0
 AttackRangeX = 64.0
 AttackRangeY = 36.0
-AttackCooldown = 0.95
-TelegraphDuration = 0.22
+AttackCooldown = 2.05
+TelegraphDuration = 1.25
+AttackDuration = 0.42
+MoveSpeed = 98.0
 
 [node name="LaneShadow" type="Polygon2D" parent="."]
 position = Vector2(0, 20)
