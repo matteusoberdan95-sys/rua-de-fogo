@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 34 - Demo Vertical Slice E QC` (implementada — validar F5 + checklist).
+**Ultima concluida:** Sprint 34 — vertical slice v1.1 e QC validados no Godot.
 
-**Ultima concluida:** Sprint 33 — clima e rua viva como gameplay.
+**Marco atual:** demo compartilhavel Vila Esperanca (~10 min) — sprints 29–34 fechadas.
 
 ### O que ja funciona
 
@@ -59,7 +59,7 @@ dotnet build SangueNoAsfalto.csproj
 - **Sprint 31 concluida:** personagens expressivos, telegraph/morte legiveis, `CombatPacing` (combate mais lento e com peso), validada no Godot.
 - **Sprint 32 concluida:** `StageAssetLibrary`, landmarks por ato e pipeline de assets, validada no Godot.
 - **Sprint 33 concluida:** clima por ato, pocas, vento, apagao nos chefes, validada no Godot.
-- **Sprint 34 implementada:** vertical slice v1.1, QC checklist, tutorial/HUD/screenshot, pacote testers — aguardando validacao.
+- **Sprint 34 concluida:** vertical slice v1.1, QC, tutorial/HUD/F9, pacote testers — validada no Godot.
 
 ### Regra visual
 

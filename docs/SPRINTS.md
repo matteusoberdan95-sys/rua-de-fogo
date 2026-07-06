@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 34 - Demo Vertical Slice E QC` (implementada / aguardando validacao no Godot).
+Sprint atual: nenhuma sprint ativa — marco vertical slice v1.1 concluido.
 
-Ultima sprint concluida: `Sprint 33 - Clima E Rua Viva Como Gameplay` (validada no Godot).
+Ultima sprint concluida: `Sprint 34 - Demo Vertical Slice E QC` (validada no Godot).
 
 Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/STAGE_ASSET_PIPELINE.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
@@ -1186,9 +1186,9 @@ Validacao:
 - lama, raio em poca, vento na viela e apagao nos chefes aprovados;
 - clima por ato reforca ritmo da fase sem quebrar leitura de combate.
 
-## Sprint 34 - Demo Vertical Slice E QC (implementada)
+## Sprint 34 - Demo Vertical Slice E QC (concluida)
 
-Status: implementada / aguardando validacao no Godot.
+Status: concluida e validada no Godot (06/07/2026).
 
 Objetivo: consolidar uma demo vertical slice curta, estavel e compartilhavel, com checklist de qualidade para testar fora da maquina de desenvolvimento.
 
@@ -1203,8 +1203,9 @@ Entregas implementadas:
 - **`scripts/package-vertical-slice.ps1`** + `build/demo/README.txt` atualizado;
 - `dotnet build` validado.
 
-Validacao pendente:
+Validacao:
 
-- F5 sessao completa + smoke test do checklist;
-- export Windows opcional (`build-demo.ps1` ou Godot Export).
+- validada no Godot pelo usuario em 06/07/2026;
+- fluxo vertical slice v1.1, tutorial, checkpoint, chefes e QC aprovados;
+- demo pronta para export/pacote testers (`scripts/package-vertical-slice.ps1`).
 

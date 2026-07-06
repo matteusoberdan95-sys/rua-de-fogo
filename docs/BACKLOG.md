@@ -316,6 +316,6 @@
 - [x] Balanceamento leve e F9 ocultando HUD.
 - [x] `scripts/package-vertical-slice.ps1` + README testers.
 - [x] Validar `dotnet build`.
-- [ ] Validar Sprint 34 no Godot (F5 + checklist).
-- [ ] Export Windows opcional.
-- [ ] Fechar sprint apos validacao.
+- [x] Validar Sprint 34 no Godot (F5 + checklist).
+- [x] Fechar sprint apos validacao.
+- [ ] Export Windows opcional (quando quiser distribuir).

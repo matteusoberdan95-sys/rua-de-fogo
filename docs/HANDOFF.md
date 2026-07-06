@@ -266,14 +266,14 @@ Estado da Sprint 30:
 
 Proximo passo recomendado:
 
-1. **validar Sprint 34** — F5 sessao completa + `docs/VERTICAL_SLICE_QC.md`;
-2. export opcional: `scripts/package-vertical-slice.ps1` ou Godot Export;
-3. arte final Krita quando quiser (`docs/STAGE_ASSET_PIPELINE.md`).
+1. export/pacote testers: `scripts/package-vertical-slice.ps1` ou Godot Export;
+2. arte final Krita (`docs/STAGE_ASSET_PIPELINE.md`) ou nova sprint de conteudo;
+3. manter baseline sprints 30–34.
 
 Estado da Sprint 34:
 
-- implementada; vertical slice v1.1, QC docs, tutorial/HUD/screenshot;
-- aguardando playtest F5.
+- concluida e validada no Godot em 06/07/2026;
+- vertical slice v1.1 aprovada para compartilhar.
 
 Estado da Sprint 33:
 
@@ -293,7 +293,7 @@ Roadmap planejado:
 
 - Sprint 32: cenario da Fase 1 com assets finais (concluida);
 - Sprint 33: clima e rua viva como gameplay (concluida);
-- Sprint 34: demo vertical slice e QC (implementada — validar F5);
+- Sprint 34: demo vertical slice e QC (concluida);
 
 Estado da Sprint 28:
 

@@ -70,3 +70,5 @@ Versao alvo: `Vertical Slice v1.1` (`DemoInfo.VersionLabel`).
 | | | | |
 
 Quando todos os itens criticos estiverem OK, marcar Sprint 34 como **concluida** no Godot.
+
+**Status:** concluida e validada em 06/07/2026.
