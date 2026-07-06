@@ -19,6 +19,11 @@ public static class ActorVisualResolver
             return production;
         }
 
+        if (production is not null)
+        {
+            production.Visible = false;
+        }
+
         if (fallback is not null)
         {
             fallback.Visible = true;

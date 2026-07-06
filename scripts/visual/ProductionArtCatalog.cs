@@ -46,24 +46,12 @@ public static class ProductionArtCatalog
             return ResourceLoader.Exists(GetSpriteFramesPath(id));
         }
 
-        return System.IO.Directory.GetFiles(spritesDir, "*.png").Length > 0
-            || ResourceLoader.Exists(GetSpriteFramesPath(id));
+        return System.IO.Directory.GetFiles(spritesDir, "*.png").Length > 0;
     }
 
     public static SpriteFrames? LoadSpriteFrames(ProductionCharacterId id)
     {
-        SpriteFrames? built = ProductionSpriteFrameBuilder.BuildFromManifest(id);
-        if (built is not null)
-        {
-            return built;
-        }
-
-        if (!HasProductionPack(id))
-        {
-            return null;
-        }
-
-        return ResourceLoader.Load<SpriteFrames>(GetSpriteFramesPath(id));
+        return ProductionSpriteFrameBuilder.BuildFromManifest(id);
     }
 
     public static ProductionCharacterId FromLayeredPreset(LayeredPrototypePreset preset) => preset switch

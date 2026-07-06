@@ -55,20 +55,12 @@ public partial class ArtCharacterVisual : Node2D, IActorVisual
         CharacterId = id;
 
         SpriteFrames? frames = ProductionArtCatalog.LoadSpriteFrames(id);
-        if (frames is null || _sprite is null || frames.GetAnimationNames().Length == 0)
+        if (frames is null
+            || _sprite is null
+            || frames.GetAnimationNames().Length == 0
+            || !ProductionSpriteFrameBuilder.HasRealFrameTextures(frames))
         {
-            _isActive = false;
-            Visible = false;
-            if (_sprite is not null)
-            {
-                _sprite.Visible = false;
-            }
-
-            return false;
-        }
-
-        if (_sprite is null)
-        {
+            DeactivateProductionArt();
             return false;
         }
 
@@ -90,6 +82,17 @@ public partial class ArtCharacterVisual : Node2D, IActorVisual
         PlayLoop("idle");
         ApplyFacing();
         return true;
+    }
+
+    private void DeactivateProductionArt()
+    {
+        _isActive = false;
+        Visible = false;
+        if (_sprite is not null)
+        {
+            _sprite.SpriteFrames = null;
+            _sprite.Visible = false;
+        }
     }
 
     public void EnsureLayeredRig(LayeredPrototypePreset preset)

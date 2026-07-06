@@ -8,6 +8,11 @@ using GodotFileAccess = Godot.FileAccess;
 /// </summary>
 public static class ProductionSpriteFrameBuilder
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     private sealed class ManifestAnim
     {
         public string Pattern { get; set; } = "{name}_{index}.png";
@@ -73,7 +78,25 @@ public static class ProductionSpriteFrameBuilder
             frames.SetAnimationSpeed(animName, anim.Fps);
         }
 
-        return frames.GetAnimationNames().Length > 0 ? frames : null;
+        return HasRealFrameTextures(frames) ? frames : null;
+    }
+
+    public static bool HasRealFrameTextures(SpriteFrames frames)
+    {
+        foreach (StringName animName in frames.GetAnimationNames())
+        {
+            int count = frames.GetFrameCount(animName);
+            for (int i = 0; i < count; i++)
+            {
+                Texture2D? texture = frames.GetFrameTexture(animName, i);
+                if (texture is not null && texture is not PlaceholderTexture2D)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public static float ReadDisplayScale(ProductionCharacterId id)
@@ -96,29 +119,30 @@ public static class ProductionSpriteFrameBuilder
         }
 
         using GodotFileAccess file = GodotFileAccess.Open(manifestPath, GodotFileAccess.ModeFlags.Read);
-        return JsonSerializer.Deserialize<CharacterManifest>(file.GetAsText());
+        return JsonSerializer.Deserialize<CharacterManifest>(file.GetAsText(), JsonOptions);
     }
 
     private static Texture2D? LoadTexture(string resourcePath)
     {
+        string absolutePath = ProjectSettings.GlobalizePath(resourcePath);
+        if (System.IO.File.Exists(absolutePath))
+        {
+            Image image = Image.LoadFromFile(absolutePath);
+            if (!image.IsEmpty())
+            {
+                return ImageTexture.CreateFromImage(image);
+            }
+        }
+
         if (ResourceLoader.Exists(resourcePath))
         {
-            return ResourceLoader.Load<Texture2D>(resourcePath);
+            Texture2D? imported = ResourceLoader.Load<Texture2D>(resourcePath);
+            if (imported is not null && imported is not PlaceholderTexture2D)
+            {
+                return imported;
+            }
         }
 
-        string absolutePath = ProjectSettings.GlobalizePath(resourcePath);
-        if (!System.IO.File.Exists(absolutePath))
-        {
-            return null;
-        }
-
-        Image image = Image.LoadFromFile(absolutePath);
-        if (image.IsEmpty())
-        {
-            return null;
-        }
-
-        ImageTexture texture = ImageTexture.CreateFromImage(image);
-        return texture;
+        return null;
     }
 }
