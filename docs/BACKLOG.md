@@ -146,16 +146,47 @@
 - [x] Tutorial dedicado no menu.
 - [x] Clima/horario por ato da fase.
 - [x] Visual reforcado (boteco, policia, inimigo Quebra-Osso).
-- [ ] Validar Sprint 12 no Godot (~10 min de sessao).
-- [ ] Fechar sprint apos validacao.
+- [x] Validar Sprint 16 no Godot (~10 min de sessao).
+- [x] Fechar sprint apos validacao.
 
-## Marco 0.13 - Producao Visual Fase 1
+## Marco 0.14 - Personagens Vivos (Combo E Reacao)
 
-- [x] Estilo travado: pintura 2D + pixel aparente.
-- [x] Caua e grunt com AnimatedSprite2D.
-- [x] Parallax Vila Esperanca (3 camadas).
-- [x] HUD tematizado (GameUiTheme).
-- [x] Pipeline de arte documentado em `art/README.md`.
-- [ ] Validar Sprint 13 no Godot (sprites, parallax, HUD vs refs).
-- [ ] Substituir placeholders por arte Krita.
-- [ ] Fechar sprint apos validacao.
+- [x] Movimento secundario idle (cabelo, roupa, colete).
+- [x] Combo 1/2/3 distintos no rig.
+- [x] Trail de arma e hurt reaction direcional.
+- [x] Telegraph corporal do inimigo.
+- [x] Integracao CombatFeedback -> CharacterSpriteVisual.
+- [x] Validar Sprint 17 no Godot.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.15 - Combate Desarmado (Sprint 18)
+
+- [x] Remover armas fixas dos rigs e HUD.
+- [x] Combo desarmado: soco / chute / voadora.
+- [x] Inimigo desarmado (soco, cabecada).
+- [x] Dano cumulativo visual (3 tiers HP).
+- [x] Validar Sprint 18 no Godot.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.16 - Movimento, Spawn E Sidearm (Sprint 19)
+
+- [x] Corrida (double-tap A/D) e golpes correndo.
+- [x] Voadora no ar (Espaco + J).
+- [x] Spawn escalonado a frente do jogador.
+- [x] Caua machuca visualmente ao levar dano.
+- [x] Pistola com animacao, municao limitada e sangramento (BleedEffect).
+- [x] Validar Sprint 19 no Godot.
+- [x] Fechar sprint apos validacao.
+
+## Marco 0.17 - Armas Improvisadas E Finishers (Sprint 20)
+
+- [ ] Pickups martelo/faca/vergalhao com durabilidade.
+- [ ] Finalizadores por tipo de arma.
+- [ ] Reload / pickup de municao da pistola.
+- [ ] Validar Sprint 20 no Godot.
+
+## Marco 0.18 - Progressao Marcial (Sprint 21)
+
+- [ ] Catalogo de estilos (boxe, Muay Thai, etc.).
+- [ ] Desbloqueio por XP/nivel.
+- [ ] HUD de tecnicas.

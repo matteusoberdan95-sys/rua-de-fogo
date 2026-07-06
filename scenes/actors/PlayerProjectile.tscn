@@ -3,24 +3,24 @@
 [ext_resource type="Script" path="res://scripts/combat/Projectile.cs" id="1_projectile"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
-radius = 8.0
+radius = 3.5
 
 [node name="PlayerProjectile" type="Area2D"]
 collision_layer = 8
 collision_mask = 16
 script = ExtResource("1_projectile")
-Damage = 18
-KnockbackForce = 180.0
-Speed = 620.0
-Lifetime = 1.1
+Damage = 14
+KnockbackForce = 120.0
+Speed = 720.0
+Lifetime = 0.85
 
 [node name="Body" type="Polygon2D" parent="."]
-color = Color(0.85, 0.08, 0.03, 1)
-polygon = PackedVector2Array(-10, -4, 8, -4, 15, 0, 8, 4, -10, 4)
+color = Color(0.92, 0.82, 0.38, 1)
+polygon = PackedVector2Array(-4, -2, 4, -2, 5, 0, 4, 2, -4, 2)
 
-[node name="Glow" type="Polygon2D" parent="."]
-color = Color(1, 0.55, 0.12, 0.25)
-polygon = PackedVector2Array(-18, -9, 12, -9, 24, 0, 12, 9, -18, 9)
+[node name="Trail" type="Polygon2D" parent="."]
+color = Color(1, 0.72, 0.22, 0.35)
+polygon = PackedVector2Array(-8, -1.5, -2, -1.5, -2, 1.5, -8, 1.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_projectile")

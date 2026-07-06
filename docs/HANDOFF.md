@@ -234,12 +234,18 @@ Estado da Sprint 13:
 
 Proximo passo recomendado:
 
-1. validar a Sprint 16 no Godot com `F5`;
-2. confirmar que o Caua e o Quebra-Osso aparecem como personagens em camadas;
-3. confirmar que a Vila Esperanca usa `LayeredStreetPrototype` e nao imagens `bg_*` ativas;
-4. conferir se o cenario cobre a fase inteira e nao fica vazio em trechos avancados;
-5. conferir tamanho/pes/sombra/colisao;
-6. depois decidir entre sprite sheet final do Caua ou refinamento da rua viva.
+1. iniciar **Sprint 20** — armas improvisadas no chao, finishers gore e reload da pistola (`docs/COMBAT_DESIGN.md`);
+2. depois Sprint 21 — estilos marciais por XP.
+
+Estado da Sprint 19:
+
+- concluida e validada no Godot;
+- corrida, voadora no ar, spawn a frente, sidearm com bleed e Caua machucando aprovados.
+
+Estado da Sprint 18:
+
+- concluida e validada no Godot;
+- combate desarmado, tiers de dano no inimigo e cabecada ok.
 
 Estado da Sprint 14:
 
@@ -272,14 +278,20 @@ Estado da Sprint 15:
 
 Estado da Sprint 16:
 
-- criado `scripts/world/LayeredStreetPrototype.cs`;
-- `scenes/world/VilaEsperancaParallax.tscn` agora e `Node2D` com script, sem texturas `bg_far/bg_mid/bg_near` ativas;
-- cenario ativo e montado por camadas nativas: ceu, morro, casas, fios, boteco, cerca, placas, postes, calcada, asfalto, pocos, sangue, lixo e bueiro;
-- neon, fios/planks e reflexos tem animacao leve no `_Process`;
-- `CharacterSpriteVisual` ganhou `LayeredPrototypePreset`;
-- `SideScrollerEnemyGrunt.tscn` ativa `UseLayeredPrototype = true` com preset `QuebraOsso`;
-- sprite antigo do inimigo fica escondido como fallback;
-- build C# validada com `dotnet build SangueNoAsfalto.csproj` com 0 erros e 0 avisos.
+- concluida e validada no Godot;
+- escala Caua/inimigo, cobertura da camera, chao e leitura da rua aprovados;
+- `LayeredStreetPrototype` + Quebra-Osso em camadas ativos na fase.
+
+Estado da Sprint 17:
+
+- concluida e validada no playtest;
+- combo, hurt, telegraph e trails aprovados.
+
+Proximo passo recomendado:
+
+1. implementar Sprint 20 — armas no chao + finishers (`docs/COMBAT_DESIGN.md`);
+2. reload da pistola e VFX de sangue esguichando;
+3. depois Sprint 21 (estilos marciais por XP).
 
 ## Regra Obrigatoria De Sprint
 

@@ -1,5 +1,7 @@
 namespace SangueNoAsfalto.Core;
 
+using SangueNoAsfalto.Visual;
+
 public static class CombatFeedback
 {
     private const float HitPauseDuration = 0.045f;
@@ -15,15 +17,22 @@ public static class CombatFeedback
             impactDirection = Vector2.Right;
         }
 
-        FlashTarget(target);
+        FlashTarget(target, impactDirection, damage);
         SpawnBlood(target, impactDirection, damage);
-        SpawnImpactSpark(target, impactDirection);
+        SpawnImpactSpark(target, impactDirection, damage);
         PlayImpactSound(target.GetParent(), damage);
         HitPause(target.GetTree());
     }
 
-    private static void FlashTarget(Node2D target)
+    private static void FlashTarget(Node2D target, Vector2 direction, int damage)
     {
+        CharacterSpriteVisual? visual = target.GetNodeOrNull<CharacterSpriteVisual>("SpriteVisual");
+        if (visual is not null)
+        {
+            visual.PlayHitReaction(direction, damage / 28f);
+            return;
+        }
+
         target.Modulate = new Color(1f, 0.18f, 0.18f, 1f);
 
         Tween tween = target.CreateTween();
@@ -98,7 +107,7 @@ public static class CombatFeedback
         tween.TweenCallback(Callable.From(puddle.QueueFree));
     }
 
-    private static void SpawnImpactSpark(Node2D target, Vector2 direction)
+    private static void SpawnImpactSpark(Node2D target, Vector2 direction, int damage)
     {
         Node? parent = target.GetParent();
         if (parent is null)
@@ -106,6 +115,7 @@ public static class CombatFeedback
             return;
         }
 
+        float scale = damage >= 45 ? 1.35f : 1f;
         Polygon2D spark = new()
         {
             Color = new Color(1f, 0.82f, 0.28f, 0.95f),
@@ -117,7 +127,7 @@ public static class CombatFeedback
                 new Vector2(25f, 7f),
                 new Vector2(-4f, 3f)
             ],
-            Scale = new Vector2(Mathf.Sign(direction.X == 0f ? 1f : direction.X), 1f),
+            Scale = new Vector2(Mathf.Sign(direction.X == 0f ? 1f : direction.X) * scale, scale),
             ZIndex = 10
         };
 
@@ -126,7 +136,7 @@ public static class CombatFeedback
         spark.Rotation = direction.Angle();
 
         Tween tween = spark.CreateTween();
-        tween.TweenProperty(spark, "scale", spark.Scale * 1.45f, 0.06f);
+        tween.TweenProperty(spark, "scale", spark.Scale * (damage >= 45 ? 1.65f : 1.45f), 0.06f);
         tween.Parallel().TweenProperty(spark, "modulate:a", 0f, 0.09f);
         tween.TweenCallback(Callable.From(spark.QueueFree));
     }

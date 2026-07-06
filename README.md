@@ -44,7 +44,9 @@ O prototipo top-down continua existindo como laboratorio de sistemas em `Prototy
 
 ## Estado atual
 
-Sprint atual: `Sprint 16 - Rua Viva E Inimigos Em Camadas` (implementada / aguardando validacao no Godot).
+Sprint atual: `Sprint 19 - Movimento, Spawn E Sidearm` (implementada / aguardando validacao).
+
+Proxima: **Sprint 19** — armas improvisadas no chao + finishers gore. Ver `docs/COMBAT_DESIGN.md`.
 
 Estamos em **prototipo alpha**. Meta atual: **fase jogavel de ~10 minutos** na Vila Esperanca, com visual proximo de `references/pillars` (pintura 2D + pixel aparente). Demo publica e Steam ficam bloqueadas ate la.
 
@@ -56,7 +58,11 @@ A Sprint 14 comecou corrigindo o problema visual dos sprites: fundo preto, escal
 
 A Sprint 15 troca o Caua recortado por um `LayeredPrototype` em `CharacterSpriteVisual`: corpo, cabeca, cabelo, pernas, bracos, camisa, faca e pulso sao partes separadas animadas por codigo. Isso ainda nao e arte final, mas ja prova respiracao, batimento/peito, cabelo mexendo, caminhada, dash e ataque com arma sem parecer imagem colada.
 
-A Sprint 16 aplica a mesma filosofia no cenario e no inimigo comum: `LayeredStreetPrototype` monta a Vila Esperanca com camadas nativas do Godot/C# (muros, cerca, boteco, postes, fio, chao molhado, pocos, lixo e neon animado), e o Quebra-Osso tambem usa `LayeredPrototype` em vez de sprite recortado. As imagens continuam como referencia, nao como runtime ativo.
+A Sprint 16 foi validada: cenario em camadas (`LayeredStreetPrototype`), Quebra-Osso em `LayeredPrototype`, escala e leitura da rua ok.
+
+A Sprint 17 foi validada: combo, hurt, telegraph e trails no rig.
+
+A Sprint 18 remove a faca fixa: combo desarmado (soco/chute/voadora), inimigo com soco/cabecada, machucado visual por HP e HUD `Estilo: Rua | Punhos`.
 
 O prototipo lateral ja tem movimento por lanes, encontros de combate, combo, tiro, esquiva, pulo visual, HUD, ataque inimigo telegrafado, slash placeholder, flash de dano, knockback com hit-stun, hit pause curto, sangue placeholder, som placeholder de impacto e indicador visual de invulnerabilidade.
 
@@ -84,23 +90,17 @@ Toda sprint so pode ser marcada como concluida depois de build C# sem erros, val
 
 ## Proximo passo recomendado
 
-Na outra maquina, validar Sprint 16 no Godot com `F5`:
+Iniciar **Sprint 20** no Godot:
 
-- menu -> tutorial -> fase;
-- conferir se o Caua em `LayeredPrototype` respira no idle;
-- conferir se cabelo, torso, bracos, pernas e faca se movem;
-- conferir se andar, atacar e esquivar parecem mais vivos que o recorte anterior;
-- conferir se o Quebra-Osso tambem aparece como personagem em camadas, nao imagem;
-- conferir se o cenario ativo nao depende mais de `bg_far/bg_mid/bg_near`;
-- conferir se boteco, cerca, postes, neon, chao molhado e pocos tem leitura boa;
-- conferir alinhamento de pes/sombra/colisao;
-- depois produzir sprite sheet final no Krita/Aseprite usando o contrato documentado em `docs/ART_PIPELINE.md`.
+- armas improvisadas no chao (vergalhao, martelo, faca) com durabilidade;
+- finishers gore quando inimigo estiver critico;
+- reload da pistola e pickup de municao.
 
-**So depois disso** voltamos a falar de demo publica ou Steam.
+Depois: Sprint 21 (estilos marciais por XP).
 
 ## Documentos importantes
 
-- `docs/PROJECT_BRIEF.md`: resumo do projeto, tecnologias e escopo.
+- `docs/COMBAT_DESIGN.md`: combate desarmado, armas improvisadas, progressao marcial.
 - `docs/VISUAL_BIBLE.md`: direcao visual do jogo.
 - `docs/WEATHER_TIME_SYSTEM.md`: clima, horario e rua viva.
 - `docs/ART_PIPELINE.md`: fluxo de arte e referencias.

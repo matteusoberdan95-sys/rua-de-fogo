@@ -8,6 +8,7 @@ O jogo mistura:
 
 - energia de jogos 2D dos anos 90;
 - combate moderno com peso, dash, stamina e feedback forte;
+- **pancadaria de rua desarmada** no inicio, estilos marciais por XP e armas improvisadas temporarias;
 - atmosfera dark, violenta e opressiva;
 - identidade brasileira suburbana;
 - tecnologia atual de luz, sombra, particulas e som;

@@ -46,15 +46,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 17
 text = "Vila Esperanca - controles basicos
 
-A/D: andar pela rua
+A/D: andar  (A/A ou D/D rapidinho = correr)
 W/S: trocar profundidade (lane)
-J: atacar corpo a corpo
-L: disparar
+J: soco / chute / voadora (combo no chao)
+Espaco + J: voadora no ar
+L: pistola (municao limitada, causa sangramento)
 K: esquivar
 Espaco: pular
 R: reiniciar trecho
 M: menu (morte ou vitoria)
 
+Combate comeca desarmado (Estilo: Rua). Armas no chao sao temporarias.
 Objetivo: atravesse a fase, ative o checkpoint no altar e sobreviva aos chefes.
 A sessao completa leva cerca de 10 minutos."
 autowrap_mode = 3

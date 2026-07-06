@@ -210,3 +210,27 @@ Regra tecnica:
 - cenas ativas devem apontar para assets limpos ou nodes/layers editaveis;
 - se uma imagem grande for usada temporariamente, documentar como placeholder e planejar substituicao;
 - cenario vivo deve ser separado em partes animaveis: luz, fio, agua, lixo, placa, parede, chao e props.
+
+## Sprint 17 - Personagens Vivos: Combo, Impacto E Reacao
+
+Arquivos principais:
+
+- `scripts/visual/CharacterSpriteVisual.cs`: estados `hurt`, `telegraph`, combo 0/1/2, movimento secundario (cabelo/roupa/colete), `SpawnSwingTrail`.
+- `scripts/core/CombatFeedback.cs`: chama `PlayHitReaction` no rig; spark escala com dano.
+- `scripts/player/SideScrollerPlayerController.cs`: `SetAttackCombo` no ataque; hit-stun no visual.
+- `scripts/enemies/SideScrollerEnemyController.cs`: telegraph no rig; hit-stun no visual.
+
+Regra tecnica:
+
+- feedback de dano deve preferir reacao no rig (`SpriteVisual`) em vez de flash cego no `CharacterBody2D`;
+- combos devem ser legiveis no corpo antes de depender de VFX externos;
+- telegraph inimigo deve ser corporal (windup visivel) antes de ligar hitbox.
+
+## Combate — direcao Sprint 18+
+
+Ver `docs/COMBAT_DESIGN.md`:
+
+- Caua **sem lamina fixa**; combo base = soco / chute / voadora;
+- inimigos **machucam visualmente** por faixa de HP;
+- armas no chao = durabilidade + finishers (Sprint 19);
+- Muay Thai, boxe, karate, capoeira, jiu-jitsu = desbloqueio XP (Sprint 20).

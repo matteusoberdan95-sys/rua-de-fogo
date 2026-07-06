@@ -58,7 +58,7 @@ public partial class SideScrollerDirector : Node
     public NodePath TimeOfDayControllerPath { get; set; } = "../TimeOfDayController";
 
     [Export]
-    public float TimeBetweenEncounters { get; set; } = 2.8f;
+    public float TimeBetweenEncounters { get; set; } = 1.5f;
 
     [Export]
     public Vector2 StartPosition { get; set; } = new(-760f, 405f);
@@ -106,6 +106,10 @@ public partial class SideScrollerDirector : Node
     private bool _f1WasDown;
     private bool _f2WasDown;
     private bool _f4WasDown;
+    private readonly List<PendingSpawn> _pendingSpawns = [];
+    private float _spawnSequenceElapsed;
+
+    private readonly record struct PendingSpawn(PackedScene? Scene, float Delay, int Index);
 
     public override void _Ready()
     {
@@ -173,7 +177,28 @@ public partial class SideScrollerDirector : Node
 
         EnemiesRemaining = CountLivingEnemies();
 
-        if (_phaseActive && EnemiesRemaining == 0)
+        if (_pendingSpawns.Count > 0 && _player is not null)
+        {
+            _spawnSequenceElapsed += (float)delta;
+            for (int i = _pendingSpawns.Count - 1; i >= 0; i--)
+            {
+                if (_spawnSequenceElapsed >= _pendingSpawns[i].Delay)
+                {
+                    SpawnEnemyAhead(_pendingSpawns[i]);
+                    _pendingSpawns.RemoveAt(i);
+                }
+            }
+
+            EnemiesRemaining = CountLivingEnemies();
+        }
+
+        if (!_phaseActive && _phase == Phase.IntroWalk && _player is not null
+            && _player.GlobalPosition.X > StartPosition.X + 140f)
+        {
+            _phaseTimer = 0f;
+        }
+
+        if (_phaseActive && EnemiesRemaining == 0 && _pendingSpawns.Count == 0)
         {
             _phaseActive = false;
             _phaseTimer = TimeBetweenEncounters;
@@ -262,7 +287,7 @@ public partial class SideScrollerDirector : Node
                 WaveNumber = 0;
                 ObjectiveText = "Entre na Vila Esperanca";
                 StatusText = "O asfalto esta molhado. Avance pela rua.";
-                BeginIntermission(38f);
+                BeginIntermission(10f);
                 break;
             case Phase.EncounterOne:
                 WaveNumber = 1;
@@ -394,13 +419,38 @@ public partial class SideScrollerDirector : Node
     private void SpawnComposition(PackedScene?[] scenes)
     {
         PackedScene?[] composition = scenes.Length > 0 ? scenes : _emptyComposition;
-        EnemiesRemaining = composition.Length;
+        _pendingSpawns.Clear();
+        _spawnSequenceElapsed = 0f;
         _phaseActive = true;
+        EnemiesRemaining = 0;
 
         for (int i = 0; i < composition.Length; i++)
         {
-            SpawnEnemy(i, composition[i] ?? EnemyScene);
+            _pendingSpawns.Add(new PendingSpawn(composition[i] ?? EnemyScene, i * 0.85f, i));
         }
+    }
+
+    private void SpawnEnemyAhead(PendingSpawn pending)
+    {
+        if (pending.Scene is null || _player is null)
+        {
+            return;
+        }
+
+        float ahead = pending.Index % 3 switch
+        {
+            0 => 240f,
+            1 => 320f,
+            _ => 190f,
+        };
+
+        float spawnX = _player.GlobalPosition.X + ahead;
+        float laneOffset = (pending.Index % 3 - 1) * 48f;
+        float spawnY = Mathf.Clamp(_player.GlobalPosition.Y + laneOffset, 268f, 465f);
+
+        Node2D enemy = pending.Scene.Instantiate<Node2D>();
+        enemy.GlobalPosition = new Vector2(spawnX, spawnY);
+        GetTree().CurrentScene?.AddChild(enemy);
     }
 
     private void SpawnEnemy(int index, PackedScene? scene)

@@ -1,5 +1,7 @@
 namespace SangueNoAsfalto.Visual;
 
+using SangueNoAsfalto.Combat;
+
 public enum LayeredPrototypePreset
 {
     Caua,
@@ -7,8 +9,7 @@ public enum LayeredPrototypePreset
 }
 
 /// <summary>
-/// Controle visual de personagem. Aceita SpriteFrames tradicionais e um rig 2D em camadas
-/// para prototipar respiracao, cabelo, arma e impacto sem depender de recortes estaticos.
+/// Rig 2D em camadas — combate desarmado, reacao a hit e machucado cumulativo no inimigo.
 /// </summary>
 public partial class CharacterSpriteVisual : Node2D
 {
@@ -36,8 +37,13 @@ public partial class CharacterSpriteVisual : Node2D
     private Node2D? _frontArm;
     private Node2D? _backLeg;
     private Node2D? _frontLeg;
-    private Node2D? _weapon;
     private Node2D? _shirtPulse;
+    private Node2D? _vestFlap;
+    private Node2D? _clothSway;
+    private Node2D? _hairTail;
+    private Polygon2D? _faceBruise;
+    private Polygon2D? _torsoBlood;
+    private Polygon2D? _criticalLimp;
     private Vector2 _basePosition;
     private Vector2 _jumpOffset;
     private Vector2 _movementOffset;
@@ -45,6 +51,15 @@ public partial class CharacterSpriteVisual : Node2D
     private string _layeredState = "idle";
     private float _stateTime;
     private float _flashTime;
+    private float _hurtTime;
+    private float _hurtStrength = 1f;
+    private Vector2 _hurtDirection = Vector2.Left;
+    private int _attackComboIndex;
+    private bool _impactSpawned;
+    private bool _isRunning;
+    private float _shootAnimTime;
+    private Node2D? _sidearm;
+    private EnemyDamageVisualTier _damageTier = EnemyDamageVisualTier.Intact;
     private int _facingSign = 1;
 
     public override void _Ready()
@@ -81,6 +96,11 @@ public partial class CharacterSpriteVisual : Node2D
 
         float dt = (float)delta;
         _stateTime += dt;
+        if (_hurtTime > 0f)
+        {
+            _hurtTime = Mathf.Max(_hurtTime - dt, 0f);
+        }
+
         if (_flashTime > 0f)
         {
             _flashTime = Mathf.Max(_flashTime - dt, 0f);
@@ -124,16 +144,79 @@ public partial class CharacterSpriteVisual : Node2D
         ApplyVisualOffset();
     }
 
-    public void UpdateLocomotion(bool isMoving, bool isAttacking, bool isDashing)
+    public void SetDamageVisualTier(EnemyDamageVisualTier tier)
     {
+        _damageTier = tier;
+        if (_faceBruise is not null)
+        {
+            _faceBruise.Visible = tier >= EnemyDamageVisualTier.Hurt;
+        }
+
+        if (_torsoBlood is not null)
+        {
+            _torsoBlood.Visible = tier >= EnemyDamageVisualTier.Hurt;
+        }
+
+        if (_criticalLimp is not null)
+        {
+            _criticalLimp.Visible = tier >= EnemyDamageVisualTier.Critical;
+        }
+    }
+
+    public void PlayShoot()
+    {
+        if (!UseLayeredPrototype)
+        {
+            return;
+        }
+
+        _shootAnimTime = 0.22f;
+        SetLayeredState("shoot");
+    }
+
+    public void UpdateLocomotion(
+        bool isMoving,
+        bool isAttacking,
+        bool isDashing,
+        bool isHurt = false,
+        bool isTelegraphing = false,
+        bool isRunning = false)
+    {
+        _isRunning = isRunning;
+        if (_shootAnimTime > 0f)
+        {
+            _shootAnimTime = Mathf.Max(_shootAnimTime - (float)GetProcessDeltaTime(), 0f);
+            if (_shootAnimTime <= 0f && _layeredState == "shoot")
+            {
+                SetLayeredState("idle");
+            }
+        }
+
         if (UseLayeredPrototype)
         {
-            _movementOffset = isMoving && !isAttacking && !isDashing
-                ? new Vector2(0f, Mathf.Sin(Time.GetTicksMsec() * 0.018f) * 1.8f)
+            float bobSpeed = isRunning ? 0.028f : 0.018f;
+            float bobAmount = isRunning ? 2.4f : 1.8f;
+            if (_damageTier == EnemyDamageVisualTier.Critical)
+            {
+                bobAmount = 2.6f;
+            }
+
+            _movementOffset = isMoving && !isAttacking && !isDashing && !isHurt && !isTelegraphing && _shootAnimTime <= 0f
+                ? new Vector2(0f, Mathf.Sin(Time.GetTicksMsec() * bobSpeed) * bobAmount)
                 : Vector2.Zero;
             ApplyVisualOffset();
 
-            string nextState = isAttacking ? "attack" : isDashing ? "dash" : isMoving ? "walk" : "idle";
+            if (_shootAnimTime > 0f)
+            {
+                return;
+            }
+
+            string nextState = isHurt || _hurtTime > 0f ? "hurt"
+                : isTelegraphing ? "telegraph"
+                : isAttacking ? "attack"
+                : isDashing ? "dash"
+                : isMoving ? "walk"
+                : "idle";
             SetLayeredState(nextState);
             return;
         }
@@ -188,6 +271,35 @@ public partial class CharacterSpriteVisual : Node2D
         _sprite.Play(animationName);
     }
 
+    public void SetAttackCombo(int comboIndex)
+    {
+        _attackComboIndex = Mathf.Clamp(comboIndex, 0, 2);
+        if (UseLayeredPrototype && _layeredState == "attack")
+        {
+            _stateTime = 0f;
+            _impactSpawned = false;
+        }
+    }
+
+    public void PlayHitReaction(Vector2 direction, float severity = 1f)
+    {
+        _flashTime = 0.12f;
+        _hurtTime = Mathf.Clamp(0.14f + severity * 0.05f, 0.14f, 0.38f);
+        _hurtStrength = Mathf.Clamp(severity, 0.5f, 2.5f);
+        if (direction.LengthSquared() > 0.01f)
+        {
+            _hurtDirection = direction.Normalized();
+        }
+
+        if (UseLayeredPrototype)
+        {
+            SetLayeredState("hurt");
+            return;
+        }
+
+        PlayHitFlash();
+    }
+
     public void PlayHitFlash()
     {
         if (UseLayeredPrototype)
@@ -225,6 +337,7 @@ public partial class CharacterSpriteVisual : Node2D
 
         _layeredState = nextState;
         _stateTime = 0f;
+        _impactSpawned = false;
     }
 
     private void BuildLayeredPrototype()
@@ -252,7 +365,7 @@ public partial class CharacterSpriteVisual : Node2D
 
         Node2D backLayer = AddJoint(_rig, "BackLayer", Vector2.Zero, 0);
         _backLeg = AddLimb(backLayer, "BackLeg", new Vector2(-8f, -12f), backPants, shoeAccent, z: 0);
-        _backArm = AddArm(backLayer, "BackArm", new Vector2(-15f, -58f), backSkin, z: 1);
+        _backArm = AddArm(backLayer, "BackArm", new Vector2(-15f, -58f), backSkin, z: 1, knuckles: true);
 
         _torso = AddJoint(_rig, "Torso", new Vector2(0f, -56f), 4);
         AddPolygon(_torso, "BackVest", vest, new[]
@@ -274,6 +387,25 @@ public partial class CharacterSpriteVisual : Node2D
         {
             new Vector2(-17f, 28f), new Vector2(-6f, 34f), new Vector2(2f, 29f), new Vector2(14f, 35f), new Vector2(12f, 42f), new Vector2(-14f, 39f)
         }, 3);
+        _vestFlap = AddJoint(_torso, "VestFlap", new Vector2(-18f, 10f), 4);
+        AddPolygon(_vestFlap, "Flap", vest.Darkened(0.08f), new[]
+        {
+            new Vector2(0f, 0f), new Vector2(14f, -2f), new Vector2(18f, 16f), new Vector2(4f, 20f), new Vector2(-2f, 8f)
+        }, 0);
+        _torsoBlood = AddPolygon(_torso, "TorsoBlood", new Color(0.52f, 0.01f, 0.02f, 0.82f), new[]
+        {
+            new Vector2(-8f, 4f), new Vector2(10f, 2f), new Vector2(14f, 16f), new Vector2(-4f, 20f), new Vector2(-12f, 12f)
+        }, 6);
+        _torsoBlood.Visible = false;
+
+        if (LayeredPreset == LayeredPrototypePreset.Caua)
+        {
+            _clothSway = AddJoint(_torso, "ScarfSway", new Vector2(8f, -14f), 5);
+            AddPolygon(_clothSway, "Scarf", new Color(0.58f, 0.02f, 0.03f), new[]
+            {
+                new Vector2(-4f, -2f), new Vector2(16f, -4f), new Vector2(22f, 8f), new Vector2(6f, 14f), new Vector2(-2f, 6f)
+            }, 0);
+        }
 
         _frontLeg = AddLimb(_rig, "FrontLeg", new Vector2(8f, -12f), pants, shoeAccent, z: 6);
         _head = AddJoint(_rig, "Head", new Vector2(0f, -96f), 8);
@@ -290,6 +422,11 @@ public partial class CharacterSpriteVisual : Node2D
         {
             new Vector2(8f, -1f), new Vector2(17f, 3f), new Vector2(7f, 7f)
         }, 5);
+        _faceBruise = AddPolygon(_head, "FaceBruise", new Color(0.38f, 0.08f, 0.12f, 0.88f), new[]
+        {
+            new Vector2(-12f, -2f), new Vector2(-2f, -4f), new Vector2(0f, 4f), new Vector2(-10f, 6f)
+        }, 7);
+        _faceBruise.Visible = false;
         _hair = AddJoint(_head, "Hair", new Vector2(-1f, -12f), 6);
         AddPolygon(_hair, "HairSpikes", LayeredPreset == LayeredPrototypePreset.Caua
             ? new Color(0.035f, 0.025f, 0.02f)
@@ -299,25 +436,30 @@ public partial class CharacterSpriteVisual : Node2D
             new Vector2(-15f, 4f), new Vector2(-10f, -14f), new Vector2(-4f, -5f), new Vector2(1f, -19f), new Vector2(5f, -5f), new Vector2(14f, -13f), new Vector2(10f, 4f)
         }
             : MakeEllipse(0f, -3f, 12f, 8f, 10), 0);
-
-        _frontArm = AddArm(_rig, "FrontArm", new Vector2(15f, -58f), skin.Lightened(0.04f), z: 10);
-        _weapon = AddJoint(_frontArm, LayeredPreset == LayeredPrototypePreset.Caua ? "Machete" : "Pipe", new Vector2(19f, 28f), 8);
-        AddPolygon(_weapon, "Handle", new Color(0.13f, 0.07f, 0.035f), new[]
+        _hairTail = AddJoint(_hair, "HairTail", new Vector2(6f, 6f), 1);
+        AddPolygon(_hairTail, "TailStrand", LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(0.05f, 0.035f, 0.028f)
+            : new Color(0.04f, 0.03f, 0.025f), new[]
         {
-            new Vector2(-3f, -3f), new Vector2(16f, -2f), new Vector2(16f, 3f), new Vector2(-3f, 3f)
+            new Vector2(-3f, 0f), new Vector2(8f, -2f), new Vector2(12f, 10f), new Vector2(0f, 12f)
         }, 0);
-        AddPolygon(_weapon, "Blade", LayeredPreset == LayeredPrototypePreset.Caua
-            ? new Color(0.73f, 0.71f, 0.62f)
-            : new Color(0.45f, 0.46f, 0.42f), new[]
+
+        _frontArm = AddArm(_rig, "FrontArm", new Vector2(15f, -58f), skin.Lightened(0.04f), z: 10, knuckles: true);
+        _sidearm = AddJoint(_frontArm, "Sidearm", new Vector2(14f, 24f), 9);
+        AddPolygon(_sidearm, "Grip", new Color(0.08f, 0.06f, 0.05f), new[]
         {
-            new Vector2(12f, -4f), new Vector2(54f, -8f), new Vector2(66f, -1f), new Vector2(50f, 6f), new Vector2(12f, 4f)
+            new Vector2(-3f, -2f), new Vector2(10f, -2f), new Vector2(10f, 3f), new Vector2(-3f, 3f)
+        }, 0);
+        AddPolygon(_sidearm, "Slide", new Color(0.18f, 0.18f, 0.2f), new[]
+        {
+            new Vector2(8f, -3f), new Vector2(22f, -3f), new Vector2(22f, 2f), new Vector2(8f, 2f)
         }, 1);
-        AddPolygon(_weapon, "BladeBlood", LayeredPreset == LayeredPrototypePreset.Caua
-            ? new Color(0.56f, 0.015f, 0.015f, 0.86f)
-            : new Color(0.22f, 0.02f, 0.02f, 0.45f), new[]
+        _sidearm.Visible = false;
+        _criticalLimp = AddPolygon(_frontLeg, "CriticalLimp", new Color(0.42f, 0.05f, 0.06f, 0.75f), new[]
         {
-            new Vector2(37f, -5f), new Vector2(56f, -4f), new Vector2(50f, 1f), new Vector2(34f, 1f)
-        }, 2);
+            new Vector2(-4f, -8f), new Vector2(8f, -10f), new Vector2(6f, 6f), new Vector2(-6f, 8f)
+        }, 4);
+        _criticalLimp.Visible = false;
     }
 
     private static Node2D AddJoint(Node parent, string name, Vector2 position, int z)
@@ -349,7 +491,7 @@ public partial class CharacterSpriteVisual : Node2D
         return leg;
     }
 
-    private static Node2D AddArm(Node parent, string name, Vector2 position, Color skin, int z)
+    private static Node2D AddArm(Node parent, string name, Vector2 position, Color skin, int z, bool knuckles = false)
     {
         Node2D arm = AddJoint(parent, name, position, z);
         AddPolygon(arm, "UpperArm", skin, new[]
@@ -360,11 +502,20 @@ public partial class CharacterSpriteVisual : Node2D
         {
             new Vector2(-8f, 12f), new Vector2(9f, 12f), new Vector2(8f, 32f), new Vector2(-7f, 33f)
         }, 1);
-        AddPolygon(arm, "Bandage", new Color(0.85f, 0.78f, 0.62f), new[]
+        AddPolygon(arm, "Wrap", new Color(0.85f, 0.78f, 0.62f), new[]
         {
             new Vector2(-9f, 18f), new Vector2(9f, 17f), new Vector2(9f, 23f), new Vector2(-8f, 24f)
         }, 2);
-        AddPolygon(arm, "Fist", skin.Darkened(0.08f), MakeEllipse(1f, 36f, 8f, 7f, 8), 3);
+        float fistRx = knuckles ? 9f : 8f;
+        AddPolygon(arm, "Fist", skin.Darkened(0.08f), MakeEllipse(1f, 36f, fistRx, 7f, 8), 3);
+        if (knuckles)
+        {
+            AddPolygon(arm, "Knuckles", new Color(0.78f, 0.72f, 0.58f), new[]
+            {
+                new Vector2(-4f, 32f), new Vector2(6f, 31f), new Vector2(5f, 36f), new Vector2(-3f, 37f)
+            }, 4);
+        }
+
         return arm;
     }
 
@@ -397,8 +548,10 @@ public partial class CharacterSpriteVisual : Node2D
     {
         float idle = Mathf.Sin(_stateTime * 4.2f);
         float heartbeat = Mathf.Max(0f, Mathf.Sin(_stateTime * 8.5f));
-        float walk = Mathf.Sin(_stateTime * 10.5f);
-        float walkOpposite = Mathf.Cos(_stateTime * 10.5f);
+        float walkSpeed = _damageTier == EnemyDamageVisualTier.Critical && !_isRunning ? 8.2f : _isRunning ? 14.5f : 10.5f;
+        float walk = Mathf.Sin(_stateTime * walkSpeed);
+        float walkOpposite = Mathf.Cos(_stateTime * walkSpeed);
+        float limpFactor = _damageTier == EnemyDamageVisualTier.Critical ? 0.55f : 1f;
 
         ResetLayeredPose();
 
@@ -425,16 +578,41 @@ public partial class CharacterSpriteVisual : Node2D
             _hair.Position = new Vector2(-1f, -12f + idle * 0.3f);
         }
 
+        if (_hairTail is not null)
+        {
+            _hairTail.Rotation = Mathf.Sin(_stateTime * 6.8f + 1.2f) * 0.12f;
+        }
+
+        if (_vestFlap is not null)
+        {
+            _vestFlap.Rotation = Mathf.Sin(_stateTime * 4.8f + 0.4f) * 0.08f;
+        }
+
+        if (_clothSway is not null)
+        {
+            _clothSway.Rotation = Mathf.Sin(_stateTime * 5.2f + 0.9f) * 0.1f;
+            _clothSway.Position = new Vector2(8f, -14f + idle * 0.4f);
+        }
+
         switch (_layeredState)
         {
             case "walk":
-                AnimateWalk(walk, walkOpposite);
+                AnimateWalk(walk, walkOpposite, limpFactor);
                 break;
             case "attack":
-                AnimateAttack();
+                AnimateUnarmedAttack();
                 break;
             case "dash":
                 AnimateDash();
+                break;
+            case "hurt":
+                AnimateHurt();
+                break;
+            case "telegraph":
+                AnimateTelegraph();
+                break;
+            case "shoot":
+                AnimateShoot();
                 break;
             default:
                 AnimateIdle(idle);
@@ -448,7 +626,15 @@ public partial class CharacterSpriteVisual : Node2D
         SetPart(_frontArm, new Vector2(15f, -58f), 0.08f, Vector2.One);
         SetPart(_backLeg, new Vector2(-8f, -12f), 0.04f, Vector2.One);
         SetPart(_frontLeg, new Vector2(8f, -12f), -0.04f, Vector2.One);
-        SetPart(_weapon, new Vector2(19f, 28f), 0.05f, Vector2.One);
+        if (_torso is not null)
+        {
+            _torso.Modulate = Colors.White;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Modulate = Colors.White;
+        }
     }
 
     private void AnimateIdle(float idle)
@@ -462,24 +648,24 @@ public partial class CharacterSpriteVisual : Node2D
         {
             _backArm.Rotation -= idle * 0.025f;
         }
-
-        if (_weapon is not null)
-        {
-            _weapon.Rotation += idle * 0.025f;
-        }
     }
 
-    private void AnimateWalk(float walk, float walkOpposite)
+    private void AnimateWalk(float walk, float walkOpposite, float limpFactor)
     {
         if (_torso is not null)
         {
-            _torso.Position += new Vector2(0f, Mathf.Abs(walk) * 2.2f);
-            _torso.Rotation = walk * 0.025f;
+            _torso.Position += new Vector2(0f, Mathf.Abs(walk) * 2.2f * limpFactor * (_isRunning ? 1.25f : 1f));
+            _torso.Rotation = walk * (_isRunning ? 0.04f : 0.025f);
+            if (_isRunning)
+            {
+                _torso.Position += new Vector2(4f, 0f);
+                _torso.Rotation += 0.08f;
+            }
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = walk * 0.32f;
+            _frontLeg.Rotation = walk * 0.32f * limpFactor;
             _frontLeg.Position += new Vector2(walk * 2.4f, Mathf.Abs(walk) * 1.2f);
         }
 
@@ -498,56 +684,399 @@ public partial class CharacterSpriteVisual : Node2D
         {
             _backArm.Rotation = walk * 0.22f - 0.12f;
         }
+    }
 
-        if (_weapon is not null)
+    private void AnimateUnarmedAttack()
+    {
+        if (_isRunning && _attackComboIndex == 0)
         {
-            _weapon.Rotation = -walk * 0.08f + 0.05f;
+            AnimateRunningPunch();
+            return;
+        }
+
+        if (_isRunning && _attackComboIndex == 1)
+        {
+            AnimateRunningKick();
+            return;
+        }
+
+        switch (_attackComboIndex)
+        {
+            case 1:
+                if (LayeredPreset == LayeredPrototypePreset.QuebraOsso)
+                {
+                    AnimateHeadbutt();
+                }
+                else
+                {
+                    AnimateSideKick();
+                }
+                break;
+            case 2:
+                AnimateFlyingKick();
+                break;
+            default:
+                AnimateJab();
+                break;
         }
     }
 
-    private void AnimateAttack()
+    private void AnimateRunningPunch()
     {
-        float t = Mathf.Clamp(_stateTime / 0.18f, 0f, 1f);
-        float windup = 1f - Mathf.Abs(t * 2f - 1f);
-        float swing = Mathf.Sin(t * Mathf.Pi);
+        float duration = 0.11f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float extend = Mathf.Sin(t * Mathf.Pi);
 
         if (_torso is not null)
         {
-            _torso.Rotation = -0.08f + swing * 0.2f;
-            _torso.Position += new Vector2(swing * 5f, -windup * 1.5f);
-        }
-
-        if (_head is not null)
-        {
-            _head.Position += new Vector2(swing * 2f, -windup * 1f);
+            _torso.Rotation = 0.12f + extend * 0.1f;
+            _torso.Position += new Vector2(extend * 10f, 0f);
         }
 
         if (_frontArm is not null)
         {
-            _frontArm.Rotation = -0.72f + swing * 1.55f;
-            _frontArm.Position = new Vector2(18f + swing * 9f, -62f + windup * 3f);
+            _frontArm.Rotation = -0.05f - extend * 1.05f;
+            _frontArm.Position = new Vector2(18f + extend * 26f, -58f);
         }
 
-        if (_backArm is not null)
-        {
-            _backArm.Rotation = -0.36f - swing * 0.35f;
-        }
+        TrySpawnImpact(0, extend, _frontArm);
+    }
 
-        if (_weapon is not null)
+    private void AnimateRunningKick()
+    {
+        float duration = 0.13f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float extend = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
         {
-            _weapon.Rotation = -0.35f + swing * 1.15f;
-            _weapon.Scale = new Vector2(1f + swing * 0.12f, 1f);
+            _torso.Rotation = -extend * 0.08f;
+            _torso.Position += new Vector2(extend * 8f, -extend * 2f);
         }
 
         if (_frontLeg is not null)
         {
-            _frontLeg.Rotation = 0.14f + swing * 0.1f;
+            _frontLeg.Rotation = -extend * 1.1f;
+            _frontLeg.Position = new Vector2(10f + extend * 22f, -12f);
+        }
+
+        TrySpawnImpact(1, extend, _frontLeg);
+    }
+
+    private void AnimateShoot()
+    {
+        float t = Mathf.Clamp(_stateTime / 0.22f, 0f, 1f);
+        bool drawing = t < 0.35f;
+        float fire = drawing ? 0f : Mathf.Sin((t - 0.35f) / 0.65f * Mathf.Pi);
+
+        if (_sidearm is not null)
+        {
+            _sidearm.Visible = true;
+        }
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = drawing ? -0.04f : fire * 0.06f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = drawing ? -0.35f : -0.15f + fire * 0.08f;
+            _frontArm.Position = new Vector2(15f + (drawing ? -4f : 2f), -58f);
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = drawing ? -0.55f : -0.25f;
+        }
+
+        if (_sidearm is not null)
+        {
+            _sidearm.Rotation = drawing ? 0.4f : fire * 0.05f;
+        }
+
+        if (!drawing && fire > 0.7f && !_impactSpawned)
+        {
+            _impactSpawned = true;
+        }
+
+        if (t >= 0.99f && _sidearm is not null)
+        {
+            _sidearm.Visible = false;
+        }
+    }
+
+    private void AnimateJab()
+    {
+        float duration = 0.14f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float extend = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = extend * 0.08f;
+            _torso.Position += new Vector2(extend * 6f, 0f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.08f - extend * 0.95f;
+            _frontArm.Position = new Vector2(15f + extend * 22f, -58f - extend * 2f);
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.12f - extend * 0.25f;
+        }
+
+        if (_head is not null)
+        {
+            _head.Position += new Vector2(extend * 2f, 0f);
+        }
+
+        TrySpawnImpact(0, extend, _frontArm);
+    }
+
+    private void AnimateHeadbutt()
+    {
+        float duration = 0.15f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float lunge = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = lunge * 0.22f;
+            _torso.Position += new Vector2(lunge * 12f, lunge * 2f);
+        }
+
+        if (_head is not null)
+        {
+            _head.Position += new Vector2(lunge * 16f, lunge * 4f);
+            _head.Rotation = lunge * 0.12f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.35f;
+        }
+
+        TrySpawnImpact(0, lunge, _head);
+    }
+
+    private void AnimateSideKick()
+    {
+        float duration = 0.18f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float extend = Mathf.Sin(t * Mathf.Pi);
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = -extend * 0.12f;
+            _torso.Position += new Vector2(extend * 4f, -extend * 1.5f);
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = -0.04f - extend * 0.95f;
+            _frontLeg.Position = new Vector2(8f + extend * 18f, -12f - extend * 4f);
         }
 
         if (_backLeg is not null)
         {
-            _backLeg.Rotation = -0.16f;
+            _backLeg.Rotation = 0.04f + extend * 0.08f;
         }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.35f + extend * 0.15f;
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.45f;
+        }
+
+        TrySpawnImpact(1, extend, _frontLeg);
+    }
+
+    private void AnimateFlyingKick()
+    {
+        float duration = 0.22f;
+        float t = Mathf.Clamp(_stateTime / duration, 0f, 1f);
+        float extend = Mathf.Sin(t * Mathf.Pi);
+        float lift = extend * 18f;
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = extend * 0.18f;
+            _torso.Position += new Vector2(extend * 10f, -lift);
+        }
+
+        if (_head is not null)
+        {
+            _head.Position += new Vector2(extend * 4f, -lift * 0.35f);
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = -extend * 1.05f;
+            _frontLeg.Position = new Vector2(12f + extend * 24f, -12f - lift * 0.45f);
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = extend * 0.35f;
+            _backLeg.Position += new Vector2(-extend * 4f, -lift * 0.2f);
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.55f;
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.62f;
+        }
+
+        if (_hair is not null)
+        {
+            _hair.Rotation -= extend * 0.14f;
+        }
+
+        TrySpawnImpact(2, extend, _frontLeg);
+    }
+
+    private void TrySpawnImpact(int comboIndex, float extend, Node2D? strikePart)
+    {
+        if (extend < 0.72f || _impactSpawned || strikePart is null)
+        {
+            return;
+        }
+
+        _impactSpawned = true;
+        SpawnStrikeImpact(comboIndex, strikePart);
+    }
+
+    private void AnimateHurt()
+    {
+        float t = 1f - Mathf.Clamp(_hurtTime / 0.28f, 0f, 1f);
+        float recoil = Mathf.Sin(t * Mathf.Pi);
+        float lean = _hurtDirection.X * recoil * 0.18f * _hurtStrength;
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = lean;
+            _torso.Position += new Vector2(_hurtDirection.X * recoil * 7f * _hurtStrength, -recoil * 2f);
+        }
+
+        if (_head is not null)
+        {
+            _head.Rotation = -lean * 0.8f;
+            _head.Position += new Vector2(_hurtDirection.X * recoil * 4f, recoil * 1.5f);
+        }
+
+        if (_hair is not null)
+        {
+            _hair.Rotation += _hurtDirection.X * recoil * 0.18f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = 0.42f * recoil;
+        }
+
+        if (_backArm is not null)
+        {
+            _backArm.Rotation = -0.55f * recoil;
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = -0.12f * recoil;
+        }
+
+        if (_backLeg is not null)
+        {
+            _backLeg.Rotation = 0.1f * recoil;
+        }
+    }
+
+    private void AnimateTelegraph()
+    {
+        float pulse = 0.5f + Mathf.Sin(_stateTime * 28f) * 0.5f;
+        bool headbutt = LayeredPreset == LayeredPrototypePreset.QuebraOsso && _attackComboIndex == 1;
+
+        if (_torso is not null)
+        {
+            _torso.Rotation = (-0.12f - (headbutt ? 0.08f : 0f)) * pulse;
+            _torso.Position += new Vector2(-4f * pulse, headbutt ? 2f * pulse : 0f);
+            _torso.Modulate = Colors.White.Lerp(new Color(1f, 0.42f, 0.28f), pulse * 0.35f);
+        }
+
+        if (_head is not null)
+        {
+            _head.Position += new Vector2((headbutt ? 3f : -2f) * pulse, headbutt ? -3f * pulse : 0f);
+            _head.Rotation = headbutt ? pulse * 0.18f : 0f;
+        }
+
+        if (_frontArm is not null)
+        {
+            _frontArm.Rotation = headbutt ? 0.25f : -0.85f * pulse;
+            _frontArm.Position = new Vector2(15f - 6f * pulse, -58f);
+        }
+
+        if (_frontLeg is not null)
+        {
+            _frontLeg.Rotation = 0.08f * pulse;
+        }
+    }
+
+    private void SpawnStrikeImpact(int comboIndex, Node2D strikePart)
+    {
+        Node? parent = GetParent()?.GetParent();
+        if (parent is null)
+        {
+            return;
+        }
+
+        Color burstColor = comboIndex switch
+        {
+            2 => new Color(1f, 0.55f, 0.22f, 0.85f),
+            1 => new Color(1f, 0.82f, 0.38f, 0.78f),
+            _ => new Color(1f, 0.92f, 0.62f, 0.72f),
+        };
+
+        float size = comboIndex switch
+        {
+            2 => 1.35f,
+            1 => 1.15f,
+            _ => 1f,
+        };
+
+        Polygon2D burst = new()
+        {
+            Color = burstColor,
+            Polygon =
+            [
+                new Vector2(-8f, -8f),
+                new Vector2(8f, -8f),
+                new Vector2(10f, 0f),
+                new Vector2(8f, 8f),
+                new Vector2(-8f, 8f),
+                new Vector2(-10f, 0f),
+            ],
+            Scale = Vector2.One * size,
+            ZIndex = 12,
+        };
+
+        parent.AddChild(burst);
+        burst.GlobalPosition = strikePart.GlobalPosition + new Vector2(_facingSign * 14f, 0f);
+
+        Tween tween = burst.CreateTween();
+        tween.TweenProperty(burst, "scale", burst.Scale * 1.8f, 0.05f);
+        tween.Parallel().TweenProperty(burst, "modulate:a", 0f, 0.09f);
+        tween.TweenCallback(Callable.From(burst.QueueFree));
     }
 
     private void AnimateDash()

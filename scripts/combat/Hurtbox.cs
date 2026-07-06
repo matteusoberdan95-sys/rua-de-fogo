@@ -36,7 +36,19 @@ public partial class Hurtbox : Area2D
         }
 
         ApplyKnockback(hitbox);
+        ApplyBleed(hitbox);
         PlayFeedback(hitbox);
+    }
+
+    private void ApplyBleed(Hitbox hitbox)
+    {
+        if (hitbox is not Projectile projectile || !projectile.ApplyBleedOnHit || Owner is null)
+        {
+            return;
+        }
+
+        BleedEffect? bleed = Owner.GetNodeOrNull<BleedEffect>("BleedEffect");
+        bleed?.Apply(projectile.BleedDuration, projectile.BleedDamagePerSecond);
     }
 
     private void ApplyKnockback(Hitbox hitbox)

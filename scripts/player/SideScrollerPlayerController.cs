@@ -2,8 +2,15 @@ namespace SangueNoAsfalto.Player;
 
 public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnockbackReceiver
 {
+    private const int SidearmMaxAmmoDefault = 7;
+    private const float DoubleTapWindowSec = 0.28f;
+    private const float RunDurationSec = 2.4f;
+
     [Export]
     public float HorizontalSpeed { get; set; } = 260f;
+
+    [Export]
+    public float RunSpeed { get; set; } = 390f;
 
     [Export]
     public float LaneSpeed { get; set; } = 150f;
@@ -62,7 +69,15 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     public int FacingSign { get; private set; } = 1;
 
-    public string WeaponName => _hasImprovisedWeapon ? "Vergalhao" : "Facao";
+    public string CombatStyleName => "Rua";
+
+    public string WeaponName => _hasImprovisedWeapon ? "Vergalhao" : "Punhos";
+
+    public int SidearmAmmo => _sidearmAmmo;
+
+    public int SidearmMaxAmmo => SidearmMaxAmmoDefault;
+
+    public bool IsRunning => _isRunning;
 
     public int WeaponDurability => _weaponDurability;
 
@@ -111,6 +126,11 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private int _comboIndex;
     private float _comboChainRemaining;
     private float _comboCalloutRemaining;
+    private float _runTimeRemaining;
+    private double _lastMoveLeftTapMs;
+    private double _lastMoveRightTapMs;
+    private bool _isRunning;
+    private int _sidearmAmmo = SidearmMaxAmmoDefault;
 
     public override void _Ready()
     {
@@ -135,6 +155,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (_health is not null)
         {
             _health.Died += OnDied;
+            _health.Changed += OnPlayerHealthChanged;
+            OnPlayerHealthChanged(_health.CurrentHealth, _health.MaxHealth);
         }
     }
 
@@ -155,6 +177,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         TickCombatStats(dt);
         TickShoot(dt);
         TickJump(dt);
+        TickRun(dt, input);
         RegenerateStamina(dt);
         UpdateAttackArc();
         UpdateFacingVisual();
@@ -171,7 +194,8 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
         if (_dashTimeRemaining <= 0f)
         {
-            Velocity = new Vector2(input.X * HorizontalSpeed, input.Y * LaneSpeed);
+            float moveSpeed = _isRunning ? RunSpeed : HorizontalSpeed;
+            Velocity = new Vector2(input.X * moveSpeed, input.Y * LaneSpeed);
         }
 
         MoveAndSlide();
@@ -375,9 +399,28 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             return;
         }
 
-        _attackTimeRemaining = AttackDuration;
-        _comboIndex = _comboResetRemaining > 0f ? (_comboIndex + 1) % 3 : 0;
+        bool airKick = _jumpTimeRemaining > 0f;
+        if (airKick)
+        {
+            _comboIndex = 2;
+        }
+        else
+        {
+            _comboIndex = _comboResetRemaining > 0f ? (_comboIndex + 1) % 3 : 0;
+            if (_isRunning && _comboIndex == 2)
+            {
+                _comboIndex = 1;
+            }
+        }
+
         _comboResetRemaining = ComboResetTime;
+
+        _attackTimeRemaining = _comboIndex switch
+        {
+            2 => airKick ? 0.24f : 0.22f,
+            1 => _isRunning ? 0.13f : 0.17f,
+            _ => _isRunning ? 0.11f : 0.12f,
+        };
 
         if (_attackArea is not null)
         {
@@ -397,7 +440,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(true);
-        SpawnSlashEffect(_comboIndex);
+        _spriteVisual?.SetAttackCombo(_comboIndex);
+        UpdateAttackArc();
+        SpawnStrikeEffect(_comboIndex);
         ConsumeWeaponDurability();
     }
 
@@ -432,16 +477,64 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             return;
         }
 
+        if (_sidearmAmmo <= 0)
+        {
+            return;
+        }
+
         CurrentStamina -= ShootStaminaCost;
         _shootCooldownRemaining = ShootCooldown;
+        _sidearmAmmo--;
+
+        _spriteVisual?.PlayShoot();
 
         Projectile projectile = ProjectileScene.Instantiate<Projectile>();
         projectile.Source = this;
         projectile.Direction = new Vector2(FacingSign, 0f);
-        projectile.GlobalPosition = GlobalPosition + new Vector2(FacingSign * 58f, -8f);
+        projectile.GlobalPosition = GlobalPosition + new Vector2(FacingSign * 34f, -22f);
         projectile.Rotation = FacingSign > 0 ? 0f : Mathf.Pi;
+        projectile.ApplyBleedOnHit = true;
+        projectile.BleedDuration = 3.5f;
+        projectile.BleedDamagePerSecond = 5f;
 
         GetTree().CurrentScene?.AddChild(projectile);
+    }
+
+    private void TickRun(float dt, Vector2 input)
+    {
+        double nowMs = Time.GetTicksMsec();
+
+        if (Input.IsActionJustPressed("move_left"))
+        {
+            if ((nowMs - _lastMoveLeftTapMs) / 1000.0 <= DoubleTapWindowSec)
+            {
+                _runTimeRemaining = RunDurationSec;
+            }
+
+            _lastMoveLeftTapMs = nowMs;
+        }
+
+        if (Input.IsActionJustPressed("move_right"))
+        {
+            if ((nowMs - _lastMoveRightTapMs) / 1000.0 <= DoubleTapWindowSec)
+            {
+                _runTimeRemaining = RunDurationSec;
+            }
+
+            _lastMoveRightTapMs = nowMs;
+        }
+
+        if (_runTimeRemaining > 0f)
+        {
+            _runTimeRemaining -= dt;
+        }
+
+        _isRunning = _runTimeRemaining > 0f && Mathf.Abs(input.X) > 0.01f && _hitStunRemaining <= 0f;
+    }
+
+    private void OnPlayerHealthChanged(int current, int maximum)
+    {
+        _spriteVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
     }
 
     private void UpdateAttackArc()
@@ -451,7 +544,12 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             return;
         }
 
-        _attackArea.Position = new Vector2(FacingSign * 45f, -6f);
+        _attackArea.Position = _comboIndex switch
+        {
+            2 => new Vector2(FacingSign * 46f, -20f),
+            1 => new Vector2(FacingSign * 40f, 10f),
+            _ => new Vector2(FacingSign * 38f, -8f),
+        };
         _attackArea.Rotation = FacingSign > 0 ? 0f : Mathf.Pi;
     }
 
@@ -468,7 +566,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
     }
 
-    private void SpawnSlashEffect(int comboIndex)
+    private void SpawnStrikeEffect(int comboIndex)
     {
         Node? parent = GetParent();
         if (parent is null)
@@ -476,39 +574,54 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             return;
         }
 
-        float reach = comboIndex == 2 ? 92f : 72f;
-        float height = comboIndex == 2 ? 54f : 40f;
-        Polygon2D slash = new()
+        Color color = comboIndex switch
         {
-            Color = comboIndex == 2
-                ? new Color(1f, 0.16f, 0.08f, 0.9f)
-                : new Color(1f, 0.86f, 0.48f, 0.78f),
-            Polygon =
-            [
-                new Vector2(0f, -height * 0.5f),
-                new Vector2(reach, -height * 0.18f),
-                new Vector2(reach + 18f, 0f),
-                new Vector2(reach, height * 0.18f),
-                new Vector2(0f, height * 0.5f),
-                new Vector2(24f, 0f)
-            ],
-            ZIndex = 12
+            2 => new Color(1f, 0.52f, 0.24f, 0.82f),
+            1 => new Color(1f, 0.84f, 0.42f, 0.72f),
+            _ => new Color(1f, 0.94f, 0.66f, 0.68f),
         };
 
-        parent.AddChild(slash);
-        slash.GlobalPosition = GlobalPosition + new Vector2(FacingSign * 16f, -8f);
-        slash.Scale = new Vector2(FacingSign, 1f);
-        slash.Rotation = comboIndex switch
+        float radius = comboIndex switch
         {
-            1 => -0.18f * FacingSign,
-            2 => 0.22f * FacingSign,
-            _ => 0f,
+            2 => 16f,
+            1 => 13f,
+            _ => 10f,
         };
 
-        Tween tween = slash.CreateTween();
-        tween.TweenProperty(slash, "scale", new Vector2(slash.Scale.X * 1.16f, slash.Scale.Y * 1.22f), 0.055f);
-        tween.Parallel().TweenProperty(slash, "modulate:a", 0f, 0.09f);
-        tween.TweenCallback(Callable.From(slash.QueueFree));
+        Vector2 offset = comboIndex switch
+        {
+            2 => new Vector2(FacingSign * 52f, -18f),
+            1 => new Vector2(FacingSign * 44f, 12f),
+            _ => new Vector2(FacingSign * 40f, -6f),
+        };
+
+        Polygon2D burst = new()
+        {
+            Color = color,
+            Polygon = MakeBurstPolygon(radius),
+            ZIndex = 12,
+        };
+
+        parent.AddChild(burst);
+        burst.GlobalPosition = GlobalPosition + offset;
+
+        Tween tween = burst.CreateTween();
+        tween.TweenProperty(burst, "scale", Vector2.One * 1.7f, 0.05f);
+        tween.Parallel().TweenProperty(burst, "modulate:a", 0f, 0.08f);
+        tween.TweenCallback(Callable.From(burst.QueueFree));
+    }
+
+    private static Vector2[] MakeBurstPolygon(float radius)
+    {
+        return
+        [
+            new Vector2(-radius, -radius * 0.65f),
+            new Vector2(radius, -radius * 0.65f),
+            new Vector2(radius * 1.1f, 0f),
+            new Vector2(radius, radius * 0.65f),
+            new Vector2(-radius, radius * 0.65f),
+            new Vector2(-radius * 1.1f, 0f),
+        ];
     }
 
     public void ReceiveKnockback(Vector2 impulse, float duration)
@@ -600,7 +713,13 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             && _dashTimeRemaining <= 0f
             && _hitStunRemaining <= 0f
             && _jumpTimeRemaining <= 0f;
-        _spriteVisual.UpdateLocomotion(moving, _attackTimeRemaining > 0f, _dashTimeRemaining > 0f);
+        _spriteVisual.UpdateLocomotion(
+            moving,
+            _attackTimeRemaining > 0f,
+            _dashTimeRemaining > 0f,
+            _hitStunRemaining > 0f,
+            false,
+            _isRunning);
     }
 
     private void ApplySavedState()

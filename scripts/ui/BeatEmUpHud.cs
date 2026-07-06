@@ -101,7 +101,7 @@ public partial class BeatEmUpHud : CanvasLayer
                 string durability = _player.WeaponDurability > 0
                     ? $" ({_player.WeaponDurability})"
                     : string.Empty;
-                _weaponLabel.Text = $"Arma: {_player.WeaponName}{durability}";
+                _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}";
             }
         }
 

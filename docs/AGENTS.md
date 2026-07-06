@@ -13,7 +13,9 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 16 - Rua Viva E Inimigos Em Camadas`.
+Sprint atual: `Sprint 20 - Armas Improvisadas E Finishers`.
+
+Direcao de combate: `docs/COMBAT_DESIGN.md` — desarmado e sidearm ok (Sprints 18–19); armas improvisadas e finishers na Sprint 20; estilos marciais por XP na Sprint 21.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 

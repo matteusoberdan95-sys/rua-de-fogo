@@ -40,7 +40,9 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private float _attackTimeRemaining;
     private float _hitStunRemaining;
     private int _facingSign = -1;
+    private int _attackPatternIndex;
     private CharacterSpriteVisual? _spriteVisual;
+    private Health? _health;
 
     public override void _Ready()
     {
@@ -59,10 +61,12 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
         SetAttackCollision(false);
 
-        Health? health = GetNodeOrNull<Health>("Health");
-        if (health is not null)
+        _health = GetNodeOrNull<Health>("Health");
+        if (_health is not null)
         {
-            health.Died += OnDied;
+            _health.Died += OnDied;
+            _health.Changed += OnHealthChanged;
+            OnHealthChanged(_health.CurrentHealth, _health.MaxHealth);
         }
     }
 
@@ -130,7 +134,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
         _cooldownRemaining = AttackCooldown;
         _telegraphRemaining = TelegraphDuration;
-        Modulate = new Color(1f, 0.58f, 0.42f, 1f);
+        int telegraphCombo = (_attackPatternIndex + 1) % 3 == 2 ? 1 : 0;
+        _spriteVisual?.SetAttackCombo(telegraphCombo);
     }
 
     private void TickTelegraph(float dt)
@@ -141,14 +146,14 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         }
 
         _telegraphRemaining -= dt;
-        float pulse = 0.55f + Mathf.Sin(_telegraphRemaining * 85f) * 0.45f;
-        Modulate = Colors.White.Lerp(new Color(1f, 0.22f, 0.1f, 1f), pulse);
 
         if (_telegraphRemaining <= 0f)
         {
             _attackTimeRemaining = AttackDuration;
+            _attackPatternIndex = (_attackPatternIndex + 1) % 3;
+            int combo = _attackPatternIndex == 2 ? 1 : 0;
+            _spriteVisual?.SetAttackCombo(combo);
             SetAttackCollision(true);
-            Modulate = Colors.White;
         }
     }
 
@@ -228,7 +233,17 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             && _telegraphRemaining <= 0f
             && _attackTimeRemaining <= 0f
             && _hitStunRemaining <= 0f;
-        _spriteVisual?.UpdateLocomotion(moving, _attackTimeRemaining > 0f, false);
+        _spriteVisual?.UpdateLocomotion(
+            moving,
+            _attackTimeRemaining > 0f,
+            false,
+            _hitStunRemaining > 0f,
+            _telegraphRemaining > 0f);
+    }
+
+    private void OnHealthChanged(int current, int maximum)
+    {
+        _spriteVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
     }
 
     private void OnDied()

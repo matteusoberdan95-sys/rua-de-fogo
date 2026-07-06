@@ -1,17 +1,19 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
 [ext_resource type="Script" path="res://scripts/combat/Hurtbox.cs" id="3_hurtbox"]
 [ext_resource type="Script" path="res://scripts/combat/Hitbox.cs" id="4_hitbox"]
 [ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="5_sprite_visual"]
-[ext_resource type="Texture2D" path="res://art/sprites/enemies/grunt_idle_game.png" id="6_idle"]
+[ext_resource type="Script" path="res://scripts/combat/BleedEffect.cs" id="6_bleed"]
+
+[ext_resource type="Texture2D" path="res://art/sprites/enemies/grunt_idle_game.png" id="7_idle"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_grunt"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("6_idle")
+"texture": ExtResource("7_idle")
 }],
 "loop": true,
 "name": &"idle",
@@ -57,7 +59,10 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
-MaxHealth = 85
+MaxHealth = 115
+
+[node name="BleedEffect" type="Node" parent="."]
+script = ExtResource("6_bleed")
 
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 16

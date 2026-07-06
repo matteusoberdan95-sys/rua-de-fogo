@@ -4,7 +4,11 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 16 - Rua Viva E Inimigos Em Camadas`
+Sprint atual: `Sprint 20 - Armas Improvisadas E Finishers` (planejada).
+
+Ultima sprint concluida: `Sprint 19 - Movimento, Spawn E Sidearm` (validada no Godot).
+
+Referencia: `docs/COMBAT_DESIGN.md`
 
 Direcao oficial atual:
 
@@ -697,7 +701,7 @@ Proximo passo recomendado:
 
 ## Sprint 16 - Rua Viva E Inimigos Em Camadas
 
-Status: implementada / aguardando validacao no Godot.
+Status: concluida (validada no Godot).
 
 Objetivo: aplicar ao cenario e aos inimigos a mesma regra aprendida com o Caua: referencias guiam o visual, mas nao devem ser imagens coladas no gameplay ativo.
 
@@ -739,6 +743,123 @@ Pendencias de validacao:
 - confirmar se o Quebra-Osso tem escala boa contra o Caua;
 - ajustar cores/posicoes se o cenario ficar poligonal demais;
 - decidir se Sprint 17 sera sprite sheet final do Caua ou refinamento visual da rua.
+
+Validacao:
+
+- escala Caua/inimigo, cobertura da camera, chao e leitura da rua aprovados no playtest;
+- proximo foco: dar vida aos personagens (Sprint 17).
+
+## Sprint 17 - Personagens Vivos: Combo, Impacto E Reacao
+
+Status: concluida (validada no playtest).
+
+Objetivo: depois de validar cenario e escala (Sprint 16), fazer personagens parecerem vivos no combate — nao apenas parados/andando, mas reagindo, telegrafando e golpeando em camadas.
+
+Criterio de pronto:
+
+- idle com respiracao visivel + cabelo/roupa com movimento secundario;
+- combo 1/2/3 com animacoes distintas no rig em camadas;
+- trail de arma no swing e feedback de impacto ligado ao rig;
+- inimigo telegrafa ataque no corpo (nao so modulate no root);
+- hit reaction com recoil direcional no torso/cabeca/bracos;
+- `CombatFeedback` aciona `CharacterSpriteVisual.PlayHitReaction`.
+
+Entregas implementadas:
+
+- `CharacterSpriteVisual` ganhou: `_vestFlap`, `_clothSway`, `_hairTail`, estados `hurt` e `telegraph`;
+- combo 0/1/2 com windups e swings diferentes + `SetAttackCombo()`;
+- `SpawnSwingTrail()` por golpe;
+- `AnimateHurt()` com recoil direcional;
+- `AnimateTelegraph()` para Quebra-Osso;
+- `SideScrollerPlayerController` passa combo index e hit-stun ao visual;
+- `SideScrollerEnemyController` usa telegraph visual no rig (sem flash no root);
+- `CombatFeedback` chama `PlayHitReaction` e escala spark em golpes pesados;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
+Validacao:
+
+- aprovada no playtest; combate e rig com boa leitura de vida.
+
+## Sprint 18 - Combate Desarmado E Dano Cumulativo
+
+Status: concluida (validada no Godot).
+
+Por que agora (decisao agents):
+
+- rig vivo pronto (Sprint 17); proximo passo e trocar corte por soco/chute;
+- Krita antes disso repetiria faca errada;
+- finishers gore e estilos marciais ficam para Sprints 19–20.
+
+Fora de escopo nesta sprint:
+
+- decapitacao / partir ao meio (Sprint 19);
+- Muay Thai, boxe, karate, capoeira, jiu-jitsu por XP (Sprint 20);
+- sprite sheet final Krita.
+
+### Fase 18A — Tirar armas fixas
+
+- remover machete/tubo fixo dos rigs Caua e Quebra-Osso;
+- impacto de punho/pe no lugar de trail de lamina;
+- HUD `Punhos` / `Estilo: Rua`; tutorial atualizado.
+
+### Fase 18B — Golpes desarmados
+
+- combo 1: jab; 2: chute lateral; 3: voadora/cotovelada;
+- inimigo: soco, cabecada, gancho telegrafados;
+- hitbox no membro, rebalance de dano.
+
+### Fase 18C — Machucado cumulativo
+
+- 3 tiers visuais por HP (intacto / machucado / critico);
+- overlays no rig inimigo.
+
+Criterio de pronto: ver checklist em `docs/COMBAT_DESIGN.md`.
+
+Entregas implementadas:
+
+- removida faca/tubo fixos dos rigs Caua e Quebra-Osso;
+- combo desarmado: jab / chute lateral / voadora (`AnimateJab`, `AnimateSideKick`, `AnimateFlyingKick`);
+- inimigo: soco e cabecada alternados (`AnimateHeadbutt`);
+- `SpawnStrikeImpact` substitui trail de lamina;
+- `EnemyDamageState.cs` + tiers visual intacto/machucado/critico no inimigo;
+- HUD `Estilo: Rua | Punhos`; tutorial atualizado;
+- hitbox por golpe rebalanceada no player;
+- `dotnet build` validado com 0 erros e 0 avisos.
+
+Validacao:
+
+- aprovada no playtest; combate desarmado e machucado cumulativo no inimigo ok.
+
+## Sprint 19 - Movimento, Spawn E Sidearm
+
+Status: concluida (validada no Godot).
+
+Objetivo: corrigir feel de combate e pacing da fase — voadora no ar, corrida, spawn a frente do jogador, Caua machucando, pistola com animacao e sangramento basico.
+
+Entregas implementadas:
+
+- **Espaco + J** forca voadora no ar;
+- **double-tap A/D** ativa corrida (2.4s) com golpes proprios (soco/chute corrida);
+- spawn escalonado **a frente** da posicao do jogador (nao mais so nos cantos fixos da fase);
+- intro encurtada + trigger ao avancar 140px;
+- inimigo grunt **115 HP**; intervalo entre ondas reduzido;
+- **Caua machuca** visualmente (tiers HP no rig);
+- **Pistola**: animacao de sacar/atirar, projetil pequeno, **7 balas**, HUD `Pistola X/7`;
+- **BleedEffect** — tiro causa sangramento (DOT) no inimigo;
+- tutorial atualizado;
+- `dotnet build` validado.
+
+Validacao:
+
+- aprovada no playtest; corrida, voadora no ar, spawn a frente, pistola e machucado do Caua ok.
+
+## Sprint 20 - Armas Improvisadas E Finishers (planejada)
+
+Martelo, faca, vergalhao no chao; durabilidade; finalizadores estilizados conforme arma e HP critico. Ver `docs/COMBAT_DESIGN.md`.
+
+## Sprint 21 - Progressao Marcial Por XP (planejada)
+
+Desbloqueio de estilos e deck de golpes por nivel. Ver `docs/COMBAT_DESIGN.md`.
 
 ## Backlog Tecnico Permanente
 

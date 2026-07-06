@@ -619,7 +619,7 @@ show_percentage = false
 
 [node name="WeaponLabel" type="Label" parent="Hud/PlayerPanel/StatsColumn"]
 layout_mode = 2
-text = "Arma: Facao"
+text = "Estilo: Rua  |  Punhos"
 
 [node name="AbilitiesPanel" type="HBoxContainer" parent="Hud"]
 offset_left = 16.0
