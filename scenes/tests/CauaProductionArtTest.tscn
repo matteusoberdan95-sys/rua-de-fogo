@@ -1,0 +1,77 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/visual/CauaProductionArtTest.cs" id="1_test"]
+[ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="2_fallback"]
+[ext_resource type="Script" path="res://scripts/visual/ArtCharacterVisual.cs" id="3_production"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fallback"]
+size = Vector2(4, 4)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fallback"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_fallback")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}]
+
+[node name="CauaProductionArtTest" type="Node2D"]
+script = ExtResource("1_test")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.06, 0.055, 0.07, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -40)
+zoom = Vector2(1.5, 1.5)
+
+[node name="GroundLine" type="Line2D" parent="."]
+points = PackedVector2Array(-500, 40, 500, 40)
+width = 2.0
+default_color = Color(0.35, 0.32, 0.28, 1)
+
+[node name="CauaActor" type="Node2D" parent="."]
+position = Vector2(0, 40)
+
+[node name="SpriteVisual" type="Node2D" parent="CauaActor"]
+position = Vector2(-8, -4)
+script = ExtResource("2_fallback")
+UseLayeredPrototype = true
+DisplayScale = 0.135
+LayeredPreset = 0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CauaActor/SpriteVisual"]
+visible = false
+texture_filter = 0
+position = Vector2(0, -52)
+sprite_frames = SubResource("SpriteFrames_fallback")
+animation = &"idle"
+
+[node name="ProductionArtVisual" type="Node2D" parent="CauaActor"]
+position = Vector2(-8, -4)
+script = ExtResource("3_production")
+CharacterId = 0
+DisplayScale = 1.0
+SourceFacesRight = true
+SpriteOffset = Vector2(0, -52)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CauaActor/ProductionArtVisual"]
+texture_filter = 0
+
+[node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="StatusLabel" type="Label" parent="Hud"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 620.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.92, 0.88, 0.78, 1)
+theme_override_font_sizes/font_size = 16
+text = "Carregando Caua production art v0..."

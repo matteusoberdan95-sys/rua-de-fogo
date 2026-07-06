@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 40 - Art Pipeline Real` (iniciada / build validado).
+Sprint atual: `Sprint 40 - Art Pipeline Real` (base tecnica implementada / build validado / aguardando F5).
 
 Ultima sprint concluida: `Sprint 39 - Anatomia e Poses Anti-South-Park` (build validado; validacao visual reprovou a abordagem procedural como caminho final).
 
@@ -28,31 +28,31 @@ Resumo da Sprint 40:
 - foco: criar pipeline real de arte para Caua, Quebra-Osso e Vila Esperanca;
 - nova pasta oficial: `art/production/`;
 - documento guia: `docs/SPRINT_40_ART_PIPELINE_REAL.md`;
-- status: iniciada / build validado / aguardando primeira importacao de asset real.
+- status: base tecnica implementada / build validado / aguardando validacao F5.
 
-## Sprint 40 - Art Pipeline Real (iniciada)
+## Sprint 40 - Art Pipeline Real (base tecnica implementada)
 
-Status: iniciada / build validado.
+Status: base tecnica implementada / build validado / aguardando F5.
 
 Objetivo: parar de tratar o rig procedural como caminho final e criar a primeira trilha real de producao visual.
 
-Entregas iniciais:
+Entregas:
 
-- `docs/SPRINT_40_ART_PIPELINE_REAL.md`;
-- `art/production/README.md`;
-- estrutura `art/production/characters/caua/`;
-- estrutura `art/production/characters/enemies/quebra-osso/`;
-- estrutura `art/production/stages/vila-esperanca/`;
-- estrutura `art/production/props/`, `fx/` e `_exports/`;
-- `docs/VISUAL_RULE.md` reescrito para separar `references/` de `art/production/`.
+- `scripts/visual/ArtCharacterVisual.cs` — visual com `AnimatedSprite2D`/`SpriteFrames`;
+- `scripts/visual/ProductionArtCatalog.cs` — caminhos em `art/production/`;
+- `scripts/visual/IActorVisual.cs` + `ActorVisualResolver.cs` — contrato e fallback;
+- flag `UseProductionArt` em `SideScrollerPlayerController` e `SideScrollerEnemyController`;
+- `art/production/characters/caua/caua_v0_frames.tres` + `manifest.json` (placeholder v0);
+- cena de teste `scenes/tests/CauaProductionArtTest.tscn`;
+- nos `ProductionArtVisual` em `SideScrollerPlayer.tscn` e `SideScrollerEnemyGrunt.tscn`;
+- `dotnet build` validado com 0 erros.
 
 Proximas tarefas:
 
-- criar `ArtCharacterVisual.cs` com `AnimatedSprite2D`/`SpriteFrames`;
-- adicionar flag `UseProductionArt`;
-- manter fallback para `CharacterSpriteVisual`;
-- importar primeiro Caua real;
-- montar primeiro trecho pintado da Vila Esperanca.
+- substituir placeholder v0 por sprite sheet real do Caua;
+- ativar `UseProductionArt = true` na fase quando arte estiver validada;
+- Quebra-Osso production art v0;
+- trecho pintado da Vila Esperanca.
 
 ## Definicao De Pronto
 

@@ -1,0 +1,9 @@
+{
+  "character": "caua",
+  "version": "v0",
+  "spriteFrames": "caua_v0_frames.tres",
+  "pivot": [32, 128],
+  "displayScale": 1.0,
+  "sourceFacesRight": true,
+  "notes": "Placeholder temporario ate sprite sheet real. Nao usar references/."
+}

@@ -14,7 +14,23 @@ Direcao atual: prototipo lateral/2.5D beat 'em up implementado para validacao, c
 
 Sprint atual: Sprint 40 - Art Pipeline Real.
 
-Decisao critica: o rig procedural em `Polygon2D` continua como gameplay-lab/fallback. Ele nao e mais o caminho de arte final. A partir da Sprint 40, assets reais entram por `art/production/`.
+Decisao critica: o rig procedural em `Polygon2D` continua como gameplay-lab/fallback. Ele nao e mais o caminho de arte final. A partir da Sprint 40, assets reais entram por `art/production/` via `ArtCharacterVisual`.
+
+Scripts novos da Sprint 40:
+
+- `scripts/visual/ArtCharacterVisual.cs` — sprite real com fallback procedural;
+- `scripts/visual/ProductionArtCatalog.cs` — pacotes em `art/production/`;
+- `scripts/visual/ActorVisualResolver.cs` — escolhe production art ou rig procedural;
+- `scripts/visual/CauaProductionArtTest.cs` — teste isolado do Caua v0.
+
+Cena de teste:
+
+- `scenes/tests/CauaProductionArtTest.tscn` — abrir no Godot para validar Caua production art v0.
+
+Flag no ator:
+
+- `UseProductionArt = false` por padrao na demo;
+- `true` ativa `ProductionArtVisual`; se `caua_v0_frames.tres` nao existir, cai no `CharacterSpriteVisual`.
 
 Sprint atual: ver `docs/SPRINTS.md`.
 

@@ -39,6 +39,9 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     [Export]
     public float MaxLaneY { get; set; } = 470f;
 
+    [Export]
+    public bool UseProductionArt { get; set; }
+
     private Node2D? _target;
     private Hitbox? _attackArea;
     private CollisionShape2D? _attackCollision;
@@ -49,6 +52,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
     private int _facingSign = -1;
     private int _attackPatternIndex;
     private CharacterSpriteVisual? _spriteVisual;
+    private IActorVisual? _actorVisual;
     private bool _dying;
     private Health? _health;
     private PostureComponent? _posture;
@@ -83,6 +87,12 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             _spriteVisual.EnsureLayeredRig(_enemyPreset);
             EnemyLayeredVisual.HideBlockMeshes(this);
         }
+
+        _actorVisual = ActorVisualResolver.Resolve(
+            this,
+            UseProductionArt,
+            ProductionArtCatalog.FromLayeredPreset(_enemyPreset),
+            _enemyPreset);
 
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
@@ -227,7 +237,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         _cooldownRemaining = AttackCooldown;
         _pendingAttack = EnemyCombatProfile.Resolve(_enemyPreset, _attackPatternIndex);
         _telegraphRemaining = TelegraphDuration * _pendingAttack.TelegraphMultiplier;
-        _spriteVisual?.SetAttackCombo(_pendingAttack.VisualComboIndex);
+        _actorVisual?.SetAttackCombo(_pendingAttack.VisualComboIndex);
         _parryMarker?.SetActive(true);
     }
 
@@ -245,8 +255,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             _parryMarker?.SetActive(false);
             _attackTimeRemaining = AttackDuration * _pendingAttack.DurationMultiplier;
             _attackPatternIndex = (_attackPatternIndex + 1) % 3;
-            _spriteVisual?.SetAttackCombo(_pendingAttack.VisualComboIndex);
-            _spriteVisual?.BeginEnemyStrike(_attackTimeRemaining, _pendingAttack.VisualComboIndex, _pendingAttack.Anim);
+            _actorVisual?.SetAttackCombo(_pendingAttack.VisualComboIndex);
+            _actorVisual?.BeginEnemyStrike(_attackTimeRemaining, _pendingAttack.VisualComboIndex, _pendingAttack.Anim);
             SetAttackCollision(false);
         }
     }
@@ -332,12 +342,12 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         Velocity = impulse;
         Modulate = Colors.White.Lerp(new Color(1f, 0.62f, 0.58f), 0.35f);
         SetAttackCollision(false);
-        _spriteVisual?.PlayHitReaction(impulse.Normalized(), Mathf.Clamp(duration / 0.14f, 0.8f, 2.2f));
+        _actorVisual?.PlayHitReaction(impulse.Normalized(), Mathf.Clamp(duration / 0.14f, 0.8f, 2.2f));
     }
 
     private void UpdateFacingVisual()
     {
-        _spriteVisual?.SetFacing(_facingSign);
+        _actorVisual?.SetFacing(_facingSign);
     }
 
     private void UpdateLocomotionVisual()
@@ -351,7 +361,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             && _telegraphRemaining <= 0f
             && _attackTimeRemaining <= 0f
             && _hitStunRemaining <= 0f;
-        _spriteVisual?.UpdateLocomotion(
+        _actorVisual?.UpdateLocomotion(
             moving,
             _attackTimeRemaining > 0f,
             false,
@@ -361,7 +371,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
 
     private void OnHealthChanged(int current, int maximum)
     {
-        _spriteVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
+        _actorVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
     }
 
     public void OnParried(SideScrollerPlayerController player)
@@ -373,8 +383,8 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
         SetAttackCollision(false);
         Velocity = (GlobalPosition - player.GlobalPosition).Normalized() * 240f;
         Modulate = new Color(0.75f, 0.88f, 1f, 1f);
-        _spriteVisual?.PlayParryStagger();
-        _spriteVisual?.PlayHitReaction(Velocity.Normalized(), 1.6f);
+        _actorVisual?.PlayParryStagger();
+        _actorVisual?.PlayHitReaction(Velocity.Normalized(), 1.6f);
     }
 
     private void OnPostureBroken()
@@ -415,7 +425,7 @@ public partial class SideScrollerEnemyController : CharacterBody2D, ICombatKnock
             bodyShape.Disabled = true;
         }
 
-        _spriteVisual?.PlayDeath();
+        _actorVisual?.PlayDeath();
         CombatFeedback.PlayHit(this, this, 8);
         GetTree().CreateTimer(CombatPacing.DeathBodySeconds).Timeout += () =>
         {

@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** Sprint 40 - Art Pipeline Real (iniciada / build validado).
+**Sprint atual:** Sprint 40 - Art Pipeline Real (base tecnica implementada / build validado).
 
-**Nota de continuidade:** Sprint 39 confirmou o limite do rig procedural como visual final. O rig em `Polygon2D` continua como laboratorio de gameplay, mas o caminho vendavel agora e `art/production/`: personagens e cenarios reais, importados gradualmente.
+**Nota de continuidade:** Sprint 39 confirmou o limite do rig procedural como visual final. O rig em `Polygon2D` continua como laboratorio de gameplay/fallback. O caminho vendavel e `art/production/` com `ArtCharacterVisual` + `UseProductionArt`.
 
 **Ultima concluida:** Sprint 34 — vertical slice v1.1 e QC validados no Godot.
 
@@ -47,7 +47,9 @@ dotnet build SangueNoAsfalto.csproj
 ### O que ja funciona
 
 - **Fase lateral ~10 min** na Vila Esperanca: spawn por progresso, chefes, portao SAIDA.
-- **Rig 2D em camadas** (`CharacterSpriteVisual`, `EnemyLayeredVisual`) — personagens animados por codigo, sem sprites colados no gameplay.
+- **Rig 2D em camadas** (`CharacterSpriteVisual`) — fallback/laboratorio de gameplay.
+- **Art Pipeline Real (Sprint 40):** `ArtCharacterVisual`, `ProductionArtCatalog`, flag `UseProductionArt`, fallback automatico para rig procedural.
+- **Teste Caua v0:** `scenes/tests/CauaProductionArtTest.tscn` + `art/production/characters/caua/caua_v0_frames.tres`.
 - **Anatomia segmentada:** pernas com joelho, bracos com cotovelo, walk/run com passada.
 - **Dano progressivo:** olho roxo, sangue no nariz, rasgo na roupa.
 - **Combate arcade:** combo 4 golpes, buffer/cancel, corrida+J, dash+J.
@@ -71,7 +73,7 @@ dotnet build SangueNoAsfalto.csproj
 
 **`references/` NAO entra no gameplay.** E moodboard. **`art/production/` e o caminho oficial para assets reais** a partir da Sprint 40. Detalhes: **`docs/VISUAL_RULE.md`**.
 
-Runtime atual: `UseLayeredPrototype = true` em todos os atores, ate a entrada gradual de production art com fallback procedural.
+Runtime atual: `UseLayeredPrototype = true` por padrao. Ative `UseProductionArt = true` no ator quando o pacote em `art/production/` estiver pronto; se faltar asset, cai no procedural automaticamente.
 
 ### Regra de sprint
 
@@ -94,5 +96,6 @@ Toda sprint so e concluida apos: `dotnet build` sem erros, validacao F5 no Godot
 | `docs/SPRINT_39_ANATOMIA_POSES.md` | Correcao visual de anatomia, membros e poses |
 | `docs/SPRINT_40_ART_PIPELINE_REAL.md` | Pipeline real de arte para personagem/cenario vendavel |
 | `art/production/README.md` | Estrutura oficial para assets reais |
+| `scenes/tests/CauaProductionArtTest.tscn` | Teste isolado do Caua production art v0 |
 | `docs/BACKLOG.md` | Marcos e checklist |
 | `docs/AGENTS.md` | Responsabilidades dos agentes |

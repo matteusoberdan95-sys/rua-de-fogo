@@ -70,6 +70,9 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     [Export]
     public PackedScene? ProjectileScene { get; set; }
 
+    [Export]
+    public bool UseProductionArt { get; set; }
+
     public float CurrentStamina { get; private set; }
 
     public Vector2 LastMovementInput { get; private set; }
@@ -148,6 +151,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
     private readonly KeyPressLatch _parryLatch = new(Key.Q);
     private readonly KeyPressLatch _reloadLatch = new(Key.E);
     private CharacterSpriteVisual? _spriteVisual;
+    private IActorVisual? _actorVisual;
     private Hitbox? _attackArea;
     private CollisionShape2D? _attackCollision;
     private Health? _health;
@@ -191,6 +195,11 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         ApplySavedState();
 
         _spriteVisual = GetNodeOrNull<CharacterSpriteVisual>("SpriteVisual");
+        _actorVisual = ActorVisualResolver.Resolve(
+            this,
+            UseProductionArt,
+            ProductionCharacterId.Caua,
+            LayeredPrototypePreset.Caua);
         _attackArea = GetNodeOrNull<Hitbox>("AttackArea");
         _attackCollision = GetNodeOrNull<CollisionShape2D>("AttackArea/CollisionShape2D");
 
@@ -219,7 +228,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SyncWeaponVisual();
-        _spriteVisual?.SetCombatStyle(ActiveCombatStyle);
+        _actorVisual?.SetCombatStyle(ActiveCombatStyle);
     }
 
     public override void _PhysicsProcess(double delta)
@@ -335,7 +344,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             _postureStaggerRemaining = Mathf.Max(_postureStaggerRemaining - dt, 0f);
             _guardActive = false;
             _parryPerfectWindow = 0f;
-            _spriteVisual?.PlayPostureStagger();
+            _actorVisual?.PlayPostureStagger();
         }
     }
 
@@ -347,7 +356,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _attackTimeRemaining = 0f;
         SetAttackCollision(false);
         CombatFeedback.PlayPostureBreak(this);
-        _spriteVisual?.PlayPostureStagger();
+        _actorVisual?.PlayPostureStagger();
     }
 
     private const float GuardHoldThreshold = 0.10f;
@@ -388,7 +397,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         {
             _qHoldTime = 0f;
             _parryPerfectWindow = ParryWindowDuration;
-            _spriteVisual?.PlayParryWindup();
+            _actorVisual?.PlayParryWindup();
         }
 
         if (qHeld)
@@ -424,7 +433,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (_guardActive)
         {
             CurrentStamina = Mathf.Max(0f, CurrentStamina - 14f * dt);
-            _spriteVisual?.PlayGuard();
+            _actorVisual?.PlayGuard();
         }
 
         if (_blockImpactFlash > 0f)
@@ -579,7 +588,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
                 CombatFeedback.PlayStyleUnlock(this, unlock);
             }
 
-            _spriteVisual?.SetCombatStyle(ActiveCombatStyle);
+            _actorVisual?.SetCombatStyle(ActiveCombatStyle);
         }
     }
 
@@ -744,7 +753,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(false);
-        _spriteVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle, duration);
+        _actorVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle, duration);
         CombatFeedback.SpawnMoveCallout(this, move.DisplayName, ActiveCombatStyle);
         UpdateAttackArc();
         SpawnStrikeEffect(move.ImpactComboIndex);
@@ -797,7 +806,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(true);
-        _spriteVisual?.PlayWeaponAttack(_weaponKind);
+        _actorVisual?.PlayWeaponAttack(_weaponKind);
         UpdateWeaponAttackArc();
         ConsumeWeaponDurability();
     }
@@ -826,7 +835,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(true);
-        _spriteVisual?.PlayFinisherAttack(_weaponKind);
+        _actorVisual?.PlayFinisherAttack(_weaponKind);
         UpdateFinisherAttackArc(target);
 
         _weaponDurability = Mathf.Max(_weaponDurability - 2, 0);
@@ -928,7 +937,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         CombatFeedback.PlayBlock(this, attacker);
-        _spriteVisual?.PlayBlockImpact();
+        _actorVisual?.PlayBlockImpact();
         return true;
     }
 
@@ -976,7 +985,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _parryRiposteDelay = 0.2f;
         _combatLockRemaining = 0.82f;
         CombatFeedback.PlayParry(this, enemySource);
-        _spriteVisual?.PlayParrySuccessMatrix();
+        _actorVisual?.PlayParrySuccessMatrix();
     }
 
     private Node2D? FindPostureKillTarget()
@@ -1045,7 +1054,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(true);
-        _spriteVisual?.PlayPostureKill();
+        _actorVisual?.PlayPostureKill();
         UpdateFinisherAttackArc(target);
     }
 
@@ -1081,7 +1090,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(false);
-        _spriteVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle, duration);
+        _actorVisual?.SetAttackMove(move.Anim, move.ImpactComboIndex, ActiveCombatStyle, duration);
         CombatFeedback.SpawnMoveCallout(this, move.DisplayName, ActiveCombatStyle);
         UpdateAttackArc();
     }
@@ -1141,7 +1150,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         }
 
         SetAttackCollision(true);
-        _spriteVisual?.PlayParryRiposte();
+        _actorVisual?.PlayParryRiposte();
         UpdateFinisherAttackArc(target);
     }
 
@@ -1185,7 +1194,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         _shootCooldownRemaining = ShootCooldown;
         _sidearmAmmo--;
 
-        _spriteVisual?.PlayShoot();
+        _actorVisual?.PlayShoot();
 
         Projectile projectile = ProjectileScene.Instantiate<Projectile>();
         projectile.Source = this;
@@ -1243,7 +1252,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
         if (_reloadTimeRemaining <= 0f)
         {
             _sidearmAmmo = SidearmMaxAmmoDefault;
-            _spriteVisual?.EndReload();
+            _actorVisual?.EndReload();
         }
     }
 
@@ -1256,7 +1265,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
         _reloadTimeRemaining = 1.25f;
         _dashTimeRemaining = 0f;
-        _spriteVisual?.PlayReload();
+        _actorVisual?.PlayReload();
     }
 
     public void AddSidearmAmmo(int amount)
@@ -1266,7 +1275,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void OnPlayerHealthChanged(int current, int maximum)
     {
-        _spriteVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
+        _actorVisual?.SetDamageVisualTier(EnemyDamageState.FromHealth(current, maximum));
     }
 
     private void UpdateAttackArc()
@@ -1419,7 +1428,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void SyncWeaponVisual()
     {
-        _spriteVisual?.SetEquippedWeapon(_weaponKind);
+        _actorVisual?.SetEquippedWeapon(_weaponKind);
     }
 
     public void AddContinue()
@@ -1489,12 +1498,12 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             heightOffset = Mathf.Sin(progress * Mathf.Pi) * JumpHeight;
         }
 
-        _spriteVisual?.SetJumpOffset(heightOffset);
+        _actorVisual?.SetJumpOffset(heightOffset);
     }
 
     private void UpdateLocomotionVisual()
     {
-        if (_spriteVisual is null)
+        if (_actorVisual is null)
         {
             return;
         }
@@ -1503,7 +1512,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
             && _dashTimeRemaining <= 0f
             && _hitStunRemaining <= 0f
             && _jumpTimeRemaining <= 0f;
-        _spriteVisual.UpdateLocomotion(
+        _actorVisual.UpdateLocomotion(
             moving,
             _attackTimeRemaining > 0f,
             _dashTimeRemaining > 0f,
@@ -1554,7 +1563,7 @@ public partial class SideScrollerPlayerController : CharacterBody2D, ICombatKnoc
 
     private void UpdateFacingVisual()
     {
-        _spriteVisual?.SetFacing(FacingSign);
+        _actorVisual?.SetFacing(FacingSign);
     }
 
     private void UpdateInvulnerabilityVisual()

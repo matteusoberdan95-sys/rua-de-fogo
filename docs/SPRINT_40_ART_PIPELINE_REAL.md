@@ -1,6 +1,6 @@
 # Sprint 40 - Art Pipeline Real
 
-Status: iniciada.
+Status: base tecnica implementada / build validado / aguardando F5 e sprite sheet real.
 
 Data: 06/07/2026.
 
@@ -98,15 +98,21 @@ Cenario:
 - manter largura modular para repetir/encaixar;
 - sombras pintadas na arte, luz dinamica no Godot por cima.
 
-## Implementacao Tecnica Planejada
+## Implementacao Tecnica (Sprint 40 — base entregue)
 
-Criar nas proximas tarefas:
+- `ArtCharacterVisual.cs` — `AnimatedSprite2D` + `SpriteFrames` de `art/production/`;
+- `ProductionArtCatalog.cs` — resolve caminhos por personagem;
+- `IActorVisual.cs` + `ActorVisualResolver.cs` — contrato compartilhado e fallback;
+- flag `UseProductionArt` em player/inimigos;
+- fallback automatico para `CharacterSpriteVisual` se pacote real nao existir;
+- Caua v0 placeholder: `art/production/characters/caua/caua_v0_frames.tres`;
+- teste: `scenes/tests/CauaProductionArtTest.tscn`.
 
-- `ArtCharacterVisual.cs`: visual baseado em `AnimatedSprite2D` ou `SpriteFrames`;
-- flag no ator: `UseProductionArt`;
-- fallback automatico para `CharacterSpriteVisual` se asset real nao existir;
-- cena `SideScrollerPlayerProductionArt.tscn` para testar Caua sem quebrar a fase;
-- import preset para pixel/painted 2D sem blur indevido.
+## Implementacao Tecnica Planejada (proximas tarefas)
+
+- import preset Godot para pixel/painted 2D sem blur;
+- substituir placeholder v0 por sprite sheet real do Caua;
+- ativar `UseProductionArt = true` na fase principal apos validacao visual.
 
 ## Criterio De Sucesso
 

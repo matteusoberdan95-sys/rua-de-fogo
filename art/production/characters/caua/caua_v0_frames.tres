@@ -1,0 +1,81 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_idle"]
+size = Vector2(64, 128)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_walk"]
+size = Vector2(68, 128)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_attack"]
+size = Vector2(72, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_idle")
+}, {
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_idle")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_walk")
+}, {
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_walk")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_walk")
+}],
+"loop": true,
+"name": &"run",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_attack")
+}, {
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_attack")
+}],
+"loop": false,
+"name": &"jab",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_attack")
+}, {
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_attack")
+}],
+"loop": false,
+"name": &"cross",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_attack")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_idle")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 8.0
+}]

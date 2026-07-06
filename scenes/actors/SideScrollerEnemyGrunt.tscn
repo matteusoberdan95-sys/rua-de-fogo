@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/SideScrollerEnemyController.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://scripts/core/Health.cs" id="2_health"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/visual/CharacterSpriteVisual.cs" id="5_sprite_visual"]
 [ext_resource type="Script" path="res://scripts/combat/BleedEffect.cs" id="6_bleed"]
 [ext_resource type="Script" path="res://scripts/combat/PostureComponent.cs" id="7_posture"]
+[ext_resource type="Script" path="res://scripts/visual/ArtCharacterVisual.cs" id="8_art_visual"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sprite"]
 size = Vector2(4, 4)
@@ -75,6 +76,18 @@ texture_filter = 0
 position = Vector2(0, -48)
 sprite_frames = SubResource("SpriteFrames_grunt")
 animation = &"idle"
+
+[node name="ProductionArtVisual" type="Node2D" parent="."]
+position = Vector2(0, -4)
+visible = false
+script = ExtResource("8_art_visual")
+CharacterId = 1
+DisplayScale = 1.0
+SourceFacesRight = false
+SpriteOffset = Vector2(0, -48)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="ProductionArtVisual"]
+texture_filter = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_body")

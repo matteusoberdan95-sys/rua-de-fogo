@@ -15,7 +15,7 @@ public enum LayeredPrototypePreset
 /// <summary>
 /// Rig 2D em camadas — combate desarmado, reacao a hit e machucado cumulativo no inimigo.
 /// </summary>
-public partial class CharacterSpriteVisual : Node2D
+public partial class CharacterSpriteVisual : Node2D, IActorVisual
 {
     [Export]
     public NodePath SpritePath { get; set; } = new("AnimatedSprite2D");
@@ -95,6 +95,8 @@ public partial class CharacterSpriteVisual : Node2D
     private Vector2 _baseRigScale = Vector2.One;
     private float _idlePersonalityOffset;
     private bool _isDying;
+
+    public bool IsProductionArtActive => false;
 
     public override void _Ready()
     {
