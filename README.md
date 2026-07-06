@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 33 - Clima E Rua Viva Como Gameplay` (implementada — validar F5).
+**Sprint atual:** `Sprint 34 - Demo Vertical Slice E QC` (planejada).
 
-**Ultima concluida:** Sprint 32 — cenario Fase 1 com landmarks validado.
+**Ultima concluida:** Sprint 33 — clima e rua viva como gameplay validados no Godot.
 
 ### O que ja funciona
 
@@ -58,7 +58,7 @@ dotnet build SangueNoAsfalto.csproj
 - **Sprint 30 concluida:** HUD compacto, camera mais aberta, chuva/vinheta menos invasivas e contorno sutil de leitura nos personagens, validada no Godot.
 - **Sprint 31 concluida:** personagens expressivos, telegraph/morte legiveis, `CombatPacing` (combate mais lento e com peso), validada no Godot.
 - **Sprint 32 concluida:** `StageAssetLibrary`, landmarks por ato e pipeline de assets, validada no Godot.
-- **Sprint 33 implementada:** clima por ato, pocas de lama/eletrica, vento, apagao e trovao nos chefes — aguardando validacao F5.
+- **Sprint 33 concluida:** clima por ato, pocas lama/eletrica, vento, apagao e trovao nos chefes, validada no Godot.
 
 ### Regra visual
 

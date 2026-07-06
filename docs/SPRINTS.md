@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 33 - Clima E Rua Viva Como Gameplay` (implementada / aguardando validacao no Godot).
+Sprint atual: `Sprint 34 - Demo Vertical Slice E QC` (planejada).
 
-Ultima sprint concluida: `Sprint 32 - Cenario Fase 1 Com Assets Finais` (validada no Godot).
+Ultima sprint concluida: `Sprint 33 - Clima E Rua Viva Como Gameplay` (validada no Godot).
 
 Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/STAGE_ASSET_PIPELINE.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
@@ -1165,9 +1165,9 @@ Validacao:
 - landmarks por ato, postes com pool de luz, chao legivel e leitura lateral aprovados;
 - pipeline `docs/STAGE_ASSET_PIPELINE.md` pronto para substituicao gradual por sprites Krita.
 
-## Sprint 33 - Clima E Rua Viva Como Gameplay (implementada)
+## Sprint 33 - Clima E Rua Viva Como Gameplay (concluida)
 
-Status: implementada / aguardando validacao no Godot.
+Status: concluida e validada no Godot (06/07/2026).
 
 Objetivo: fazer chuva, horario, vento, lama, eletricidade e luz afetarem sensacao de jogo, leitura e ritmo da fase, nao apenas o visual.
 
@@ -1180,9 +1180,11 @@ Entregas implementadas:
 - **`WeatherController`** — sinal `LightningStruck`, vento e raios acelerados nos chefes;
 - `dotnet build` validado com 0 erros e 0 avisos.
 
-Validacao pendente:
+Validacao:
 
-- F5: lama, raio em poca, vento na viela, apagao nos chefes finais.
+- validada no Godot pelo usuario em 06/07/2026;
+- lama, raio em poca, vento na viela e apagao nos chefes aprovados;
+- clima por ato reforca ritmo da fase sem quebrar leitura de combate.
 
 ## Sprint 34 - Demo Vertical Slice E QC (planejada)
 

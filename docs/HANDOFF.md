@@ -266,15 +266,14 @@ Estado da Sprint 30:
 
 Proximo passo recomendado:
 
-1. **validar Sprint 33 no Godot (F5)** — lama, raio em poca, vento, apagao nos chefes;
-2. iniciar **Sprint 34** — demo vertical slice e QC;
-3. manter baseline camera/HUD/combate das sprints 30–31.
+1. iniciar **Sprint 34** — demo vertical slice e QC;
+2. manter baseline sprints 30–33 (camera, combate, cenario, clima);
+3. exportar props Krita quando for arte final (`docs/STAGE_ASSET_PIPELINE.md`).
 
 Estado da Sprint 33:
 
-- implementada; build OK;
-- `StageClimateDirector`, hazards, vento, trovao e clima por ato;
-- aguardando playtest F5.
+- concluida e validada no Godot em 06/07/2026;
+- lama, raio, vento e apagao nos chefes aprovados.
 
 Estado da Sprint 32:
 
@@ -288,7 +287,7 @@ Estado da Sprint 31:
 Roadmap planejado:
 
 - Sprint 32: cenario da Fase 1 com assets finais (concluida);
-- Sprint 33: clima e rua viva como gameplay (implementada — validar F5);
+- Sprint 33: clima e rua viva como gameplay (concluida);
 - Sprint 34: demo vertical slice e QC.
 
 Estado da Sprint 28:

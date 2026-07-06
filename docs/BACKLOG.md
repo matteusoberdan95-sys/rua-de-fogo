@@ -306,8 +306,8 @@
 - [x] SFX placeholder trovao/chuva (`WeatherAmbience`).
 - [x] Assinatura climatica mini-chefe e chefes finais.
 - [x] Validar `dotnet build SangueNoAsfalto.csproj`.
-- [ ] Validar Sprint 33 no Godot com F5.
-- [ ] Fechar sprint apos validacao.
+- [x] Validar Sprint 33 no Godot com F5.
+- [x] Fechar sprint apos validacao.
 
 ## Marco 0.31 - Demo Vertical Slice E QC (Sprint 34)
 
