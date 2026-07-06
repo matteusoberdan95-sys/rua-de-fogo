@@ -241,11 +241,11 @@ Estado da Sprint 13:
 Nota historica:
 
 - as Sprints 24 a 28 adicionaram golpes por estilo, rig em camadas, props quebraveis, defesa, parry e postura;
-- a Sprint 29 agora e o foco visual atual da fase 1.
+- a Sprint 29 foi validada no Godot e abriu caminho para a Sprint 30.
 
 Estado da Sprint 29:
 
-- implementada, aguardando validacao no Godot;
+- concluida e validada no Godot pelo usuario em 06/07/2026;
 - `scripts/world/LayeredStreetPrototype.cs` recebeu passada visual de fase 1;
 - adicionados comercios, pichacoes, calcada, asfalto remendado, lixeiras, caixa eletrica, varal, cabos, cacos, papeis, buracos, pocas e marcas de rua;
 - objetivo: transformar as referencias em camadas editaveis, nao em fundo chapado;
@@ -256,9 +256,9 @@ Estado da Sprint 29:
 
 Proximo passo recomendado:
 
-1. validar **Sprint 29** no Godot (F5): andar a fase inteira e conferir se a Vila Esperanca deixou de parecer vazia/blocada;
-2. validar se os detalhes novos nao atrapalham leitura de combate, inimigos, pickups e hitboxes;
-3. decidir Sprint 30: HUD/camera/legibilidade ou sprite sheet final do Caua/inimigos.
+1. iniciar **Sprint 30 - Legibilidade, Camera e HUD**;
+2. reduzir HUD/camera/contraste antes de novos sistemas;
+3. deixar personagens e cenario final para sprints seguintes, sem perder jogabilidade.
 
 Estado da Sprint 28:
 
@@ -448,3 +448,5 @@ So entra quando houver necessidade real, por exemplo:
 - ferramentas internas.
 
 Enquanto o jogo esta em prototipo, saves locais e dados locais bastam.
+
+

@@ -4,11 +4,11 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 29 - Polimento Visual Da Fase 1` (implementada — aguardando validacao no Godot).
+Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (planejada).
 
-Ultima sprint concluida: `Sprint 23 - Progressao Marcial Por XP` (validada no Godot).
+Ultima sprint concluida: `Sprint 29 - Polimento Visual Da Fase 1` (validada no Godot).
 
-Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`
+Referencia: `docs/STAGE_01_VILA_ESPERANCA.md`, `docs/VISUAL_BIBLE.md` e `docs/ARCHITECTURE.md`
 
 Direcao oficial atual:
 
@@ -1046,9 +1046,9 @@ Validacao:
 - toque rapido Q no `! PARRY !` ou no impacto: parry + contra;
 - inimigos nao ficam batendo indefinidamente sem consequencia.
 
-## Sprint 29 - Polimento Visual Da Fase 1 (implementada)
+## Sprint 29 - Polimento Visual Da Fase 1 (concluida)
 
-Status: implementada (aguardando validacao no Godot).
+Status: concluida e validada no Godot.
 
 Objetivo: comecar a tirar a Vila Esperanca da aparencia de prototipo vazio e aproximar a fase 1 das referencias: rua suburbana brasileira, asfalto molhado, comercio fechado, lixo, fios, pichacao, perigo e historia visual.
 
@@ -1072,10 +1072,34 @@ Entregas implementadas:
 - `LayeredStreetPrototype` reorganiza sky/far/mid/near/fg para aparecer atras do jogador e nao atras do ceu;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
-Validacao pendente:
+Validacao:
 
-- abrir no Godot e testar `F5`;
-- andar a fase inteira e confirmar se nao existem trechos vazios;
-- avaliar se a rua ainda esta escura demais ou poligonal demais;
-- conferir se os detalhes nao atrapalham leitura de inimigos, pickups e hitboxes;
-- decidir Sprint 30: HUD/camera/legibilidade ou sprite sheet final do Caua/inimigos.
+- validada no Godot pelo playtest do usuario em 06/07/2026;
+- resultado: houve melhora visivel no cenario apos a correcao de camadas;
+- observacao: ainda esta longe da arte final, mas a direcao da rua viva foi aprovada como proximo degrau de prototipo.
+
+
+## Sprint 30 - Legibilidade, Camera e HUD (planejada)
+
+Status: planejada.
+
+Objetivo: melhorar a leitura do jogo antes de adicionar mais conteudo: camera, escala, contraste, HUD e composicao visual precisam deixar personagem, inimigos, pickups e golpes claros em meio segundo.
+
+Entregas planejadas:
+
+- reduzir ou reorganizar o HUD para ocupar menos tela durante combate;
+- ajustar camera para mostrar melhor rua, jogador, inimigos e proximos perigos;
+- aumentar contraste/rim light dos personagens contra o cenario escuro;
+- garantir que pickups e props importantes sejam legiveis;
+- revisar cores/alpha da chuva, vignette e elementos de fundo;
+- documentar quais problemas visuais ficam para Sprint 31 (personagens) e Sprint 32 (cenario com assets finais).
+
+Criterio de pronto:
+
+- HUD nao cobre a leitura principal do combate;
+- camera mostra pelo menos um bom trecho da rua e nao corta personagens grandes;
+- jogador e inimigos sao identificaveis em print parado;
+- build sem erros;
+- validacao F5 no Godot.
+
+

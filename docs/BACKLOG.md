@@ -262,5 +262,16 @@
 - [x] Adicionar lixo, lixeira, cacos, papeis soltos e sujeira urbana.
 - [x] Adicionar fios, varal, caixa eletrica, pichacoes e atmosfera de chuva.
 - [x] Validar `dotnet build SangueNoAsfalto.csproj`.
-- [ ] Validar Sprint 29 no Godot com `F5`.
-- [ ] Fechar sprint apos validacao visual.
+- [x] Validar Sprint 29 no Godot com `F5`.
+- [x] Fechar sprint apos validacao visual.
+
+## Marco 0.27 - Legibilidade, Camera e HUD (Sprint 30)
+
+- [ ] Reduzir/reorganizar HUD para nao cobrir a acao.
+- [ ] Ajustar camera e enquadramento do jogador/inimigos.
+- [ ] Melhorar contraste dos personagens contra cenario escuro.
+- [ ] Melhorar leitura de pickups, props e perigos.
+- [ ] Revisar chuva/vignette/alpha para nao esconder elementos.
+- [ ] Validar Sprint 30 no Godot com F5.
+- [ ] Fechar sprint apos validacao.
+

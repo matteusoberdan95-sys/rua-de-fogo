@@ -13,11 +13,11 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 29 - Polimento Visual Da Fase 1` (implementada — aguardando validacao no Godot).
+Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (planejada).
 
 Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro.
 
-Direcao visual atual: `docs/STAGE_01_VILA_ESPERANCA.md` — transformar a fase 1 em rua viva, com asfalto, lojas, lixo, fios, pichacoes, poças, sangue e leitura de suburbio brasileiro.
+Direcao visual atual: Sprint 29 validou a rua viva como caminho; Sprint 30 foca leitura, camera, HUD e contraste antes de novos sistemas.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 
@@ -176,7 +176,7 @@ Foco atual:
 - manter `docs/WEATHER_TIME_SYSTEM.md` como fonte do sistema;
 - garantir que a rua viva tenha luzes, chuva e fundo em camadas;
 - pensar clima como gameplay e narrativa, nao so decoracao.
-- apoiar a Sprint 29 com varal, fios, chuva no chao, luz/neon e sujeira animavel.
+- apoiar a Sprint 30 reduzindo poluicao visual, chuva/vignette excessiva e elementos que escondem personagens.
 
 Proximas entregas:
 
@@ -201,3 +201,4 @@ Proximas entregas:
 - manter backend fora da Sprint 02;
 - documentar ideias futuras sem implementar;
 - avaliar save local antes de qualquer API.
+
