@@ -102,7 +102,7 @@ public partial class WeatherController : Node
         {
             streak.DefaultColor = new Color(0.72f, 0.86f, 0.92f, visuals.RainAlpha);
             streak.Visible = visuals.RainAlpha > 0.01f;
-            streak.Width = state == WeatherState.Drizzle ? 1.6f : 2.3f;
+            streak.Width = state == WeatherState.Drizzle ? 1.35f : 1.9f;
         }
     }
 
@@ -139,14 +139,14 @@ public partial class WeatherController : Node
             }
         }
 
-        const int streakCount = 90;
+        const int streakCount = 72;
         for (int i = 0; i < streakCount; i++)
         {
             Line2D streak = new()
             {
                 Name = $"RainStreak{i:00}",
-                DefaultColor = new Color(0.72f, 0.86f, 0.92f, 0.48f),
-                Width = 1.8f,
+                DefaultColor = new Color(0.72f, 0.86f, 0.92f, 0.34f),
+                Width = 1.5f,
                 ZIndex = 30,
                 Antialiased = false
             };
@@ -200,9 +200,9 @@ public partial class WeatherController : Node
         return state switch
         {
             WeatherState.Dry => new WeatherVisuals(0f, 0.06f, 0.15f),
-            WeatherState.HeavyRain => new WeatherVisuals(0.68f, 0.24f, 0.5f),
-            WeatherState.Thunderstorm => new WeatherVisuals(0.78f, 0.3f, 0.62f),
-            _ => new WeatherVisuals(0.48f, 0.16f, 0.36f),
+            WeatherState.HeavyRain => new WeatherVisuals(0.46f, 0.20f, 0.45f),
+            WeatherState.Thunderstorm => new WeatherVisuals(0.56f, 0.26f, 0.56f),
+            _ => new WeatherVisuals(0.30f, 0.13f, 0.32f),
         };
     }
 

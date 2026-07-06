@@ -254,11 +254,22 @@ Estado da Sprint 29:
 - `LayeredStreetPrototype` agora usa ordem `sky -> far -> mid -> near -> foreground`, sempre atras do jogador;
 - `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
 
+Estado da Sprint 30:
+
+- implementada / aguardando validacao no Godot;
+- `BeatEmUpHud` e `SideScrollerPrototype.tscn` usam HUD compacto: painel menor, barras menores, textos abreviados e `TechniquesLabel` previsto na cena;
+- `SideScrollerPlayer.tscn` abriu a camera (`zoom 1.28`) e deslocou enquadramento para mostrar mais rua e perigo a frente;
+- `CharacterSpriteVisual` adicionou halo, sombra de contato e rim light sutil atras do rig para destacar personagens no cenario escuro;
+- `WeatherController` reduziu quantidade, largura e alpha das gotas de chuva;
+- chuva placeholder e vinheta foram atenuadas para nao esconder personagem/pickups;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
 Proximo passo recomendado:
 
-1. iniciar **Sprint 30 - Legibilidade, Camera e HUD**;
-2. reduzir HUD/camera/contraste antes de novos sistemas;
-3. deixar personagens e cenario final para sprints seguintes, sem perder jogabilidade.
+1. abrir no Godot e testar **Sprint 30** com `F5`;
+2. conferir se HUD/camera/chuva/halo melhoram leitura sem matar o peso visual;
+3. se aprovado, marcar Sprint 30 como concluida;
+4. planejar Sprint 31 focada em personagens/inimigos mais expressivos ou Sprint 32 focada em cenario com assets finais.
 
 Estado da Sprint 28:
 

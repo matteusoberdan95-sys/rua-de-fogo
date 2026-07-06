@@ -658,7 +658,7 @@ public partial class LayeredStreetPrototype : Node2D
             OffsetRight = 3900f,
             OffsetBottom = 720f,
             MouseFilter = Control.MouseFilterEnum.Ignore,
-            Color = new Color(0f, 0f, 0f, 0.20f),
+            Color = new Color(0f, 0f, 0f, 0.14f),
             ZIndex = -40
         };
         AddChild(vignette);

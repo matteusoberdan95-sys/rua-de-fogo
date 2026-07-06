@@ -267,11 +267,12 @@
 
 ## Marco 0.27 - Legibilidade, Camera e HUD (Sprint 30)
 
-- [ ] Reduzir/reorganizar HUD para nao cobrir a acao.
-- [ ] Ajustar camera e enquadramento do jogador/inimigos.
-- [ ] Melhorar contraste dos personagens contra cenario escuro.
-- [ ] Melhorar leitura de pickups, props e perigos.
-- [ ] Revisar chuva/vignette/alpha para nao esconder elementos.
+- [x] Reduzir/reorganizar HUD para nao cobrir a acao.
+- [x] Ajustar camera e enquadramento do jogador/inimigos.
+- [x] Melhorar contraste dos personagens contra cenario escuro.
+- [x] Melhorar leitura de pickups, props e perigos.
+- [x] Revisar chuva/vignette/alpha para nao esconder elementos.
+- [x] Validar `dotnet build SangueNoAsfalto.csproj`.
 - [ ] Validar Sprint 30 no Godot com F5.
 - [ ] Fechar sprint apos validacao.
 

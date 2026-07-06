@@ -17,6 +17,8 @@ public partial class BeatEmUpHud : CanvasLayer
     private ProgressBar? _healthBar;
     private ProgressBar? _staminaBar;
     private ProgressBar? _xpBar;
+    private PanelContainer? _playerPanel;
+    private HBoxContainer? _abilitiesPanel;
     private PanelContainer? _centerOverlay;
     private Label? _overlayTitleLabel;
     private Label? _overlayBodyLabel;
@@ -31,6 +33,8 @@ public partial class BeatEmUpHud : CanvasLayer
         ApplyThemeRecursive(this, theme);
 
         _levelLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/LevelLabel");
+        _playerPanel = GetNodeOrNull<PanelContainer>("PlayerPanel");
+        _abilitiesPanel = GetNodeOrNull<HBoxContainer>("AbilitiesPanel");
         _healthLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/HealthLabel");
         _staminaLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/StaminaLabel");
         _xpLabel = GetNodeOrNull<Label>("PlayerPanel/StatsColumn/XpLabel");
@@ -46,6 +50,8 @@ public partial class BeatEmUpHud : CanvasLayer
         _overlayBodyLabel = GetNodeOrNull<Label>("CenterOverlay/VBoxContainer/OverlayBody");
         _player = GetTree().GetFirstNodeInGroup("side_player") as SideScrollerPlayerController;
         _director = GetTree().GetFirstNodeInGroup("side_director") as SideScrollerDirector;
+
+        ConfigureCompactHud();
 
         _styleToast = new Label
         {
@@ -86,10 +92,10 @@ public partial class BeatEmUpHud : CanvasLayer
             {
                 Name = "TechniquesLabel",
             };
-            _techniquesLabel.AddThemeFontSizeOverride("font_size", 13);
-            _techniquesLabel.AddThemeColorOverride("font_color", new Color(0.82f, 0.78f, 0.62f));
             GetNodeOrNull<VBoxContainer>("PlayerPanel/StatsColumn")?.AddChild(_techniquesLabel);
         }
+
+        ConfigureLabel(_techniquesLabel, 11, new Color(0.82f, 0.78f, 0.62f));
 
         if (_player is not null)
         {
@@ -124,7 +130,7 @@ public partial class BeatEmUpHud : CanvasLayer
 
         if (_levelLabel is not null)
         {
-            _levelLabel.AddThemeFontSizeOverride("font_size", 18);
+            _levelLabel.AddThemeFontSizeOverride("font_size", 15);
             _levelLabel.AddThemeColorOverride("font_color", new Color(0.95f, 0.82f, 0.62f));
         }
     }
@@ -153,13 +159,13 @@ public partial class BeatEmUpHud : CanvasLayer
                     CombatStyleKind.Capoeira => new Color(0.5f, 0.98f, 0.45f),
                     _ => new Color(0.95f, 0.82f, 0.62f),
                 };
-                _levelLabel.Text = $"CAUA  Nv {_player.Level}  [{_player.CombatStyleName}]";
+                _levelLabel.Text = $"CAUA Nv {_player.Level} [{_player.CombatStyleName}]";
                 _levelLabel.AddThemeColorOverride("font_color", styleColor);
             }
 
             if (_staminaLabel is not null)
             {
-                _staminaLabel.Text = $"Stamina {(int)_player.CurrentStamina}/{(int)_player.MaxStamina}";
+                _staminaLabel.Text = $"STA {(int)_player.CurrentStamina}/{(int)_player.MaxStamina}";
             }
 
             if (_staminaBar is not null)
@@ -194,7 +200,7 @@ public partial class BeatEmUpHud : CanvasLayer
                 string nextStyle = _player.NextStyleUnlock is StyleUnlockInfo next
                     ? $"  |  Prox: {next.DisplayName} (Nv {next.Level})"
                     : string.Empty;
-                _weaponLabel.Text = $"Estilo: {_player.CombatStyleName}{nextStyle}  |  {_player.WeaponName}{durability}  |  Pistola {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}{reload}";
+                _weaponLabel.Text = $"{_player.CombatStyleName}{nextStyle} | {_player.WeaponName}{durability} | Pst {_player.SidearmAmmo}/{_player.SidearmMaxAmmo}{reload}";
             }
 
             if (_techniquesLabel is not null)
@@ -210,7 +216,7 @@ public partial class BeatEmUpHud : CanvasLayer
                 string lastMove = string.IsNullOrEmpty(_player.LastMoveDisplayName)
                     ? string.Empty
                     : $"  |  ultimo: {_player.LastMoveDisplayName}";
-                _techniquesLabel.Text = $"Golpe: {current}  ->  prox: {next}{lastMove}";
+                _techniquesLabel.Text = $"{current} -> {next}{lastMove}";
             }
 
             UpdateParryHint();
@@ -221,7 +227,7 @@ public partial class BeatEmUpHud : CanvasLayer
             if (_debugLabel is not null)
             {
                 _debugLabel.Visible = _director.ShowDebugHud && !ScreenshotMode.IsActive;
-                _debugLabel.Text = $"Etapa {_director.WaveNumber}/{_director.TotalWaves}  |  Inimigos {_director.EnemiesRemaining}  |  {_director.ObjectiveText}";
+                _debugLabel.Text = $"Etapa {_director.WaveNumber}/{_director.TotalWaves} | Inimigos {_director.EnemiesRemaining} | {_director.ObjectiveText}";
             }
 
             UpdateCenterOverlay();
@@ -284,6 +290,74 @@ public partial class BeatEmUpHud : CanvasLayer
             _healthBar.MaxValue = maximum;
             _healthBar.Value = current;
         }
+    }
+
+    private void ConfigureCompactHud()
+    {
+        if (_playerPanel is not null)
+        {
+            _playerPanel.OffsetLeft = 14f;
+            _playerPanel.OffsetTop = 12f;
+            _playerPanel.OffsetRight = 286f;
+            _playerPanel.OffsetBottom = 128f;
+            _playerPanel.Modulate = new Color(1f, 1f, 1f, 0.88f);
+        }
+
+        if (GetNodeOrNull<VBoxContainer>("PlayerPanel/StatsColumn") is VBoxContainer stats)
+        {
+            stats.AddThemeConstantOverride("separation", 2);
+        }
+
+        ConfigureLabel(_levelLabel, 15, new Color(0.98f, 0.82f, 0.55f));
+        ConfigureLabel(_healthLabel, 12, new Color(0.92f, 0.84f, 0.74f));
+        ConfigureLabel(_staminaLabel, 12, new Color(0.92f, 0.84f, 0.74f));
+        ConfigureLabel(_xpLabel, 11, new Color(0.78f, 0.80f, 0.76f));
+        ConfigureLabel(_weaponLabel, 11, new Color(0.82f, 0.78f, 0.62f));
+        ConfigureLabel(_techniquesLabel, 11, new Color(0.82f, 0.78f, 0.62f));
+
+        ConfigureBar(_healthBar, 252f, 10f);
+        ConfigureBar(_staminaBar, 252f, 8f);
+        ConfigureBar(_xpBar, 252f, 6f);
+        ConfigureBar(_postureBar, 252f, 7f);
+
+        if (_abilitiesPanel is not null)
+        {
+            _abilitiesPanel.OffsetLeft = 14f;
+            _abilitiesPanel.OffsetTop = 132f;
+            _abilitiesPanel.OffsetRight = 286f;
+            _abilitiesPanel.OffsetBottom = 154f;
+            _abilitiesPanel.Modulate = new Color(1f, 1f, 1f, 0.62f);
+            _abilitiesPanel.AddThemeConstantOverride("separation", 5);
+            foreach (Node child in _abilitiesPanel.GetChildren())
+            {
+                if (child is Label label)
+                {
+                    ConfigureLabel(label, 11, new Color(0.84f, 0.78f, 0.64f));
+                }
+            }
+        }
+    }
+
+    private static void ConfigureLabel(Label? label, int fontSize, Color color)
+    {
+        if (label is null)
+        {
+            return;
+        }
+
+        label.AddThemeFontSizeOverride("font_size", fontSize);
+        label.AddThemeColorOverride("font_color", color);
+    }
+
+    private static void ConfigureBar(ProgressBar? bar, float width, float height)
+    {
+        if (bar is null)
+        {
+            return;
+        }
+
+        bar.CustomMinimumSize = new Vector2(width, height);
+        bar.Size = new Vector2(width, height);
     }
 
     private void UpdateCenterOverlay()

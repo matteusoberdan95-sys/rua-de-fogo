@@ -36,7 +36,7 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** `Sprint 30 - Legibilidade, Camera e HUD` (planejada).
+**Sprint atual:** `Sprint 30 - Legibilidade, Camera e HUD` (implementada / aguardando validacao no Godot).
 
 **Ultima concluida:** Sprint 29 - polimento visual da Fase 1 validado no Godot.
 
@@ -55,7 +55,8 @@ dotnet build SangueNoAsfalto.csproj
 - **Clima e horario** dinamicos, chuva, rua em camadas, HUD arcade.
 - **Sprint 29:** primeira passada de producao visual na Vila Esperanca: lojas, lixeira, fios, roupas no varal, caixa eletrica, pichacoes, asfalto remendado, buracos, lixo, cacos, marcas de rua e atmosfera no trecho inteiro.
 - **Correcao visual Sprint 29:** camadas antigas `Road`/`LaneBand`/`NightVignette` foram escondidas e a rua nova teve `ZIndex` corrigido para aparecer no gameplay.
-- **Proxima sprint:** reduzir poluicao do HUD, melhorar enquadramento da camera, contraste de personagens/inimigos e leitura geral do combate.
+- **Sprint 30 implementada:** HUD compacto, camera mais aberta, chuva/vinheta menos invasivas e contorno sutil de leitura nos personagens.
+- **Proxima validacao:** jogar com `F5` para confirmar se combate, pickups e inimigos ficam legiveis em print parado e em movimento.
 
 ### Regra visual
 

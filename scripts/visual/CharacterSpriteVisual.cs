@@ -745,6 +745,7 @@ public partial class CharacterSpriteVisual : Node2D
         Color shirt = palette.Shirt;
         Color vest = palette.Vest;
         Color shoeAccent = palette.ShoeAccent;
+        AddReadabilitySilhouette(_rig, palette);
 
         Node2D backLayer = AddJoint(_rig, "BackLayer", Vector2.Zero, 0);
         _backLeg = AddLegRig(backLayer, "BackLeg", new Vector2(-8f, -12f), backPants, shoeAccent, z: 0, out _backLegShin);
@@ -1148,6 +1149,34 @@ public partial class CharacterSpriteVisual : Node2D
                 }, 8);
                 break;
         }
+    }
+
+    private void AddReadabilitySilhouette(Node2D parent, PresetPalette palette)
+    {
+        Color halo = LayeredPreset == LayeredPrototypePreset.Caua
+            ? new Color(1f, 0.62f, 0.20f, 0.12f)
+            : new Color(0.76f, 0.04f, 0.04f, 0.12f);
+        Color rim = palette.ShoeAccent.Lightened(0.18f);
+        rim.A = 0.16f;
+
+        AddPolygon(parent, "ReadabilityHalo", halo, new[]
+        {
+            new Vector2(-42f, -132f), new Vector2(34f, -130f), new Vector2(48f, -86f),
+            new Vector2(44f, -28f), new Vector2(24f, 10f), new Vector2(-26f, 12f),
+            new Vector2(-46f, -28f), new Vector2(-50f, -88f),
+        }, -3);
+
+        AddPolygon(parent, "ContactShadow", new Color(0f, 0f, 0f, 0.34f), new[]
+        {
+            new Vector2(-42f, 7f), new Vector2(36f, 5f), new Vector2(54f, 14f),
+            new Vector2(34f, 23f), new Vector2(-36f, 23f), new Vector2(-56f, 14f),
+        }, -2);
+
+        AddPolygon(parent, "RimSide", rim, new[]
+        {
+            new Vector2(30f, -118f), new Vector2(38f, -98f), new Vector2(40f, -34f),
+            new Vector2(30f, 2f), new Vector2(22f, -2f), new Vector2(30f, -62f),
+        }, -1);
     }
 
     private static Node2D AddJoint(Node parent, string name, Vector2 position, int z)

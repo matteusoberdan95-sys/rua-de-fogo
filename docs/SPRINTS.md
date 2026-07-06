@@ -4,7 +4,7 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (planejada).
+Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (implementada / aguardando validacao no Godot).
 
 Ultima sprint concluida: `Sprint 29 - Polimento Visual Da Fase 1` (validada no Godot).
 
@@ -1079,9 +1079,9 @@ Validacao:
 - observacao: ainda esta longe da arte final, mas a direcao da rua viva foi aprovada como proximo degrau de prototipo.
 
 
-## Sprint 30 - Legibilidade, Camera e HUD (planejada)
+## Sprint 30 - Legibilidade, Camera e HUD (implementada)
 
-Status: planejada.
+Status: implementada / aguardando validacao no Godot.
 
 Objetivo: melhorar a leitura do jogo antes de adicionar mais conteudo: camera, escala, contraste, HUD e composicao visual precisam deixar personagem, inimigos, pickups e golpes claros em meio segundo.
 
@@ -1094,6 +1094,16 @@ Entregas planejadas:
 - revisar cores/alpha da chuva, vignette e elementos de fundo;
 - documentar quais problemas visuais ficam para Sprint 31 (personagens) e Sprint 32 (cenario com assets finais).
 
+Entregas implementadas:
+
+- `BeatEmUpHud` ficou mais compacto: painel menor, labels menores, barras reduzidas e linha de golpe/arma menos poluida;
+- `SideScrollerPrototype.tscn` agora ja nasce com HUD compacto e `TechniquesLabel`, evitando salto visual ao rodar a fase;
+- camera do `SideScrollerPlayer` foi aberta (`zoom 1.28`) e deslocada para mostrar mais rua, inimigos e perigos a frente;
+- `CharacterSpriteVisual` recebeu `ReadabilityHalo`, `ContactShadow` e rim light sutil atras do rig para separar Caua/inimigos do asfalto escuro;
+- `WeatherController` reduziu quantidade, largura e alpha da chuva gerada por codigo;
+- chuva placeholder da cena e vinheta do `LayeredStreetPrototype` foram atenuadas para nao cobrir personagem e pickups;
+- `dotnet build SangueNoAsfalto.csproj` validado com 0 erros e 0 avisos.
+
 Criterio de pronto:
 
 - HUD nao cobre a leitura principal do combate;
@@ -1101,5 +1111,13 @@ Criterio de pronto:
 - jogador e inimigos sao identificaveis em print parado;
 - build sem erros;
 - validacao F5 no Godot.
+
+Pendencias de validacao:
+
+- abrir no Godot e testar com `F5`;
+- checar se o HUD nao cobre luta quando ha varios inimigos;
+- checar se a camera nao afasta demais o impacto dos golpes;
+- confirmar se chuva, vignette e halo melhoram leitura sem deixar o jogo claro demais;
+- se aprovado, marcar Sprint 30 como concluida e planejar Sprint 31 focada em personagens/inimigos mais expressivos.
 
 

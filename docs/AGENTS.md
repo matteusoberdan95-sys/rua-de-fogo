@@ -13,11 +13,11 @@ Antes de qualquer tarefa grande, todo agente deve consultar:
 - `docs/ARCHITECTURE.md`
 - `docs/HANDOFF.md`
 
-Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (planejada).
+Sprint atual: `Sprint 30 - Legibilidade, Camera e HUD` (implementada / aguardando validacao no Godot).
 
 Direcao de combate: `docs/COMBAT_DESIGN.md` — combo 4 golpes por estilo (`MoveCatalog`), defesa com Q (segurar = block, toque = parry), postura estilo Sekiro.
 
-Direcao visual atual: Sprint 29 validou a rua viva como caminho; Sprint 30 foca leitura, camera, HUD e contraste antes de novos sistemas.
+Direcao visual atual: Sprint 29 validou a rua viva como caminho; Sprint 30 implementou leitura, camera, HUD compacto, chuva menos poluida e contraste dos personagens antes de novos sistemas.
 
 Direcao atual: cena lateral/2.5D beat 'em up como caminho principal, mantendo o top-down como laboratorio antigo de sistemas.
 
@@ -47,6 +47,7 @@ Foco atual:
 - melhorar feedback de acerto;
 - ajustar velocidade, dash, stamina e combo;
 - garantir que cada mudanca continue jogavel.
+- validar se a camera aberta da Sprint 30 ainda preserva peso e impacto dos golpes.
 
 Proximas entregas:
 
@@ -142,6 +143,7 @@ Foco atual:
 - criar tela de morte;
 - criar menu inicial;
 - mostrar feedback claro sem poluir a tela.
+- manter o HUD compacto da Sprint 30 e evitar que debug/tecnicas cubram a acao.
 
 Proximas entregas:
 
@@ -176,7 +178,7 @@ Foco atual:
 - manter `docs/WEATHER_TIME_SYSTEM.md` como fonte do sistema;
 - garantir que a rua viva tenha luzes, chuva e fundo em camadas;
 - pensar clima como gameplay e narrativa, nao so decoracao.
-- apoiar a Sprint 30 reduzindo poluicao visual, chuva/vignette excessiva e elementos que escondem personagens.
+- validar a reducao de chuva/vignette da Sprint 30 sem perder clima dark.
 
 Proximas entregas:
 
