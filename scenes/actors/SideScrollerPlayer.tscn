@@ -53,6 +53,7 @@ collision_layer = 2
 collision_mask = 5
 script = ExtResource("1_player")
 ProjectileScene = ExtResource("5_projectile")
+UseProductionArt = true
 
 [node name="LaneShadow" type="Polygon2D" parent="."]
 position = Vector2(0, 21)

@@ -33,17 +33,31 @@ public static class ProductionArtCatalog
 
     public static bool HasProductionPack(ProductionCharacterId id)
     {
-        string framesPath = GetSpriteFramesPath(id);
-        if (string.IsNullOrEmpty(framesPath))
+        string folder = GetCharacterFolder(id);
+        string manifestPath = $"{folder}manifest.json";
+        if (!Godot.FileAccess.FileExists(manifestPath))
         {
             return false;
         }
 
-        return ResourceLoader.Exists(framesPath);
+        string spritesDir = ProjectSettings.GlobalizePath($"{folder}sprites/");
+        if (!System.IO.Directory.Exists(spritesDir))
+        {
+            return ResourceLoader.Exists(GetSpriteFramesPath(id));
+        }
+
+        return System.IO.Directory.GetFiles(spritesDir, "*.png").Length > 0
+            || ResourceLoader.Exists(GetSpriteFramesPath(id));
     }
 
     public static SpriteFrames? LoadSpriteFrames(ProductionCharacterId id)
     {
+        SpriteFrames? built = ProductionSpriteFrameBuilder.BuildFromManifest(id);
+        if (built is not null)
+        {
+            return built;
+        }
+
         if (!HasProductionPack(id))
         {
             return null;

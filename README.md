@@ -36,9 +36,9 @@ dotnet build SangueNoAsfalto.csproj
 
 ## Estado atual (Jul/2026)
 
-**Sprint atual:** Sprint 40 - Art Pipeline Real (base tecnica implementada / build validado).
+**Sprint atual:** Sprint 41 - Caua Production Art v0 jogavel (implementada / build validado / aguardando F5).
 
-**Nota de continuidade:** Sprint 39 confirmou o limite do rig procedural como visual final. O rig em `Polygon2D` continua como laboratorio de gameplay/fallback. O caminho vendavel e `art/production/` com `ArtCharacterVisual` + `UseProductionArt`.
+**Nota de continuidade:** Caua usa `UseProductionArt = true` na fase lateral. Sprites v1 em `art/production/characters/caua/sprites/`. Rig procedural permanece fallback.
 
 **Ultima concluida:** Sprint 34 — vertical slice v1.1 e QC validados no Godot.
 
@@ -49,7 +49,8 @@ dotnet build SangueNoAsfalto.csproj
 - **Fase lateral ~10 min** na Vila Esperanca: spawn por progresso, chefes, portao SAIDA.
 - **Rig 2D em camadas** (`CharacterSpriteVisual`) — fallback/laboratorio de gameplay.
 - **Art Pipeline Real (Sprint 40):** `ArtCharacterVisual`, `ProductionArtCatalog`, flag `UseProductionArt`, fallback automatico para rig procedural.
-- **Teste Caua v0:** `scenes/tests/CauaProductionArtTest.tscn` + `art/production/characters/caua/caua_v0_frames.tres`.
+- **Caua production art v1:** 26 PNGs + `manifest.json` auto-build SpriteFrames; `UseProductionArt = true` no jogador lateral.
+- **Gerador:** `tools/generate-caua-production-v1.ps1` recria sprites em `art/production/`.
 - **Anatomia segmentada:** pernas com joelho, bracos com cotovelo, walk/run com passada.
 - **Dano progressivo:** olho roxo, sangue no nariz, rasgo na roupa.
 - **Combate arcade:** combo 4 golpes, buffer/cancel, corrida+J, dash+J.

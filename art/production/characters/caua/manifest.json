@@ -1,9 +1,23 @@
 {
   "character": "caua",
-  "version": "v0",
-  "spriteFrames": "caua_v0_frames.tres",
-  "pivot": [32, 128],
-  "displayScale": 1.0,
+  "version": "v1",
+  "spriteFrames": "auto",
+  "spritesFolder": "sprites",
+  "pivotY": 132,
+  "displayScale": 0.92,
   "sourceFacesRight": true,
-  "notes": "Placeholder temporario ate sprite sheet real. Nao usar references/."
+  "notes": "Sprites v1 em sprites/. Gerar com tools/generate-caua-production-v1.ps1",
+  "animations": {
+    "idle": { "pattern": "caua_{name}_{index}.png", "frames": 4, "fps": 5, "loop": true },
+    "walk": { "pattern": "caua_{name}_{index}.png", "frames": 6, "fps": 8, "loop": true },
+    "run": { "pattern": "caua_{name}_{index}.png", "frames": 4, "fps": 10, "loop": true },
+    "jab": { "pattern": "caua_{name}_{index}.png", "frames": 3, "fps": 14, "loop": false },
+    "cross": { "pattern": "caua_{name}_{index}.png", "frames": 3, "fps": 13, "loop": false },
+    "kick": { "pattern": "caua_{name}_{index}.png", "frames": 3, "fps": 12, "loop": false },
+    "high_kick": { "pattern": "caua_{name}_{index}.png", "frames": 3, "fps": 12, "loop": false },
+    "low_kick": { "pattern": "caua_{name}_{index}.png", "frames": 3, "fps": 12, "loop": false },
+    "attack": { "pattern": "caua_{name}_{index}.png", "frames": 3, "fps": 13, "loop": false },
+    "hurt": { "pattern": "caua_{name}_{index}.png", "frames": 2, "fps": 8, "loop": false },
+    "death": { "pattern": "caua_{name}_{index}.png", "frames": 1, "fps": 6, "loop": false }
+  }
 }

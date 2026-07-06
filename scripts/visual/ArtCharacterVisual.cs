@@ -67,7 +67,15 @@ public partial class ArtCharacterVisual : Node2D, IActorVisual
             return false;
         }
 
+        if (_sprite is null)
+        {
+            return false;
+        }
+
         _sprite.SpriteFrames = frames;
+        DisplayScale = ProductionSpriteFrameBuilder.ReadDisplayScale(id);
+        SpriteOffset = ProductionSpriteFrameBuilder.ReadSpriteOffset(id);
+        _sprite.Position = SpriteOffset;
         _sprite.Scale = Vector2.One * DisplayScale;
         _sprite.Visible = true;
         Visible = true;
@@ -308,8 +316,7 @@ public partial class ArtCharacterVisual : Node2D, IActorVisual
         MoveAnimProfile.Hook => "hook",
         MoveAnimProfile.Uppercut => "uppercut",
         MoveAnimProfile.SideKick or MoveAnimProfile.Teep => "kick",
-        MoveAnimProfile.HighKick => "high_kick",
-        MoveAnimProfile.LowKick => "low_kick",
+        MoveAnimProfile.HighKick or MoveAnimProfile.LowKick => "kick",
         MoveAnimProfile.Knee or MoveAnimProfile.FlyingKnee => "knee",
         MoveAnimProfile.KnifeSlash => "knife_slash",
         MoveAnimProfile.RunningPunch => "running_punch",

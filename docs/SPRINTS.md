@@ -4,9 +4,9 @@ Este documento deve ser atualizado sempre que uma sprint comecar ou terminar.
 
 ## Estado Atual
 
-Sprint atual: `Sprint 40 - Art Pipeline Real` (base tecnica implementada / build validado / aguardando F5).
+Sprint atual: `Sprint 41 - Caua Production Art v0 Jogavel` (implementada / build validado / aguardando F5).
 
-Ultima sprint concluida: `Sprint 39 - Anatomia e Poses Anti-South-Park` (build validado; validacao visual reprovou a abordagem procedural como caminho final).
+Ultima sprint concluida: `Sprint 40 - Art Pipeline Real` (base tecnica entregue).
 
 **Regra visual obrigatoria:** `docs/VISUAL_RULE.md` - `references/` nao vira runtime; `art/production/` e o caminho oficial para assets reais.
 
